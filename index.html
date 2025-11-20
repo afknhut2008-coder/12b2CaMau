@@ -136,7 +136,7 @@
         h4 { color: #555; margin-bottom: 15px; font-weight: 600; }
 
         /* INPUTS & BUTTONS */
-        input[type="text"], textarea, select {
+        input[type="text"], textarea, select, input[type="number"] {
             width: 100%; 
             padding: 12px 15px; 
             border: 1px solid var(--border-color); 
@@ -147,13 +147,13 @@
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             color: var(--text-color);
         }
-        input[type="text"]:focus, textarea:focus, select:focus { 
+        input[type="text"]:focus, textarea:focus, select:focus, input[type="number"]:focus { 
             border-color: #6dd5ed; 
             box-shadow: 0 0 0 3px rgba(109, 213, 237, 0.2);
         }
         textarea { resize: vertical; min-height: 80px; }
 
-        .btn-send, .next-btn, #name-input-section button, #tictactoe-reset { 
+        .btn-send, .next-btn, #name-input-section button, #tictactoe-reset, .game-button { 
             background: var(--primary-gradient); 
             color: white; 
             border: none; 
@@ -165,7 +165,7 @@
             transition: all 0.3s ease-in-out;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .btn-send:hover, .next-btn:hover, #name-input-section button:hover, #tictactoe-reset:hover { 
+        .btn-send:hover, .next-btn:hover, #name-input-section button:hover, #tictactoe-reset:hover, .game-button:hover { 
             background: var(--button-hover); 
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
@@ -191,167 +191,86 @@
         }
         .post-author i { margin-right: 5px; font-size: 0.9em; }
         
-        /* QUIZ STYLES */
-        .quiz-stat { 
-            font-size: 1rem; 
-            color: var(--light-text-color); 
-            margin-bottom: 15px; 
-            line-height: 1.6;
-        }
-        .quiz-stat strong { color: var(--text-color); }
-        .question-box { 
-            font-size: 1.35rem; 
-            font-weight: 700; 
-            margin: 25px 0; 
-            min-height: 70px; 
-            color: var(--text-color);
-            animation: fadeIn 0.7s ease-out; 
-            line-height: 1.5;
-        }
-        #q-category { 
-            display: inline-block; 
-            background: #e9ecef; 
-            padding: 6px 15px; 
-            border-radius: var(--radius-large); 
-            font-size: 0.85rem; 
-            margin-bottom: 15px; 
-            color: #555;
-            font-weight: 600;
-        }
+        /* QUIZ STYLES (Giữ nguyên) */
+        .quiz-stat { font-size: 1rem; color: var(--light-text-color); margin-bottom: 15px; line-height: 1.6; }
+        .question-box { font-size: 1.35rem; font-weight: 700; margin: 25px 0; min-height: 70px; color: var(--text-color); animation: fadeIn 0.7s ease-out; line-height: 1.5; }
+        #q-category { display: inline-block; background: #e9ecef; padding: 6px 15px; border-radius: var(--radius-large); font-size: 0.85rem; margin-bottom: 15px; color: #555; font-weight: 600; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        .opt-btn { 
-            padding: 15px 20px; 
-            border: 1px solid var(--border-color); 
-            background: #fdfdfd; 
-            border-radius: var(--radius-medium); 
-            font-size: 1rem; 
-            cursor: pointer; 
-            transition: all 0.3s ease-in-out; 
-            text-align: left;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            line-height: 1.4;
-        }
-        .opt-btn:not(:disabled):hover { 
-            background: #e8f7ff; 
-            border-color: #6dd5ed; 
-            transform: translateX(8px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        .opt-btn.correct { 
-            background: #d4edda; 
-            border-color: #28a745; 
-            color: #155724; 
-            font-weight: 700; 
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
-        }
-        .opt-btn.wrong { 
-            background: #f8d7da; 
-            border-color: #dc3545; 
-            color: #721c24; 
-            font-weight: 700; 
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
-        }
-        
-        /* QUIZ COMPLETE */
-        #quiz-complete h3 { color: #4CAF50; margin-top: 10px; }
-        #quiz-complete .fa-trophy { color: #FFD700; }
-        #quiz-complete button { 
-            background: #f0f0f0; 
-            color: var(--text-color); 
-            border: 1px solid #ddd;
-            font-weight: 600;
-        }
-        #quiz-complete button:hover { 
-            background: #e0e0e0; 
-            transform: translateY(-2px); 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+        .opt-btn { padding: 15px 20px; border: 1px solid var(--border-color); background: #fdfdfd; border-radius: var(--radius-medium); font-size: 1rem; cursor: pointer; transition: all 0.3s ease-in-out; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.05); line-height: 1.4; }
+        .opt-btn:not(:disabled):hover { background: #e8f7ff; border-color: #6dd5ed; transform: translateX(8px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .opt-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; font-weight: 700; box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); }
+        .opt-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; font-weight: 700; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); }
 
-        /* RANKING */
+        /* RANKING (Giữ nguyên) */
         .rank-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; }
-        .rank-table th, .rank-table td { 
-            padding: 12px 15px; 
-            border-bottom: 1px solid #eee; 
-            text-align: left; 
-        }
-        .rank-table th { 
-            background: #f8f9fa; 
-            color: #2193b0; 
-            font-weight: 700; 
-            text-transform: uppercase;
-        }
-        .rank-table tr:first-child th:first-child { border-top-left-radius: var(--radius-medium); }
-        .rank-table tr:first-child th:last-child { border-top-right-radius: var(--radius-medium); }
-        .rank-table tr:last-child td:first-child { border-bottom-left-radius: var(--radius-medium); }
-        .rank-table tr:last-child td:last-child { border-bottom-right-radius: var(--radius-medium); }
-
-
+        .rank-table th, .rank-table td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+        .rank-table th { background: #f8f9fa; color: #2193b0; font-weight: 700; text-transform: uppercase; }
         .rank-table tr:nth-child(even) { background-color: #fcfcfc; }
         .rank-table tr:hover { background-color: #f5f5f5; }
+        .rank-table tr:nth-child(1) td { font-weight: 700; color: #FFD700; font-size: 1.15em; } 
+        .rank-table tr:nth-child(2) td { font-weight: 600; color: #C0C0C0; font-size: 1.1em; } 
+        .rank-table tr:nth-child(3) td { font-weight: 600; color: #CD7F32; font-size: 1.05em; } 
 
-        .rank-table tr:nth-child(1) td { font-weight: 700; color: #FFD700; font-size: 1.15em; } /* Vàng */
-        .rank-table tr:nth-child(2) td { font-weight: 600; color: #C0C0C0; font-size: 1.1em; } /* Bạc */
-        .rank-table tr:nth-child(3) td { font-weight: 600; color: #CD7F32; font-size: 1.05em; } /* Đồng */
-        
-        /* TIC-TAC-TOE (CỜ CARO) STYLES */
-        .tictactoe-wrapper {
+        /* TIC-TAC-TOE (CỜ CARO) STYLES (Giữ nguyên) */
+        .tictactoe-wrapper { text-align: center; margin-bottom: 30px; }
+        #tictactoe-board { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 300px; height: 300px; margin: 20px auto; border: 5px solid #333; border-radius: var(--radius-medium); background: #fff; }
+        .cell { border: 3px solid #333; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; cursor: pointer; font-weight: 700; color: #333; transition: background 0.2s; }
+        .cell:hover:not(.x):not(.o) { background: #f0f8ff; } 
+        .cell:nth-child(3n) { border-right: none; } .cell:nth-child(3n+1) { border-left: none; }
+        .cell:nth-child(-n+3) { border-top: none; } .cell:nth-child(n+7) { border-bottom: none; }
+        .cell.x { color: #2193b0; } .cell.o { color: #fc4a1a; } 
+
+        /* NUMBER GUESSING GAME STYLES MỚI */
+        #guess-input {
             text-align: center;
+            font-size: 1.5rem;
+            max-width: 150px;
+            display: block;
+            margin: 0 auto 15px auto;
         }
-        #tictactoe-board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            width: 300px; /* Kích thước tối ưu cho mobile */
-            height: 300px;
-            margin: 20px auto;
-            border: 5px solid #333;
-            border-radius: var(--radius-medium);
-            background: #fff;
+        #guess-button {
+            display: inline-block;
         }
-        .cell {
-            border: 3px solid #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3.5rem;
-            cursor: pointer;
-            font-weight: 700;
-            color: #333;
-            transition: background 0.2s;
-        }
-        .cell:hover:not(.x):not(.o) {
-            background: #f0f8ff; 
-        }
-        /* Loại bỏ border không cần thiết */
-        .cell:nth-child(3n) { border-right: none; }
-        .cell:nth-child(3n+1) { border-left: none; }
-        .cell:nth-child(-n+3) { border-top: none; }
-        .cell:nth-child(n+7) { border-bottom: none; }
-
-        .cell.x { color: #2193b0; } 
-        .cell.o { color: #fc4a1a; } 
-
-        #tictactoe-status {
-            font-size: 1.2rem;
+        #guess-result {
+            margin-top: 20px;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--text-color);
+            min-height: 25px;
         }
-        #tictactoe-reset {
-            background: #4CAF50; 
+        #guess-result.win {
+            color: #28a745;
+        }
+        #guess-result.lose {
+            color: #dc3545;
+        }
+        #guess-log {
             margin-top: 15px;
-        }
-        @media (max-width: 400px) {
-            #tictactoe-board {
-                width: 270px;
-                height: 270px;
-            }
-            .cell {
-                font-size: 3rem;
-            }
+            padding: 15px;
+            border-radius: var(--radius-medium);
+            background: #f8f9fa;
+            border: 1px dashed var(--border-color);
+            text-align: left;
+            font-size: 0.95rem;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
-        /* ANIMATIONS */
+        /* LOAD MORE BUTTON CHO CHAT */
+        #load-more-btn {
+            background: #f0f0f0;
+            color: var(--text-color);
+            border: 1px solid #ddd;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            font-weight: 600;
+        }
+        #load-more-btn:hover {
+             background: #e0e0e0;
+        }
+
+
+        /* ANIMATIONS (Giữ nguyên) */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -385,9 +304,13 @@
                     <button id="btn-send-msg" class="btn-send" onclick="sendMessage()" data-i18n="send_msg">Gửi tin nhắn</button>
                 </div>
             </div>
+            
             <div id="message-list">
                 <div style="text-align: center; color: var(--light-text-color); margin-top: 20px;" data-i18n="loading_msg">Đang tải tin nhắn...</div>
             </div>
+            
+            <button id="load-more-btn" class="btn-send" onclick="loadMoreMessages()" data-i18n="load_more_msg" style="display: none;">Xem thêm tin nhắn</button>
+
 
             <hr>
 
@@ -463,7 +386,7 @@
         </div> 
 
         <div id="games" class="tab-content" style="display: none;">
-            <h3 style="margin-bottom: 25px;"><i class="fas fa-gamepad"></i> <span data-i18n="game_h3">Khu Vực Trò Chơi Tuổi Thơ (Cờ Caro)</span></h3>
+            <h3 style="margin-bottom: 25px;"><i class="fas fa-gamepad"></i> <span data-i18n="game_h3">Khu Vực Trò Chơi Tuổi Thơ</span></h3>
             
             <div class="tictactoe-wrapper card">
                 <h4 data-i18n="tictactoe_title">Chơi Cờ Caro (Tic-Tac-Toe)</h4>
@@ -481,6 +404,18 @@
                 </div>
                 <button id="tictactoe-reset" data-i18n="tictactoe_reset" onclick="resetGame()">Chơi lại</button>
             </div>
+
+            <div class="guessing-wrapper card">
+                <h4 data-i18n="guessing_title">Game Đoán Số (1-100)</h4>
+                <p data-i18n="guessing_prompt">Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!</p>
+                <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+                    <input type="number" id="guess-input" min="1" max="100" data-i18n-placeholder="guess_ph" placeholder="Nhập số">
+                    <button id="guess-button" class="game-button" onclick="checkGuess()" data-i18n="guess_btn">Đoán</button>
+                </div>
+                <div id="guess-result"></div>
+                <div id="guess-log"></div>
+                <button id="new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="background: #fc4a1a; margin-top: 15px;">Chơi lại</button>
+            </div>
             
         </div> 
     </div>
@@ -490,7 +425,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
@@ -502,6 +437,7 @@
                 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...',
                 'send_msg': 'Gửi tin nhắn',
                 'loading_msg': 'Đang tải tin nhắn...',
+                'load_more_msg': 'Xem thêm tin nhắn',
                 'quiz_title': 'Thử Thách Đố Vui',
                 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):',
                 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)',
@@ -527,7 +463,7 @@
                 'leaderboard_title': 'Bảng Xếp Hạng (Top 10)',
                 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi',
                 'loading_rank': 'Đang tải bảng xếp hạng...',
-                'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ (Cờ Caro)',
+                'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ',
                 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)',
                 'tictactoe_status_x': 'Lượt của X',
                 'tictactoe_status_o': 'Lượt của O',
@@ -535,6 +471,17 @@
                 'tictactoe_win_o': 'O thắng! 🥳',
                 'tictactoe_draw': 'Hòa! 🤝',
                 'tictactoe_reset': 'Chơi lại',
+                'guessing_title': 'Game Đoán Số (1-100)',
+                'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!',
+                'guess_ph': 'Nhập số',
+                'guess_btn': 'Đoán',
+                'new_game_btn': 'Chơi mới',
+                'guess_too_low': 'Quá thấp! 🤏',
+                'guess_too_high': 'Quá cao! 👆',
+                'guess_win': '🎉 CHÚC MỪNG! Bạn đoán đúng số %s chỉ trong %t lần!',
+                'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.',
+                'guess_try_left': 'Bạn còn %t lần đoán.',
+                'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.',
                 'anonymous': 'Ẩn danh'
             },
             'en': {
@@ -545,6 +492,7 @@
                 'chat_placeholder': 'Send an anonymous message to the class...',
                 'send_msg': 'Send Message',
                 'loading_msg': 'Loading messages...',
+                'load_more_msg': 'Load more messages',
                 'quiz_title': 'Quiz Challenge',
                 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):',
                 'name_placeholder': 'Your name (e.g., John Doe)',
@@ -570,7 +518,7 @@
                 'leaderboard_title': 'Leaderboard (Top 10)',
                 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date',
                 'loading_rank': 'Loading leaderboard...',
-                'game_h3': 'Childhood Games Zone (Tic-Tac-Toe)',
+                'game_h3': 'Childhood Games Zone',
                 'tictactoe_title': 'Play Tic-Tac-Toe',
                 'tictactoe_status_x': 'X\'s turn',
                 'tictactoe_status_o': 'O\'s turn',
@@ -578,6 +526,17 @@
                 'tictactoe_win_o': 'O wins! 🥳',
                 'tictactoe_draw': 'Draw! 🤝',
                 'tictactoe_reset': 'Play Again',
+                'guessing_title': 'Number Guessing Game (1-100)',
+                'guessing_prompt': 'I have picked a number between 1 and 100. You have 10 tries!',
+                'guess_ph': 'Enter number',
+                'guess_btn': 'Guess',
+                'new_game_btn': 'New Game',
+                'guess_too_low': 'Too low! 🤏',
+                'guess_too_high': 'Too high! 👆',
+                'guess_win': '🎉 CONGRATS! You guessed %s in %t tries!',
+                'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.',
+                'guess_try_left': 'You have %t tries left.',
+                'guess_input_invalid': 'Please enter a valid number between 1 and 100.',
                 'anonymous': 'Anonymous'
             }
         };
@@ -588,7 +547,9 @@
             currentLang = currentLang === 'vi' ? 'en' : 'vi';
             localStorage.setItem('appLang', currentLang);
             applyLanguage(currentLang);
-            updateGameStatusDisplay(); 
+            updateGameStatusDisplay();
+            startNewGuessingGame(); // Khởi tạo lại game đoán số để cập nhật ngôn ngữ
+            loadInitialMessages(); // Tải lại tin nhắn để cập nhật ngôn ngữ
         }
 
         function applyLanguage(lang) {
@@ -605,8 +566,7 @@
             });
             
             loadLeaderboard(); 
-            onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(10)), updateChatList);
-            updateGameStatusDisplay(); 
+            // Chỉ cần gọi loadInitialMessages để tải lại 5 tin đầu và cập nhật ngôn ngữ
         }
         
         // --- LOGIC TAB CON ---
@@ -620,14 +580,15 @@
             if (tabId === 'games') {
                 if (!window.ticTacToeInitialized) {
                     initTicTacToe();
+                    startNewGuessingGame();
                     window.ticTacToeInitialized = true;
                 }
             }
         }
 
-        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (VUI LÒNG DÙNG THÔNG TIN CỦA BẠN)
+        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY
         const firebaseConfig = {
-            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // 👈 THAY THẾ KEY CỦA BẠN
+            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c",
             storageBucket: "b2-6431c.appspot.com",
@@ -651,10 +612,15 @@
         let questionsAttempted = 0;
         let currentUserName = localStorage.getItem('userName12B2') || null;
 
+        // BIẾN CHAT PHÂN TRANG
+        let lastVisible = null;
+        const MESSAGE_LIMIT = 5;
+
         // --- HÀM KHỞI TẠO CHUNG (CHẠY KHI TẢI TRANG) ---
         window.initApp = function() {
             applyLanguage(currentLang);
             loadLeaderboard();
+            loadInitialMessages(); // Khởi tạo tải 5 tin nhắn đầu
             if (currentUserName) {
                 document.getElementById('current-user-display').innerText = currentUserName;
                 document.getElementById('name-input-section').style.display = 'none';
@@ -665,8 +631,133 @@
                 document.getElementById('quiz-section').style.display = 'none';
             }
             initTicTacToe(); 
+            startNewGuessingGame(); 
         }
 
+        // --- LOGIC CHAT PHÂN TRANG MỚI ---
+        
+        // Tải 5 tin nhắn đầu tiên (và thiết lập lắng nghe cho tin nhắn mới)
+        async function loadInitialMessages() {
+            const list = document.getElementById("message-list");
+            list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${translations[currentLang]['loading_msg']}</div>`;
+            lastVisible = null; 
+
+            // Lắng nghe realtime cho 1 tin nhắn mới nhất để hiển thị ngay lập tức
+            onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(1)), (snapshot) => {
+                if(snapshot.empty) return;
+                const latestMsg = snapshot.docs[0];
+                const latestDocId = latestMsg.id;
+                
+                // Lấy ra tin nhắn đầu tiên trong list cũ
+                const firstMsgElement = list.querySelector('.post.card:first-child');
+                if (firstMsgElement && firstMsgElement.getAttribute('data-doc-id') === latestDocId) {
+                    // Tin nhắn này đã có trong list, không làm gì
+                    return;
+                }
+                
+                // Tải lại 5 tin đầu nếu có tin nhắn mới hơn tin nhắn đầu tiên trong list
+                if (lastVisible) {
+                    loadMoreMessages(true);
+                } else {
+                    // Nếu là lần đầu tiên tải, hoặc list đang rỗng thì tải lại 5 tin đầu.
+                    loadMoreMessages(true);
+                }
+            });
+
+            // Tải 5 tin nhắn đầu tiên (không phải realtime)
+            await loadMoreMessages(true);
+        }
+
+        window.loadMoreMessages = async function(isInitialLoad = false) {
+            const list = document.getElementById("message-list");
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            loadMoreBtn.disabled = true;
+            loadMoreBtn.textContent = isInitialLoad ? translations[currentLang]['loading_msg'] : (currentLang === 'vi' ? "Đang tải..." : "Loading...");
+
+            let q = query(chatRef, orderBy("createdAt", "desc"), limit(MESSAGE_LIMIT));
+            if (lastVisible && !isInitialLoad) {
+                q = query(chatRef, orderBy("createdAt", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+            }
+            
+            try {
+                const snapshot = await getDocs(q);
+                
+                if (isInitialLoad) {
+                    list.innerHTML = '';
+                }
+
+                if (snapshot.docs.length === 0 && isInitialLoad) {
+                    list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${currentLang === 'vi' ? 'Chưa có tin nhắn nào.' : 'No messages yet.'}</div>`;
+                    loadMoreBtn.style.display = 'none';
+                    return;
+                }
+                
+                const newMessages = [];
+                snapshot.docs.forEach(doc => {
+                    const msg = doc.data();
+                    const date = msg.createdAt ? new Date(msg.createdAt.seconds * 1000).toLocaleString(currentLang === 'vi' ? 'vi-VN' : 'en-US') : (currentLang === 'vi' ? 'Vừa xong' : 'Just now');
+                    const authorDisplay = msg.author || translations[currentLang]['anonymous'];
+                    newMessages.push(`<div class="post card" data-doc-id="${doc.id}"><div class="post-header"><span class="post-author"><i class="fas fa-user-secret"></i> ${authorDisplay}</span><span>${date}</span></div><div style="font-size: 1rem; line-height: 1.5;">${msg.text}</div></div>`);
+                });
+
+                // Chèn tin nhắn mới (chèn lên đầu nếu là initial/realtime load, chèn xuống cuối nếu là load more)
+                if (isInitialLoad) {
+                    list.innerHTML = newMessages.join('');
+                } else {
+                    list.insertAdjacentHTML('beforeend', newMessages.join(''));
+                }
+
+                // Cập nhật lastVisible cho lần tải tiếp theo
+                if (snapshot.docs.length > 0) {
+                    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                }
+
+                // Hiển thị nút "Xem thêm" nếu vẫn còn tin nhắn để tải (hoặc đã tải đủ limit)
+                if (snapshot.docs.length === MESSAGE_LIMIT) {
+                    loadMoreBtn.style.display = 'block';
+                    loadMoreBtn.textContent = translations[currentLang]['load_more_msg'];
+                    loadMoreBtn.disabled = false;
+                } else {
+                    loadMoreBtn.style.display = 'none'; 
+                }
+
+
+            } catch (error) {
+                console.error("Lỗi tải tin nhắn:", error);
+                if (isInitialLoad) list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">Lỗi tải tin nhắn.</div>`;
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+
+
+        window.sendMessage = async function() {
+            const messageText = document.getElementById('message-text').value;
+            const btn = document.getElementById('btn-send-msg');
+            if (!messageText.trim()) return;
+
+            btn.disabled = true;
+            btn.innerText = currentLang === 'vi' ? "Đang gửi..." : "Sending...";
+
+            try {
+                await addDoc(chatRef, {
+                    text: messageText,
+                    createdAt: serverTimestamp(),
+                    author: currentUserName || translations[currentLang]['anonymous'] 
+                });
+                document.getElementById('message-text').value = '';
+                
+                // Sau khi gửi thành công, reset lại list và tải 5 tin đầu
+                await loadMoreMessages(true); 
+
+            } catch (error) {
+                console.error("Lỗi gửi tin nhắn:", error);
+                alert((currentLang === 'vi' ? "Lỗi gửi tin nhắn: " : "Error sending message: ") + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = translations[currentLang]['send_msg'];
+            }
+        }
+        
         // --- LOGIC TIC-TAC-TOE (CỜ CARO) ---
         let board = ['', '', '', '', '', '', '', '', ''];
         let currentPlayer = 'X';
@@ -681,9 +772,7 @@
         ];
 
         function updateGameStatusDisplay() {
-            if (!gameActive) {
-                return; 
-            }
+            if (!gameActive) return; 
             const key = currentPlayer === 'X' ? 'tictactoe_status_x' : 'tictactoe_status_o';
             statusDisplay.textContent = translations[currentLang][key];
         }
@@ -753,7 +842,73 @@
             resetGame(); 
         }
 
-        // --- HÀM XỬ LÝ TÊN NGƯỜI DÙNG ---
+        // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) MỚI ---
+        let secretNumber;
+        let guessesLeft;
+        const maxGuesses = 10;
+        let gameStatus = 'playing';
+
+        window.startNewGuessingGame = function() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            guessesLeft = maxGuesses;
+            gameStatus = 'playing';
+
+            document.getElementById('guess-result').textContent = translations[currentLang]['guessing_prompt'];
+            document.getElementById('guess-result').className = '';
+            document.getElementById('guess-log').innerHTML = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
+            document.getElementById('guess-input').value = '';
+            document.getElementById('guess-input').disabled = false;
+            document.getElementById('guess-button').disabled = false;
+        }
+
+        window.checkGuess = function() {
+            if (gameStatus !== 'playing') return;
+
+            const inputElement = document.getElementById('guess-input');
+            const guess = parseInt(inputElement.value);
+            const resultElement = document.getElementById('guess-result');
+            const logElement = document.getElementById('guess-log');
+
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                resultElement.textContent = translations[currentLang]['guess_input_invalid'];
+                resultElement.className = 'lose';
+                return;
+            }
+
+            guessesLeft--;
+
+            if (guess === secretNumber) {
+                resultElement.textContent = translations[currentLang]['guess_win'].replace('%s', secretNumber).replace('%t', maxGuesses - guessesLeft);
+                resultElement.className = 'win';
+                logElement.innerHTML = `✅ ${guess} | ${logElement.innerHTML}`;
+                gameStatus = 'win';
+                inputElement.disabled = true;
+                document.getElementById('guess-button').disabled = true;
+
+            } else {
+                let hintKey = guess < secretNumber ? 'guess_too_low' : 'guess_too_high';
+                let hint = translations[currentLang][hintKey];
+                
+                resultElement.textContent = hint;
+                resultElement.className = 'lose';
+                logElement.innerHTML = `❌ ${guess} (${hint}) <br> ${logElement.innerHTML}`;
+
+                if (guessesLeft === 0) {
+                    resultElement.textContent = translations[currentLang]['guess_lose'].replace('%s', secretNumber);
+                    gameStatus = 'lose';
+                    inputElement.disabled = true;
+                    document.getElementById('guess-button').disabled = true;
+                } else {
+                    logElement.innerHTML = ` (${translations[currentLang]['guess_try_left'].replace('%t', guessesLeft)}) <br> ${logElement.innerHTML}`;
+                }
+            }
+            inputElement.value = '';
+            inputElement.focus();
+        }
+
+
+        // --- LOGIC QUIZ & LEADERBOARD (GIỮ NGUYÊN) ---
+
         window.saveUserName = function() {
             const nameInput = document.getElementById('user-name-input').value.trim();
             if (nameInput.length < 2 || nameInput.length > 20) {
@@ -768,46 +923,6 @@
             initQuiz();
         }
 
-        // --- PHẦN 1: GỬI VÀ HIỂN THỊ TIN NHẮN ẨN DANH ---
-        window.sendMessage = async function() {
-            const messageText = document.getElementById('message-text').value;
-            const btn = document.getElementById('btn-send-msg');
-            if (!messageText.trim()) return;
-
-            btn.disabled = true;
-            btn.innerText = currentLang === 'vi' ? "Đang gửi..." : "Sending...";
-
-            try {
-                await addDoc(chatRef, {
-                    text: messageText,
-                    createdAt: serverTimestamp(),
-                    author: translations[currentLang]['anonymous'] 
-                });
-                document.getElementById('message-text').value = '';
-            } catch (error) {
-                console.error("Lỗi gửi tin nhắn:", error);
-                alert((currentLang === 'vi' ? "Lỗi gửi tin nhắn: " : "Error sending message: ") + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = translations[currentLang]['send_msg'];
-            }
-        }
-        
-        const updateChatList = (snapshot) => {
-            const list = document.getElementById("message-list");
-            list.innerHTML = "";
-            snapshot.forEach(doc => {
-                const msg = doc.data();
-                const date = msg.createdAt ? new Date(msg.createdAt.seconds * 1000).toLocaleString(currentLang === 'vi' ? 'vi-VN' : 'en-US') : (currentLang === 'vi' ? 'Vừa xong' : 'Just now');
-                const authorDisplay = msg.author || translations[currentLang]['anonymous'];
-                list.innerHTML += `<div class="post card"><div class="post-header"><span class="post-author"><i class="fas fa-user-secret"></i> ${authorDisplay}</span><span>${date}</span></div><div style="font-size: 1rem; line-height: 1.5;">${msg.text}</div></div>`;
-            });
-        };
-
-        onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(10)), updateChatList);
-
-        // --- PHẦN 2: QUIZ VỚI ĐIỂM SỐ & TÊN (CHỈ DÙNG FIRESTORE) ---
-        
         window.initQuiz = async function() {
             currentScore = 0;
             questionsAttempted = 0;
@@ -822,7 +937,7 @@
                     const querySnapshot = await getDocs(quizRef);
                     querySnapshot.forEach((doc) => { fullQuestionBank.push({ id: doc.id, ...doc.data() }); });
                     if (fullQuestionBank.length === 0) {
-                        document.getElementById('q-text').innerText = currentLang === 'vi' ? "Chưa có câu hỏi nào được Admin duyệt. Vui lòng đóng góp!" : "No questions have been approved by Admin. Please contribute!";
+                        document.getElementById('q-text').innerText = currentLang === 'vi' ? "Chưa có câu hỏi nào. Vui lòng đóng góp!" : "No questions yet. Please contribute!";
                         document.getElementById('options').innerHTML = '';
                         return;
                     }
@@ -953,7 +1068,6 @@
             initQuiz();
         }
 
-        // --- PHẦN 3: TẠO CÂU HỎI MỚI (TỰ ĐỘNG ĐƯA VÀO QUIZ) ---
         window.submitUserQuestion = async function() {
             const qText = document.getElementById('q-text-input').value.trim();
             const ans0 = document.getElementById('q-ans-0').value.trim();
@@ -985,7 +1099,7 @@
 
                 alert(currentLang === 'vi' ? "Câu hỏi đã được thêm vào Quiz ngay lập tức! Cảm ơn bạn đã đóng góp." : "Question has been added to the Quiz immediately! Thank you for contributing.");
                 
-                // Cập nhật lại bộ câu hỏi trong bộ nhớ để người dùng có thể chơi ngay
+                // Cập nhật lại bộ câu hỏi trong bộ nhớ
                 fullQuestionBank = []; 
                 await initQuiz(); 
 
