@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>12B2 - Cộng Đồng & Tuổi Thơ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght+400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI */
+        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V2 - High-End UX) */
         :root { 
             /* MÀU SẮC MỚI: Tông xanh tím sang trọng */
             --primary-color: #4a00e0;
@@ -15,14 +15,14 @@
             --primary-gradient: linear-gradient(135deg, #7474bf, #348ac7); /* Blue-Purple Fade */
             --button-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
             --bg-color: #f8f9fa; /* Nền trắng xám nhẹ */
-            --card-bg: #ffffff; 
+            --card-bg: rgba(255, 255, 255, 0.8); /* Thẻ nền hơi mờ */
             --text-color: #212529; /* Đen sâu */
             --light-text-color: #6c757d;
             --border-color: #dee2e6;
             
             /* BÓNG ĐỔ MỀM (Soft Shadow) */
-            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.05), 0 1px 5px rgba(0, 0, 0, 0.03); 
-            --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-soft: 0 5px 20px rgba(0, 0, 0, 0.08), 0 1px 5px rgba(0, 0, 0, 0.05); 
+            --shadow-medium: 0 15px 40px rgba(0, 0, 0, 0.12);
 
             /* BO GÓC */
             --radius-large: 20px;
@@ -35,6 +35,8 @@
             padding-bottom: 70px; 
             color: var(--text-color); 
             min-height: 100vh;
+            /* Hoạt ảnh cho nền */
+            transition: background-color 0.4s ease; 
         }
         
         /* HIỆU ỨNG NỀN VÀ MÀU SẮC CHUNG */
@@ -62,6 +64,8 @@
             justify-content: space-between; 
             align-items: center; 
             box-shadow: var(--shadow-medium); 
+            /* Hiệu ứng nổi */
+            transform: translateZ(0);
         }
         .navbar a { color: white; margin-left: 15px; }
         .container { max-width: 700px; margin: 25px auto; padding: 0 15px; }
@@ -70,12 +74,16 @@
             padding: 25px; 
             border-radius: var(--radius-large); 
             margin-bottom: 20px; 
-            box-shadow: var(--shadow-soft); /* Bóng đổ mềm */
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft); 
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s, backdrop-filter 0.4s;
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Border nhẹ */
+            /* GLASSMORHPISM EFFECT */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
+        /* Hiệu ứng Tilt khi hover */
         .card:hover { 
-            transform: translateY(-2px); 
+            transform: translateY(-4px) translateZ(10px); 
             box-shadow: var(--shadow-medium); 
         }
 
@@ -92,6 +100,7 @@
             border: none; 
             border-top: 1px solid var(--border-color); 
             margin: 30px 0; 
+            opacity: 0.5;
         }
         
         /* INPUTS & BUTTONS */
@@ -103,10 +112,11 @@
             border-radius: var(--radius-medium);
             font-size: 1rem;
             transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: white; /* Đảm bảo input không bị blur */
         }
         input:focus, textarea:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.1);
+            box-shadow: 0 0 0 4px rgba(74, 0, 224, 0.2);
             outline: none;
         }
 
@@ -116,19 +126,21 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             border-radius: var(--radius-medium);
             background: var(--primary-gradient);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .btn-send:hover, .next-btn:hover, .game-button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
         }
         .btn-send:disabled {
             background: var(--light-text-color);
             cursor: not-allowed;
             box-shadow: none;
+            transform: translateY(0);
         }
         
         /* TAB NAVIGATION TỐI ƯU */
@@ -136,10 +148,11 @@
             display: flex;
             justify-content: center;
             margin-bottom: 25px;
-            background: white;
+            background: rgba(255, 255, 255, 0.6);
             padding: 8px;
-            border-radius: 50px; /* Kiểu pill button group */
+            border-radius: 50px; 
             box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(10px);
         }
         .tab-btn {
             background: transparent;
@@ -154,7 +167,7 @@
         .tab-btn.active {
             background: var(--primary-gradient);
             color: white;
-            box-shadow: 0 3px 10px rgba(74, 0, 224, 0.3);
+            box-shadow: 0 3px 10px rgba(74, 0, 224, 0.4);
         }
 
         /* QUIZ */
@@ -167,10 +180,10 @@
             padding: 15px;
             border: 2px solid var(--border-color);
             border-radius: var(--radius-medium);
-            background-color: var(--card-bg);
+            background-color: white;
             text-align: left;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s, transform 0.1s;
             font-size: 1rem;
             color: var(--text-color);
             font-weight: 500;
@@ -178,104 +191,191 @@
         .opt-btn:hover {
             border-color: var(--secondary-color);
             background-color: #f0f8ff;
+            transform: translateX(3px); /* Hiệu ứng nhẹ khi hover */
         }
         .opt-btn.correct {
             background-color: #d4edda; 
             border-color: #28a745;
             color: #155724;
             font-weight: 700;
+            animation: pulse-correct 0.5s ease-out;
         }
         .opt-btn.wrong {
             background-color: #f8d7da; 
             border-color: #dc3545;
             color: #721c24;
-            opacity: 0.7;
+            opacity: 0.8;
+            animation: shake 0.5s;
+        }
+        @keyframes pulse-correct {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% {transform: translateX(0);}
+            20%, 60% {transform: translateX(-5px);}
+            40%, 80% {transform: translateX(5px);}
         }
         
-        /* QUIZ STATS TỐI ƯU */
-        .quiz-stat { 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            border-bottom: 1px dashed var(--border-color);
-        }
-        .quiz-stat-item {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        #current-score {
-            background-color: #f0f2ff; /* Màu tím nhạt */
-            color: var(--primary-color); 
-        }
-        #done-count {
-            background-color: #e9f7ef; /* Màu xanh lá nhạt */
-            color: #28a745; 
-            margin-right: 10px;
-        }
-        .quiz-stat i { margin-right: 5px; }
-
-
         /* CHAT/MESSAGE TỐI ƯU */
         .post { 
             padding: 15px 20px; 
-            border-left: 5px solid var(--secondary-color); /* Điểm nhấn */
-        }
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--light-text-color);
-            margin-bottom: 10px;
-        }
-        .post-author {
-            font-weight: 600;
-            color: var(--text-color);
+            border-left: 5px solid var(--secondary-color); 
+            margin-top: 10px;
+            border-radius: var(--radius-medium);
+            background: white; /* Card cho Chat không cần Blur */
         }
         .post-likes {
             margin-top: 10px; 
             font-size: 0.9rem;
             color: var(--light-text-color);
-            transition: color 0.2s;
+            cursor: pointer;
         }
         .post-likes i {
             color: #ccc;
+            transition: color 0.2s, transform 0.2s;
         }
         .post-likes i.liked {
             color: #dc3545;
+            animation: heart-beat 0.5s;
         }
         .post-likes:hover i {
             color: #dc3545;
+            transform: scale(1.2);
         }
         
-        /* GAME GHÉP CẶP TỐI ƯU */
+        /* AI CHAT SPECIFIC */
+        #ai-chat-output {
+            max-height: 350px; /* Điều chỉnh chiều cao */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            padding: 10px;
+            background-color: #ffffff; /* Nền trắng cho chat box */
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-medium);
+        }
+        .ai-post-container {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: var(--radius-medium);
+            max-width: 90%; /* Giới hạn chiều rộng tin nhắn */
+        }
+        /* Tin nhắn của người dùng */
+        .ai-post-container.user-message {
+            background-color: #e6f0ff; /* Light blue */
+            align-self: flex-end; /* Căn phải */
+            margin-left: auto;
+        }
+        /* Tin nhắn của AI */
+        .ai-post-container.ai-message {
+            background-color: #f4f6f9; /* Light grey */
+            align-self: flex-start; /* Căn trái */
+            margin-right: auto;
+            border-left: 3px solid var(--primary-color);
+        }
+        .ai-message-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .ai-author {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        .user-message .ai-author {
+            color: var(--secondary-color);
+        }
+
+        /* TIC TAC TOE STYLES (CỜ CARO) */
+        #tictactoe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            border: 2px solid var(--primary-color);
+        }
+        .cell {
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .cell:hover {
+            background-color: #f1f1f1;
+        }
+        #tictactoe-status {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        /* MEMORY MATCH STYLES (GHÉP CẶP) */
         #memory-game-board {
-            gap: 8px;
-            max-width: 450px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 350px;
+            margin: 0 auto;
         }
         .memory-card {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            height: 90px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--primary-color);
+            height: 80px;
+            border-radius: var(--radius-medium);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .memory-card.flipped .card-inner {
+            transform: rotateY(180deg);
         }
         .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius-medium);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .card-back {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-front {
+            background-color: #ffffff;
             color: var(--text-color);
-            font-weight: 700;
-            font-size: 2.2rem;
+            transform: rotateY(180deg);
+            border: 2px solid var(--secondary-color);
         }
-        .back-face {
-            color: white !important;
-        }
-        .memory-card.match {
-            background: #e9f7ef; /* Nền xanh lá nhạt khi match */
-            opacity: 1;
-            box-shadow: none;
-            border: 2px solid #28a745;
+        .memory-card.matched {
+            opacity: 0.5;
+            cursor: default;
         }
         
         /* Responsive */
@@ -286,49 +386,7 @@
             .quiz-stat-item { padding: 5px 10px; }
             .memory-card { height: 70px; }
             .card-face { font-size: 1.5rem; }
-        }
-
-        /* Thêm style cho caro */
-        #tictactoe-board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            width: 300px;
-            height: 300px;
-            margin: 20px auto;
-            border: 3px solid var(--primary-color);
-            border-radius: var(--radius-medium);
-        }
-        .cell {
-            border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-weight: 700;
-        }
-        .cell:hover {
-            background-color: #f0f0f0;
-        }
-        .cell.x { color: #dc3545; }
-        .cell.o { color: var(--primary-color); }
-        #tictactoe-status {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-        #tictactoe-reset {
-            margin-top: 15px;
-            display: block;
-            width: 100%;
-            background: #6c757d;
-        }
-        #tictactoe-reset:hover {
-            background: #5a6268;
+            #tictactoe-board { width: 180px; height: 180px; }
         }
     </style>
 </head>
@@ -351,6 +409,17 @@
 
         <div id="social" class="tab-content">
 
+            <h3><i class="fas fa-robot"></i> <span data-i18n="ai_chat_title">AI Hỗ Trợ (Model 12B2)</span></h3>
+            <div class="card">
+                <div id="ai-chat-output">
+                    </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <input type="text" id="ai-chat-input" data-i18n-placeholder="ai_chat_placeholder" placeholder="Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)" style="flex-grow: 1; margin-bottom: 0;">
+                    <button id="btn-send-ai" class="btn-send" onclick="sendMessageToAI()" data-i18n="ai_send_msg" style="width: 100px;">Gửi</button>
+                </div>
+            </div>
+            <hr>
+
             <h3><i class="fas fa-comments"></i> <span data-i18n="chat_title">Góc Chat Ẩn Danh</span></h3>
             <div class="create-message card">
                 <textarea id="message-text" rows="3" data-i18n-placeholder="chat_placeholder" placeholder="Gửi tin nhắn ẩn danh cho cả lớp..."></textarea>
@@ -361,9 +430,9 @@
             
             <div id="message-list">
                 <div class="card" style="padding: 15px;">
-                    <div class="skeleton" style="width: 50%; height: 15px; margin-bottom: 10px;"></div>
-                    <div class="skeleton" style="width: 100%; height: 10px; margin-bottom: 5px;"></div>
-                    <div class="skeleton" style="width: 80%; height: 10px;"></div>
+                    <div class="skeleton" style="width: 50%; height: 15px; margin-bottom: 10px; background-color: #e0e0e0; border-radius: 4px;"></div>
+                    <div class="skeleton" style="width: 100%; height: 10px; margin-bottom: 5px; background-color: #e0e0e0; border-radius: 4px;"></div>
+                    <div class="skeleton" style="width: 80%; height: 10px; background-color: #e0e0e0; border-radius: 4px;"></div>
                 </div>
             </div>
             
@@ -393,13 +462,13 @@
                     <div id="quiz-content">
                         <div id="q-category" style="font-size: 0.9rem; color: var(--secondary-color); font-weight: 600; margin-bottom: 10px;">Chủ đề</div>
                         <div id="q-text" class="question-box" style="font-size: 1.2rem; font-weight: 600; margin-bottom: 20px;">
-                            <div class="skeleton skeleton-text-lg"></div>
+                            <div class="skeleton" style="background-color: #e0e0e0; height: 20px; width: 80%; margin-bottom: 10px; border-radius: 4px;"></div>
                         </div>
                         <div id="options" class="options-grid">
-                            <div class="skeleton skeleton-button"></div>
-                            <div class="skeleton skeleton-button"></div>
-                            <div class="skeleton skeleton-button"></div>
-                            <div class="skeleton skeleton-button"></div>
+                            <div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>
+                            <div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>
+                            <div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>
+                            <div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>
                         </div>
                         <button id="next-btn" class="next-btn" onclick="loadNextQuestion()" data-i18n="next_q" style="display: none; width: 100%; margin-top: 15px;">Câu tiếp theo <i class="fas fa-arrow-right"></i></button>
                     </div>
@@ -408,7 +477,7 @@
                         <i class="fas fa-trophy" style="font-size: 3.5rem; color: gold; margin-bottom: 20px;"></i>
                         <h3 style="justify-content: center;"><span data-i18n="quiz_done_h3">Hoàn thành!</span></h3>
                         <p style="margin-bottom: 20px;"><span data-i18n="final_score_p">Tổng điểm của bạn</span>: <strong id="final-score-display"></strong>. <span data-i18n="sending_rank">Đang gửi kết quả lên BXH...</span></p>
-                        <button onclick="resetQuiz()" data-i18n="play_again" class="btn-send" style="background: #e0e0e0; color: var(--text-color); width: auto; background: var(--button-gradient);">Làm lại</button>
+                        <button onclick="resetQuiz()" data-i18n="play_again" class="btn-send" style="width: auto; background: var(--button-gradient);">Làm lại</button>
                     </div>
                 </div>
             </div>
@@ -461,9 +530,9 @@
             <div class="guessing-wrapper card">
                 <h4 style="color: var(--text-color);"><i class="fas fa-th-large"></i> <span data-i18n="memory_title">Game Ghép Cặp (Memory Match)</span></h4>
                 <p id="memory-status" style="margin-bottom: 15px; font-weight: 600; color: var(--primary-color);" data-i18n="memory_status_start">Bấm "Chơi mới" để bắt đầu!</p>
-                <div id="memory-game-board">
+                <div id="memory-game-board" style="display: grid;">
                     </div>
-                <button id="memory-new-game-button" class="game-button" onclick="startMemoryGame()" data-i18n="memory_new_game" style="width: 100%; margin-top: 15px;">Chơi mới</button>
+                <button id="memory-new-game-button" class="game-button" onclick="startMemoryGame(false)" data-i18n="memory_new_game" style="width: 100%; margin-top: 15px;">Chơi mới</button>
             </div>
             
             <hr>
@@ -507,15 +576,45 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, setDoc, getDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- DỮ LIỆU ĐA NGÔN NGỮ (GIỮ NGUYÊN) ---
+        // --- DỮ LIỆU ĐA NGÔN NGỮ (ĐÃ CẬP NHẬT) ---
         const translations = {
             'vi': {
-                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Tuổi Thơ)', 'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn', 'loading_msg': 'Đang tải tin nhắn...', 'load_more_msg': 'Xem thêm tin nhắn', 'quiz_title': 'Thử Thách Đố Vui', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 'welcome': 'Chào mừng', 'completed': 'Đã hoàn thành', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'sending_rank': 'Đang gửi kết quả lên BXH...', 'play_again': 'Làm lại', 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 'leaderboard_title': 'Bảng Xếp Hạng (Top 10)', 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi', 'loading_rank': 'Đang tải bảng xếp hạng...', 'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng! 🥳', 'tictactoe_win_o': 'O thắng! 🥳', 'tictactoe_draw': 'Hòa! 🤝', 'tictactoe_reset': 'Chơi lại', 'guessing_title': 'Game Đoán Số (1-100)', 'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!', 'guess_ph': 'Nhập số', 'guess_btn': 'Đoán', 'new_game_btn': 'Chơi mới', 'guess_too_low': 'Quá thấp! 🤏', 'guess_too_high': 'Quá cao! 👆', 'guess_win': '🎉 CHÚC MỪNG! Bạn đoán đúng số %s chỉ trong %t lần!', 'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.', 'guess_try_left': 'Bạn còn %t lần đoán.', 'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.', 'anonymous': 'Ẩn danh', 'memory_title': 'Game Ghép Cặp (Memory Match)', 'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!', 'memory_status_win': '🎉 CHIẾN THẮNG! Bạn đã ghép đúng tất cả các cặp!', 'memory_status_turn': 'Lượt đi: %t', 'memory_new_game': 'Chơi mới',
+                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Tuổi Thơ)', 
+                'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn', 'loading_msg': 'Đang tải tin nhắn...', 'load_more_msg': 'Xem thêm tin nhắn', 
+                
+                'ai_chat_title': 'AI Hỗ Trợ (Model 12B2)', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Model 12B2',
+                // Các phản hồi mô phỏng của AI
+                'ai_response_default_vi_1': 'Chào bạn, tôi là AI của lớp 12B2! Bạn muốn tôi giúp gì về kiến thức hay tin tức lớp học?',
+                'ai_response_default_vi_2': 'Câu hỏi này hay đấy! Theo tôi, điều quan trọng nhất là phải ôn lại kiến thức cơ bản.',
+                'ai_response_default_vi_3': 'Để giải bài này, bạn nên áp dụng công thức: $A=B^2 - 4C$. Hãy cho tôi biết kết quả của bạn!',
+                'ai_response_default_vi_4': 'Trong lớp chúng ta, mọi người đang bàn tán về sự kiện sắp tới. Bạn đã đăng ký tham gia chưa?',
+                'ai_response_default_vi_5': 'Ah, tôi hiểu rồi. Hãy thử cách tiếp cận sau: Phân tích đề bài thành các bước nhỏ hơn.',
+                
+                'quiz_title': 'Thử Thách Đố Vui', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 'welcome': 'Chào mừng', 'completed': 'Đã hoàn thành', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'sending_rank': 'Đang gửi kết quả lên BXH...', 'play_again': 'Làm lại', 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 'leaderboard_title': 'Bảng Xếp Hạng (Top 10)', 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi', 'loading_rank': 'Đang tải bảng xếp hạng...', 
+                
+                'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng! 🥳', 'tictactoe_win_o': 'O thắng! 🥳', 'tictactoe_draw': 'Hòa! 🤝', 'tictactoe_reset': 'Chơi lại', 'guessing_title': 'Game Đoán Số (1-100)', 'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!', 'guess_ph': 'Nhập số', 'guess_btn': 'Đoán', 'new_game_btn': 'Chơi mới', 'guess_too_low': 'Quá thấp! 🤏', 'guess_too_high': 'Quá cao! 👆', 'guess_win': '🎉 CHÚC MỪNG! Bạn đoán đúng số %s chỉ trong %t lần!', 'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.', 'guess_try_left': 'Bạn còn %t lần đoán.', 'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.', 'anonymous': 'Ẩn danh', 
+                
+                'memory_title': 'Game Ghép Cặp (Memory Match)', 'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!', 'memory_status_win': '🎉 CHIẾN THẮNG! Bạn đã ghép đúng tất cả các cặp!', 'memory_status_turn': 'Lượt đi: %t', 'memory_new_game': 'Chơi mới', 
             },
             'en': {
-                'community': 'Community', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Childhood)', 'chat_title': 'Anonymous Chat Corner', 'chat_placeholder': 'Send an anonymous message to the class...', 'send_msg': 'Send Message', 'loading_msg': 'Loading messages...', 'load_more_msg': 'Load more messages', 'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again', 'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 'game_h3': 'Childhood Games Zone', 'tictactoe_title': 'Play Tic-Tac-Toe', 'tictactoe_status_x': 'X\'s turn', 'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X wins! 🥳', 'tictactoe_win_o': 'O wins! 🥳', 'tictactoe_draw': 'Draw! 🤝', 'tictactoe_reset': 'Play Again', 'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have picked a number between 1 and 100. You have 10 tries!', 'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'new_game_btn': 'New Game', 'guess_too_low': 'Too low! 🤏', 'guess_too_high': 'Too high! 👆', 'guess_win': '🎉 CONGRATS! You guessed %s in %t tries!', 'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.', 'guess_try_left': 'You have %t tries left.', 'guess_input_invalid': 'Please enter a valid number between 1 and 100.', 'anonymous': 'Anonymous', 'memory_title': 'Memory Match Game', 'memory_status_start': 'Click "New Game" to start!', 'memory_status_win': '🎉 CONGRATS! You matched all pairs!', 'memory_status_turn': 'Turns: %t', 'memory_new_game': 'New Game',
+                'community': 'Community', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Childhood)', 
+                'chat_title': 'Anonymous Chat Corner', 'chat_placeholder': 'Send an anonymous message to the class...', 'send_msg': 'Send Message', 'loading_msg': 'Loading messages...', 'load_more_msg': 'Load more messages',
+                
+                'ai_chat_title': 'AI Assistant (Model 12B2)', 'ai_chat_placeholder': 'Ask AI anything (Example: Quick formula for derivative?)', 'ai_send_msg': 'Send', 'ai_system_msg': 'AI Model 12B2',
+                // Các phản hồi mô phỏng của AI
+                'ai_response_default_en_1': 'Hello, I am the 12B2 class AI! What can I help you with regarding knowledge or class news?',
+                'ai_response_default_en_2': 'That\'s a great question! In my opinion, the most important thing is to review the basic knowledge.',
+                'ai_response_default_en_3': 'To solve this problem, you should apply the formula: $A=B^2 - 4C$. Let me know your result!',
+                'ai_response_default_en_4': 'In our class, everyone is talking about the upcoming event. Have you signed up?',
+                'ai_response_default_en_5': 'Ah, I see. Try this approach: Break down the problem into smaller steps.',
+                
+                'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again', 'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer B is correct', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer B is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 
+                
+                'game_h3': 'Childhood Games Zone', 'tictactoe_title': 'Play Tic-Tac-Toe', 'tictactoe_status_x': 'X\'s turn', 'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X wins! 🥳', 'tictactoe_win_o': 'O wins! 🥳', 'tictactoe_draw': 'Draw! 🤝', 'tictactoe_reset': 'Play Again', 'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have picked a number between 1 and 100. You have 10 tries!', 'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'new_game_btn': 'New Game', 'guess_too_low': 'Too low! 🤏', 'guess_too_high': 'Too high! 👆', 'guess_win': '🎉 CONGRATS! You guessed %s in %t tries!', 'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.', 'guess_try_left': 'You have %t tries left.', 'guess_input_invalid': 'Please enter a valid number between 1 and 100.', 'anonymous': 'Anonymous', 
+                
+                'memory_title': 'Memory Match Game', 'memory_status_start': 'Click "New Game" to start!', 'memory_status_win': '🎉 CONGRATS! You matched all pairs!', 'memory_status_turn': 'Turns: %t', 'memory_new_game': 'New Game',
             }
         };
         // --- LOGIC ĐA NGÔN NGỮ (GIỮ NGUYÊN) ---
@@ -535,13 +634,17 @@
             const elements = document.querySelectorAll('[data-i18n]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                el.textContent = translations[lang][key];
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
             });
 
             const placeholders = document.querySelectorAll('[data-i18n-placeholder]');
             placeholders.forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
-                el.placeholder = translations[lang][key];
+                if (translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
             });
             
             loadLeaderboard(); 
@@ -593,11 +696,12 @@
         let lastVisible = null;
         const MESSAGE_LIMIT = 5;
 
-        // --- HÀM KHỞI TẠO CHUNG (CHẠY KHI TẢI TRANG) (GIỮ NGUYÊN) ---
+        // --- HÀM KHỞI TẠO CHUNG (CHẠY KHI TẢI TRANG) ---
         window.initApp = function() {
             applyLanguage(currentLang);
             loadLeaderboard();
             loadInitialMessages(); 
+            initAIChat(); // Khởi tạo AI Chat
             if (currentUserName) {
                 document.getElementById('current-user-display').innerText = currentUserName;
                 document.getElementById('name-input-section').style.display = 'none';
@@ -609,194 +713,507 @@
             }
         }
 
-        // --- LOGIC CHAT PHÂN TRANG & LIKE MỚI (GIỮ NGUYÊN) ---
-        
-        async function loadInitialMessages() {
-            const list = document.getElementById("message-list");
-            list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${translations[currentLang]['loading_msg']}</div>`;
-            lastVisible = null; 
+        // --- LOGIC AI CHAT MỚI ---
+        const aiChatOutput = document.getElementById('ai-chat-output');
+        const aiChatInput = document.getElementById('ai-chat-input');
+        const aiSendBtn = document.getElementById('btn-send-ai');
+        let aiChatHistory = []; // Lưu trữ lịch sử chat
 
-            onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(1)), (snapshot) => {
-                if(snapshot.empty) return;
-                const latestDocId = snapshot.docs[0].id;
+        function initAIChat() {
+            // Hiển thị tin nhắn mặc định của AI khi khởi tạo
+            if (aiChatHistory.length === 0) {
+                const initialMsgKey = currentLang === 'vi' ? 'ai_response_default_vi_1' : 'ai_response_default_en_1';
+                const initialMsgText = translations[currentLang][initialMsgKey];
                 
-                const firstMsgElement = list.querySelector('.post.card:first-child');
-                if (firstMsgElement && firstMsgElement.getAttribute('data-doc-id') === latestDocId) {
-                    return;
+                aiChatHistory.push({ type: 'ai', text: initialMsgText });
+                renderAIChat();
+            }
+            // Thêm sự kiện Enter
+            aiChatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessageToAI();
                 }
-                
-                loadMoreMessages(true);
             });
-
-            await loadMoreMessages(true);
         }
 
-        window.loadMoreMessages = async function(isInitialLoad = false) {
-            const list = document.getElementById("message-list");
-            const loadMoreBtn = document.getElementById('load-more-btn');
-            loadMoreBtn.disabled = true;
-            loadMoreBtn.textContent = isInitialLoad ? translations[currentLang]['loading_msg'] : (currentLang === 'vi' ? "Đang tải..." : "Loading...");
+        function renderAIChat() {
+            aiChatOutput.innerHTML = '';
+            
+            // Render ngược từ tin nhắn cũ nhất đến mới nhất
+            [...aiChatHistory].reverse().forEach(msg => { 
+                const msgElement = document.createElement('div');
+                msgElement.classList.add('ai-post-container');
+                msgElement.classList.add(msg.type === 'user' ? 'user-message' : 'ai-message');
+                
+                const author = msg.type === 'user' 
+                    ? (currentUserName || translations[currentLang]['anonymous']) 
+                    : translations[currentLang]['ai_system_msg'];
+                const authorClass = msg.type === 'user' ? 'fas fa-user-circle' : 'fas fa-robot';
+                
+                msgElement.innerHTML = `
+                    <div class="ai-author">
+                        <i class="${authorClass}"></i> ${author}
+                    </div>
+                    <div class="ai-message-content">${msg.text}</div>
+                `;
+                aiChatOutput.appendChild(msgElement);
+            });
+            
+            // Tự động cuộn xuống tin nhắn mới nhất
+            aiChatOutput.scrollTop = aiChatOutput.scrollHeight;
+        }
 
-            let q = query(chatRef, orderBy("createdAt", "desc"), limit(MESSAGE_LIMIT));
-            if (lastVisible && !isInitialLoad) {
-                q = query(chatRef, orderBy("createdAt", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+        window.sendMessageToAI = async function() {
+            const userInput = aiChatInput.value.trim();
+            if (!userInput) return;
+
+            // 1. Ghi nhận tin nhắn người dùng
+            const userName = currentUserName || translations[currentLang]['anonymous'];
+            aiChatHistory.push({ type: 'user', text: userInput, user: userName });
+            aiChatInput.value = '';
+            aiSendBtn.disabled = true;
+            aiSendBtn.textContent = '...';
+            renderAIChat();
+
+            // 2. Mô phỏng phản hồi của AI
+            setTimeout(() => {
+                const aiResponse = generateAIResponse(userInput);
+                aiChatHistory.push({ type: 'ai', text: aiResponse });
+                renderAIChat();
+                aiSendBtn.disabled = false;
+                aiSendBtn.textContent = translations[currentLang]['ai_send_msg'];
+            }, 1000 + Math.random() * 1000); // Trả lời sau 1-2 giây
+        }
+
+        function generateAIResponse(input) {
+            const lowerInput = input.toLowerCase();
+            const lang = currentLang;
+            const res = translations[lang];
+
+            if (lowerInput.includes('công thức') || lowerInput.includes('giải bài') || lowerInput.includes('toán') || lowerInput.includes('lý')) {
+                return res[lang === 'vi' ? 'ai_response_default_vi_3' : 'ai_response_default_en_3'];
+            }
+            if (lowerInput.includes('tin tức') || lowerInput.includes('sự kiện') || lowerInput.includes('lớp')) {
+                return res[lang === 'vi' ? 'ai_response_default_vi_4' : 'ai_response_default_en_4'];
+            }
+            if (lowerInput.includes('cách làm') || lowerInput.includes('giúp tôi') || lowerInput.includes('cần làm gì')) {
+                return res[lang === 'vi' ? 'ai_response_default_vi_5' : 'ai_response_default_en_5'];
+            }
+            if (lowerInput.includes('cơ bản') || lowerInput.includes('ôn tập') || lowerInput.includes('học')) {
+                return res[lang === 'vi' ? 'ai_response_default_vi_2' : 'ai_response_default_en_2'];
             }
             
-            try {
-                const snapshot = await getDocs(q);
-                
-                if (isInitialLoad) {
-                    list.innerHTML = '';
-                }
-
-                if (snapshot.docs.length === 0 && isInitialLoad) {
-                    list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${currentLang === 'vi' ? 'Chưa có tin nhắn nào.' : 'No messages yet.'}</div>`;
-                    loadMoreBtn.style.display = 'none';
-                    return;
-                }
-                
-                const newMessages = [];
-                const likedMessages = JSON.parse(localStorage.getItem('likedMessages12B2') || '{}');
-
-                snapshot.docs.forEach(doc => {
-                    const msg = doc.data();
-                    const date = msg.createdAt ? new Date(msg.createdAt.seconds * 1000).toLocaleString(currentLang === 'vi' ? 'vi-VN' : 'en-US') : (currentLang === 'vi' ? 'Vừa xong' : 'Just now');
-                    const authorDisplay = msg.author || translations[currentLang]['anonymous'];
-                    const likes = msg.likes || 0;
-                    const likedClass = likedMessages[doc.id] ? 'liked' : '';
-
-                    newMessages.push(`
-                        <div class="post card" data-doc-id="${doc.id}">
-                            <div class="post-header">
-                                <span class="post-author"><i class="fas fa-user-secret"></i> ${authorDisplay}</span>
-                                <span>${date}</span>
-                            </div>
-                            <div style="font-size: 1rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word;">${msg.text}</div>
-                            <div class="post-likes" onclick="toggleLike('${doc.id}', ${likes})">
-                                <i class="fas fa-heart ${likedClass}"></i>
-                                <span data-likes-count="${doc.id}">${likes}</span>
-                            </div>
-                        </div>`);
-                });
-
-                if (isInitialLoad) {
-                    list.innerHTML = newMessages.join('');
-                } else {
-                    list.insertAdjacentHTML('beforeend', newMessages.join(''));
-                }
-
-                if (snapshot.docs.length > 0) {
-                    lastVisible = snapshot.docs[snapshot.docs.length - 1];
-                }
-
-                if (snapshot.docs.length === MESSAGE_LIMIT) {
-                    loadMoreBtn.style.display = 'block';
-                    loadMoreBtn.textContent = translations[currentLang]['load_more_msg'];
-                    loadMoreBtn.disabled = false;
-                } else {
-                    loadMoreBtn.style.display = 'none'; 
-                }
-
-            } catch (error) {
-                console.error("Lỗi tải tin nhắn:", error);
-                if (isInitialLoad) list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">Lỗi tải tin nhắn.</div>`;
-                loadMoreBtn.style.display = 'none';
-            }
+            // Phản hồi mặc định nếu không khớp
+            const defaultResponses = [
+                res[lang === 'vi' ? 'ai_response_default_vi_2' : 'ai_response_default_en_2'],
+                res[lang === 'vi' ? 'ai_response_default_vi_5' : 'ai_response_default_en_5'],
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
         }
 
 
-        window.toggleLike = async function(docId, currentLikes) {
-            const likesCountElement = document.querySelector(`[data-likes-count="${docId}"]`);
-            const likeIcon = likesCountElement ? likesCountElement.previousElementSibling : null;
-            
-            if (!likesCountElement || !likeIcon) return;
-            
-            const likedMessages = JSON.parse(localStorage.getItem('likedMessages12B2') || '{}');
-            const hasLiked = likedMessages[docId];
-            
-            let newLikes = currentLikes;
-
-            if (!hasLiked) {
-                newLikes = currentLikes + 1;
-                likedMessages[docId] = true;
-                likeIcon.classList.add('liked');
-            } else {
-                newLikes = Math.max(0, currentLikes - 1);
-                delete likedMessages[docId];
-                likeIcon.classList.remove('liked');
-            }
-            
-            likesCountElement.textContent = newLikes;
-            localStorage.setItem('likedMessages12B2', JSON.stringify(likedMessages));
-
-            try {
-                const docRef = doc(db, "anonymous_messages", docId);
-                await updateDoc(docRef, {
-                    likes: newLikes
-                });
-            } catch (error) {
-                console.error("Lỗi cập nhật like:", error);
-                if (!hasLiked) {
-                    likesCountElement.textContent = currentLikes;
-                    delete likedMessages[docId];
-                    likeIcon.classList.remove('liked');
-                } else {
-                    likesCountElement.textContent = currentLikes;
-                    likedMessages[docId] = true;
-                    likeIcon.classList.add('liked');
-                }
-                localStorage.setItem('likedMessages12B2', JSON.stringify(likedMessages));
-            }
-        };
-
-
+        // --- LOGIC CHAT ẨN DANH (GIỮ NGUYÊN) ---
         window.sendMessage = async function() {
-            const messageText = document.getElementById('message-text').value;
-            const btn = document.getElementById('btn-send-msg');
-            if (!messageText.trim()) return;
+            const messageText = document.getElementById('message-text').value.trim();
+            if (messageText.length === 0) {
+                alert("Vui lòng nhập nội dung tin nhắn!");
+                return;
+            }
 
-            btn.disabled = true;
-            btn.innerText = currentLang === 'vi' ? "Đang gửi..." : "Sending...";
+            const sendBtn = document.getElementById('btn-send-msg');
+            sendBtn.disabled = true;
 
             try {
                 await addDoc(chatRef, {
                     text: messageText,
-                    createdAt: serverTimestamp(),
-                    author: currentUserName || translations[currentLang]['anonymous'],
+                    timestamp: serverTimestamp(),
                     likes: 0
                 });
                 document.getElementById('message-text').value = '';
-                
-                await loadMoreMessages(true); 
+                // Sau khi gửi thành công, tải lại tin nhắn để tin nhắn mới xuất hiện ngay
+                lastVisible = null;
+                document.getElementById('message-list').innerHTML = '';
+                loadInitialMessages();
 
-            } catch (error) {
-                console.error("Lỗi gửi tin nhắn:", error);
-                alert((currentLang === 'vi' ? "Lỗi gửi tin nhắn: " : "Error sending message: ") + error.message);
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert("Đã xảy ra lỗi khi gửi tin nhắn.");
             } finally {
-                btn.disabled = false;
-                btn.innerText = translations[currentLang]['send_msg'];
+                sendBtn.disabled = false;
+            }
+        }
+
+        window.loadInitialMessages = function() {
+            const q = query(chatRef, orderBy("timestamp", "desc"), limit(MESSAGE_LIMIT));
+            onSnapshot(q, (snapshot) => {
+                document.getElementById('message-list').innerHTML = '';
+                let tempLastVisible = null;
+                snapshot.docs.forEach((doc, index) => {
+                    const data = doc.data();
+                    renderMessage(doc.id, data);
+                    if (index === snapshot.docs.length - 1) {
+                        tempLastVisible = doc;
+                    }
+                });
+
+                // Chỉ cập nhật lastVisible nếu có đủ số lượng tin nhắn (để bật nút "Xem thêm")
+                if (snapshot.docs.length >= MESSAGE_LIMIT) {
+                    lastVisible = tempLastVisible;
+                    document.getElementById('load-more-btn').style.display = 'block';
+                } else {
+                    lastVisible = null;
+                    document.getElementById('load-more-btn').style.display = 'none';
+                }
+            });
+        }
+        
+        window.loadMoreMessages = async function() {
+            if (!lastVisible) {
+                document.getElementById('load-more-btn').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('load-more-btn').disabled = true;
+            document.getElementById('load-more-btn').textContent = translations[currentLang]['loading_msg'];
+
+            try {
+                const q = query(chatRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+                const snapshot = await getDocs(q);
+                let tempLastVisible = null;
+
+                snapshot.docs.forEach((doc, index) => {
+                    const data = doc.data();
+                    renderMessage(doc.id, data);
+                    if (index === snapshot.docs.length - 1) {
+                        tempLastVisible = doc;
+                    }
+                });
+
+                if (snapshot.empty || snapshot.docs.length < MESSAGE_LIMIT) {
+                    lastVisible = null;
+                    document.getElementById('load-more-btn').style.display = 'none';
+                } else {
+                    lastVisible = tempLastVisible;
+                    document.getElementById('load-more-btn').style.display = 'block';
+                }
+
+            } catch (e) {
+                console.error("Error loading more documents: ", e);
+            } finally {
+                document.getElementById('load-more-btn').disabled = false;
+                document.getElementById('load-more-btn').textContent = translations[currentLang]['load_more_msg'];
+            }
+        }
+
+        function renderMessage(id, data) {
+            const messageList = document.getElementById('message-list');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('post');
+            messageElement.id = `msg-${id}`;
+
+            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString(currentLang) + ' ' + new Date(data.timestamp.toDate()).toLocaleDateString(currentLang) : 'Vừa xong';
+            
+            const liked = localStorage.getItem(`liked_${id}`) === 'true';
+
+            messageElement.innerHTML = `
+                <div style="font-weight: 600; color: var(--secondary-color); font-size: 0.95rem;">
+                    <i class="fas fa-mask"></i> ${translations[currentLang]['anonymous']} 
+                    <span style="font-weight: 400; font-size: 0.8rem; color: var(--light-text-color); margin-left: 10px;">${date}</span>
+                </div>
+                <p style="margin-top: 5px; white-space: pre-wrap; word-wrap: break-word;">${data.text}</p>
+                <div class="post-likes" onclick="toggleLike('${id}', ${data.likes})" data-liked="${liked}">
+                    <i class="fas fa-heart ${liked ? 'liked' : ''}"></i> 
+                    <span id="likes-count-${id}">${data.likes || 0}</span> ${liked ? (currentLang === 'vi' ? 'Lượt thích (Đã thích)' : 'Likes (Liked)') : (currentLang === 'vi' ? 'Lượt thích' : 'Likes')}
+                </div>
+            `;
+            messageList.appendChild(messageElement);
+        }
+
+        window.toggleLike = async function(id, currentLikes) {
+            const isLiked = localStorage.getItem(`liked_${id}`) === 'true';
+            const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+            const docRef = doc(db, "anonymous_messages", id);
+
+            try {
+                await updateDoc(docRef, {
+                    likes: newLikes
+                });
+
+                localStorage.setItem(`liked_${id}`, !isLiked ? 'true' : 'false');
+                
+                // Cập nhật lại giao diện ngay lập tức
+                const heartIcon = document.querySelector(`#msg-${id} .fa-heart`);
+                const likesCount = document.getElementById(`likes-count-${id}`);
+                const likesText = document.querySelector(`#msg-${id} .post-likes`);
+
+                if (!isLiked) {
+                    heartIcon.classList.add('liked');
+                    likesText.innerHTML = `<i class="fas fa-heart liked"></i> <span id="likes-count-${id}">${newLikes}</span> ${currentLang === 'vi' ? 'Lượt thích (Đã thích)' : 'Likes (Liked)'}`;
+                } else {
+                    heartIcon.classList.remove('liked');
+                    likesText.innerHTML = `<i class="fas fa-heart"></i> <span id="likes-count-${id}">${newLikes}</span> ${currentLang === 'vi' ? 'Lượt thích' : 'Likes'}`;
+                }
+                
+            } catch (e) {
+                console.error("Error updating like: ", e);
+            }
+        }
+
+        // --- LOGIC QUIZ (GIỮ NGUYÊN) ---
+        window.saveUserName = function() {
+            const nameInput = document.getElementById('user-name-input').value.trim();
+            if (nameInput.length < 2) {
+                alert(currentLang === 'vi' ? "Vui lòng nhập tên hợp lệ (ít nhất 2 ký tự)." : "Please enter a valid name (at least 2 characters).");
+                return;
+            }
+            currentUserName = nameInput;
+            localStorage.setItem('userName12B2', currentUserName);
+            document.getElementById('current-user-display').innerText = currentUserName;
+            document.getElementById('name-input-section').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'block';
+            resetQuiz();
+            initQuiz();
+        }
+
+        window.resetQuiz = function() {
+            currentScore = 0;
+            questionsAttempted = 0;
+            document.getElementById('current-score').textContent = 0;
+            document.getElementById('done-count').textContent = 0;
+            document.getElementById('quiz-complete').style.display = 'none';
+            document.getElementById('quiz-content').style.display = 'block';
+            loadQuizQuestions(); 
+        }
+
+        async function loadQuizQuestions() {
+            try {
+                const q = query(quizRef);
+                const snapshot = await getDocs(q);
+                fullQuestionBank = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Shuffle questions
+                availableQuestions = [...fullQuestionBank].sort(() => 0.5 - Math.random());
+                loadNextQuestion(); 
+            } catch (e) {
+                console.error("Error loading quiz questions: ", e);
+            }
+        }
+
+        window.initQuiz = function() {
+            if (fullQuestionBank.length === 0) {
+                loadQuizQuestions();
+            } else {
+                resetQuiz();
+            }
+        }
+
+        window.loadNextQuestion = function() {
+            document.getElementById('next-btn').style.display = 'none';
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
+
+            if (availableQuestions.length === 0) {
+                handleQuizComplete();
+                return;
+            }
+
+            const currentQ = availableQuestions.pop();
+            window.currentQuestion = currentQ; // Lưu câu hỏi hiện tại vào biến toàn cục
+
+            document.getElementById('q-category').textContent = currentQ.category || (currentLang === 'vi' ? 'Chung' : 'General');
+            document.getElementById('q-text').textContent = currentQ.text;
+            
+            // Shuffle options
+            let options = currentQ.answers.map((ans, index) => ({ text: ans, index: index }));
+            options = options.sort(() => 0.5 - Math.random());
+
+            optionsDiv.innerHTML = '';
+            options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.classList.add('opt-btn');
+                btn.textContent = option.text;
+                btn.onclick = () => checkAnswer(option.index);
+                btn.setAttribute('data-index', option.index); // Lưu chỉ mục ban đầu
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        window.checkAnswer = function(selectedIndex) {
+            const correctIndex = window.currentQuestion.correctAnswer;
+            const isCorrect = selectedIndex === correctIndex;
+            
+            questionsAttempted++;
+            document.getElementById('done-count').textContent = questionsAttempted;
+
+            // Vô hiệu hóa tất cả các nút
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
+
+            // Đánh dấu đáp án
+            document.querySelectorAll('.opt-btn').forEach(btn => {
+                const index = parseInt(btn.getAttribute('data-index'));
+                if (index === correctIndex) {
+                    btn.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (isCorrect) {
+                currentScore += 10; 
+                document.getElementById('current-score').textContent = currentScore;
+            }
+
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        async function handleQuizComplete() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('quiz-complete').style.display = 'block';
+            document.getElementById('final-score-display').textContent = currentScore;
+            
+            // Gửi điểm lên Leaderboard
+            try {
+                await addDoc(leaderboardRef, {
+                    name: currentUserName,
+                    score: currentScore,
+                    timestamp: serverTimestamp()
+                });
+                loadLeaderboard(); // Tải lại BXH
+            } catch (e) {
+                console.error("Error submitting score: ", e);
+            }
+        }
+
+        window.submitUserQuestion = async function() {
+            const qText = document.getElementById('q-text-input').value.trim();
+            const ans = [
+                document.getElementById('q-ans-0').value.trim(),
+                document.getElementById('q-ans-1').value.trim(),
+                document.getElementById('q-ans-2').value.trim(),
+                document.getElementById('q-ans-3').value.trim(),
+            ];
+            const correctIndex = parseInt(document.getElementById('q-correct-select').value);
+            const category = document.getElementById('q-cat-input').value.trim() || (currentLang === 'vi' ? 'Đóng góp' : 'Contribution');
+
+            if (qText.length < 5 || ans.some(a => a.length === 0) || correctIndex === -1) {
+                alert(currentLang === 'vi' ? "Vui lòng điền đầy đủ và chính xác tất cả các trường." : "Please fill in all fields completely and correctly.");
+                return;
+            }
+
+            try {
+                // Thêm vào Firestore
+                await addDoc(quizRef, {
+                    text: qText,
+                    answers: ans,
+                    correctAnswer: correctIndex,
+                    category: category,
+                    contributor: currentUserName || translations[currentLang]['anonymous']
+                });
+
+                alert(currentLang === 'vi' ? "Câu hỏi đã được gửi thành công và được thêm ngay vào ngân hàng câu hỏi!" : "Question submitted successfully and added immediately to the question bank!");
+                
+                // Reset form
+                document.getElementById('q-text-input').value = '';
+                document.getElementById('q-ans-0').value = '';
+                document.getElementById('q-ans-1').value = '';
+                document.getElementById('q-ans-2').value = '';
+                document.getElementById('q-ans-3').value = '';
+                document.getElementById('q-correct-select').value = -1;
+                document.getElementById('q-cat-input').value = '';
+                
+                loadQuizQuestions(); // Tải lại bộ câu hỏi để bao gồm câu hỏi mới
+            } catch (e) {
+                console.error("Error submitting question: ", e);
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi." : "An error occurred while submitting the question.");
+            }
+        }
+
+        async function loadLeaderboard() {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${translations[currentLang]['loading_rank']}</td></tr>`;
+            try {
+                const q = query(leaderboardRef, orderBy("score", "desc"), orderBy("timestamp"), limit(10));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Chưa có ai tham gia.' : 'No one has played yet.'}</td></tr>`;
+                    return;
+                }
+
+                leaderboardBody.innerHTML = '';
+                snapshot.docs.forEach((doc, index) => {
+                    const data = doc.data();
+                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString(currentLang) : '';
+                    const row = `
+                        <tr>
+                            <td style="padding: 10px; font-weight: bold;">${index + 1}</td>
+                            <td style="padding: 10px;">${data.name}</td>
+                            <td style="padding: 10px; font-weight: bold; color: var(--primary-color);">${data.score}</td>
+                            <td style="padding: 10px; font-size: 0.9rem; color: var(--light-text-color);">${date}</td>
+                        </tr>
+                    `;
+                    leaderboardBody.innerHTML += row;
+                });
+
+            } catch (e) {
+                console.error("Error loading leaderboard: ", e);
+                leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Lỗi tải BXH.' : 'Error loading Leaderboard.'}</td></tr>`;
             }
         }
         
-        // --- LOGIC TIC-TAC-TOE (CỜ CARO) (GIỮ NGUYÊN) ---
-        let board = ['', '', '', '', '', '', '', '', ''];
-        let currentPlayer = 'X';
-        let gameActive = true;
+        // --- LOGIC GAME CỜ CARO (TIC-TAC-TOE) (GIỮ NGUYÊN) ---
+        let board;
+        let currentPlayer;
+        let gameActive;
 
         const cells = document.querySelectorAll('.cell');
         const statusDisplay = document.getElementById('tictactoe-status');
         const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], 
-            [0, 4, 8], [2, 4, 6]           
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+            [0, 4, 8], [2, 4, 6]             // diagonals
         ];
+        
+        function initTicTacToe() {
+            cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+            resetGame();
+        }
 
-        function updateGameStatusDisplay() {
-            if (!gameActive) return; 
-            const key = currentPlayer === 'X' ? 'tictactoe_status_x' : 'tictactoe_status_o';
-            statusDisplay.textContent = translations[currentLang][key];
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.style.backgroundColor = 'transparent';
+                cell.removeEventListener('click', handleCellClick);
+                cell.addEventListener('click', handleCellClick);
+            });
+            updateStatus(translations[currentLang]['tictactoe_status_x']);
         }
         
+        window.resetGame = resetGame; // Expose to HTML
+
+        function updateStatus(message) {
+            statusDisplay.textContent = message;
+        }
+
+        function handleCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            if (board[clickedCellIndex] !== '' || !gameActive) {
+                return;
+            }
+
+            board[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            clickedCell.style.color = currentPlayer === 'X' ? varStyle('--primary-color') : varStyle('--secondary-color');
+
+            handleResultValidation();
+        }
+
         function handleResultValidation() {
             let roundWon = false;
             for (let i = 0; i < winningConditions.length; i++) {
@@ -805,436 +1222,221 @@
                 let b = board[winCondition[1]];
                 let c = board[winCondition[2]];
 
-                if (a === '' || b === '' || c === '') continue;
-
+                if (a === '' || b === '' || c === '') {
+                    continue;
+                }
                 if (a === b && b === c) {
                     roundWon = true;
+                    // Highlight winning cells
+                    winCondition.forEach(index => {
+                        cells[index].style.backgroundColor = a === 'X' ? '#d4edda' : '#f8d7da';
+                    });
                     break;
                 }
             }
 
             if (roundWon) {
-                statusDisplay.textContent = translations[currentLang][currentPlayer === 'X' ? 'tictactoe_win_x' : 'tictactoe_win_o'];
+                updateStatus(currentPlayer === 'X' ? translations[currentLang]['tictactoe_win_x'] : translations[currentLang]['tictactoe_win_o']);
                 gameActive = false;
                 return;
             }
 
             let roundDraw = !board.includes('');
             if (roundDraw) {
-                statusDisplay.textContent = translations[currentLang]['tictactoe_draw'];
+                updateStatus(translations[currentLang]['tictactoe_draw']);
                 gameActive = false;
                 return;
             }
 
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            updateGameStatusDisplay();
-        }
-
-        function handleCellClick(clickedCellEvent) {
-            const clickedCell = clickedCellEvent.target;
-            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
-
-            if (board[clickedCellIndex] !== '' || !gameActive) return;
-
-            board[clickedCellIndex] = currentPlayer;
-            clickedCell.textContent = currentPlayer;
-            clickedCell.classList.add(currentPlayer.toLowerCase());
-
-            handleResultValidation();
+            updateStatus(currentPlayer === 'X' ? translations[currentLang]['tictactoe_status_x'] : translations[currentLang]['tictactoe_status_o']);
         }
         
-        window.resetGame = function() {
-            gameActive = true;
-            currentPlayer = 'X';
-            board = ['', '', '', '', '', '', '', '', ''];
-            updateGameStatusDisplay();
-            cells.forEach(cell => {
-                cell.textContent = '';
-                cell.classList.remove('x', 'o');
-            });
-        }
-
-        function initTicTacToe() {
-            cells.forEach(cell => {
-                cell.removeEventListener('click', handleCellClick); 
-                cell.addEventListener('click', handleCellClick);
-            });
-            resetGame(); 
+        function varStyle(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name);
         }
 
         // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) (GIỮ NGUYÊN) ---
         let secretNumber;
         let guessesLeft;
-        const maxGuesses = 10;
-        let guessingGameStatus = 'playing';
+        let guessLog = [];
+        let gameGuActive = false;
 
         window.startNewGuessingGame = function() {
             secretNumber = Math.floor(Math.random() * 100) + 1;
-            guessesLeft = maxGuesses;
-            guessingGameStatus = 'playing';
-
-            document.getElementById('guess-result').textContent = translations[currentLang]['guessing_prompt'];
-            document.getElementById('guess-result').className = '';
-            document.getElementById('guess-log').innerHTML = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
+            guessesLeft = 10;
+            guessLog = [];
+            gameGuActive = true;
             document.getElementById('guess-input').value = '';
-            document.getElementById('guess-input').disabled = false;
             document.getElementById('guess-button').disabled = false;
+            document.getElementById('guess-result').textContent = '';
+            document.getElementById('guess-log').textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
         }
 
         window.checkGuess = function() {
-            if (guessingGameStatus !== 'playing') return;
+            if (!gameGuActive) {
+                startNewGuessingGame();
+                return;
+            }
 
-            const inputElement = document.getElementById('guess-input');
-            const guess = parseInt(inputElement.value);
-            const resultElement = document.getElementById('guess-result');
-            const logElement = document.getElementById('guess-log');
+            const guessInput = document.getElementById('guess-input');
+            const userGuess = parseInt(guessInput.value);
+            const resultDisplay = document.getElementById('guess-result');
+            const logDisplay = document.getElementById('guess-log');
 
-            if (isNaN(guess) || guess < 1 || guess > 100) {
-                resultElement.textContent = translations[currentLang]['guess_input_invalid'];
-                resultElement.className = 'lose';
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                resultDisplay.textContent = translations[currentLang]['guess_input_invalid'];
                 return;
             }
 
             guessesLeft--;
-
-            if (guess === secretNumber) {
-                resultElement.textContent = translations[currentLang]['guess_win'].replace('%s', secretNumber).replace('%t', maxGuesses - guessesLeft);
-                resultElement.className = 'win';
-                logElement.innerHTML = `✅ ${guess} | ${logElement.innerHTML}`;
-                guessingGameStatus = 'win';
-                inputElement.disabled = true;
+            guessLog.push(userGuess);
+            
+            if (userGuess === secretNumber) {
+                resultDisplay.textContent = translations[currentLang]['guess_win'].replace('%s', secretNumber).replace('%t', 10 - guessesLeft);
+                guessInput.value = '';
                 document.getElementById('guess-button').disabled = true;
-
+                gameGuActive = false;
+            } else if (guessesLeft === 0) {
+                resultDisplay.textContent = translations[currentLang]['guess_lose'].replace('%s', secretNumber);
+                guessInput.value = '';
+                document.getElementById('guess-button').disabled = true;
+                gameGuActive = false;
             } else {
-                let hintKey = guess < secretNumber ? 'guess_too_low' : 'guess_too_high';
-                let hint = translations[currentLang][hintKey];
-                
-                resultElement.textContent = hint;
-                resultElement.className = 'lose';
-                logElement.innerHTML = `❌ ${guess} (${hint}) <br> ${logElement.innerHTML}`;
-
-                if (guessesLeft === 0) {
-                    resultElement.textContent = translations[currentLang]['guess_lose'].replace('%s', secretNumber);
-                    guessingGameStatus = 'lose';
-                    inputElement.disabled = true;
-                    document.getElementById('guess-button').disabled = true;
+                if (userGuess < secretNumber) {
+                    resultDisplay.textContent = translations[currentLang]['guess_too_low'];
                 } else {
-                    logElement.innerHTML = ` (${translations[currentLang]['guess_try_left'].replace('%t', guessesLeft)}) <br> ${logElement.innerHTML}`;
+                    resultDisplay.textContent = translations[currentLang]['guess_too_high'];
                 }
+                logDisplay.textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft) + 
+                                        (currentLang === 'vi' ? ' (Đã đoán: ' : ' (Guessed: ') + guessLog.join(', ') + ')';
             }
-            inputElement.value = '';
-            inputElement.focus();
-        }
 
+            guessInput.value = '';
+        }
+        
         // --- LOGIC GAME GHÉP CẶP (MEMORY MATCH) (GIỮ NGUYÊN) ---
-        const MEMORY_ICONS = [
-            '<i class="fas fa-apple-alt"></i>', '<i class="fas fa-bell"></i>', '<i class="fas fa-birthday-cake"></i>', '<i class="fas fa-cat"></i>', 
-            '<i class="fas fa-camera"></i>', '<i class="fas fa-cookie"></i>', '<i class="fas fa-dog"></i>', '<i class="fas fa-feather"></i>'
-        ];
-        let cards = [];
-        let flippedCards = [];
+        let memoryCards = [];
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
         let matchesFound = 0;
-        let canFlip = true;
         let totalTurns = 0;
-        const memoryStatus = document.getElementById('memory-status');
+        
+        const cardSymbols = ['⭐', '🍒', '🍋', '🔔', '🍉', '🍓', '🍇', '🍍'];
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        window.startMemoryGame = function(resetOnly = false) {
-            if (resetOnly) {
-                memoryStatus.textContent = translations[currentLang]['memory_status_start'];
-                document.getElementById('memory-game-board').innerHTML = '';
-                return;
-            }
-
-            totalTurns = 0;
-            matchesFound = 0;
-            canFlip = true;
-            flippedCards = [];
-            memoryStatus.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
-
-            const doubledIcons = [...MEMORY_ICONS, ...MEMORY_ICONS];
-            cards = shuffleArray(doubledIcons);
-
-            const board = document.getElementById('memory-game-board');
-            board.innerHTML = '';
-
-            cards.forEach((icon, index) => {
-                const cardElement = document.createElement('div');
-                cardElement.classList.add('memory-card');
-                cardElement.dataset.icon = icon;
-                cardElement.dataset.index = index;
-                cardElement.innerHTML = `
-                    <div class="card-face back-face"><i class="fas fa-question"></i></div>
-                    <div class="card-face front-face">${icon}</div>
-                `;
-                cardElement.addEventListener('click', handleCardClick);
-                board.appendChild(cardElement);
-            });
-        }
-
-        function handleCardClick(event) {
-            const clickedCard = event.currentTarget;
-
-            if (!canFlip || flippedCards.includes(clickedCard) || clickedCard.classList.contains('match')) return;
-            
-            clickedCard.classList.add('flip');
-            flippedCards.push(clickedCard);
-
-            if (flippedCards.length === 2) {
-                canFlip = false;
-                totalTurns++;
-                memoryStatus.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
-
-                const [card1, card2] = flippedCards;
-                if (card1.dataset.icon === card2.dataset.icon) {
-                    matchesFound++;
-                    setTimeout(() => {
-                        card1.classList.add('match');
-                        card2.classList.add('match');
-                        flippedCards = [];
-                        canFlip = true;
-                        
-                        if (matchesFound === MEMORY_ICONS.length) {
-                            memoryStatus.textContent = translations[currentLang]['memory_status_win'];
-                        }
-                    }, 500);
-
-                } else {
-                    setTimeout(() => {
-                        card1.classList.remove('flip');
-                        card2.classList.remove('flip');
-                        flippedCards = [];
-                        canFlip = true;
-                    }, 1000);
-                }
-            }
-        }
-
-
-        // --- LOGIC QUIZ & LEADERBOARD (GIỮ NGUYÊN) ---
-
-        window.saveUserName = function() {
-            const nameInput = document.getElementById('user-name-input').value.trim();
-            if (nameInput.length < 2 || nameInput.length > 20) {
-                alert(currentLang === 'vi' ? "Tên phải từ 2 đến 20 ký tự!" : "Name must be between 2 and 20 characters!");
-                return;
-            }
-            currentUserName = nameInput;
-            localStorage.setItem('userName12B2', currentUserName);
-            document.getElementById('current-user-display').innerText = currentUserName;
-            document.getElementById('name-input-section').style.display = 'none';
-            document.getElementById('quiz-section').style.display = 'block';
-            initQuiz();
-        }
-
-        window.initQuiz = async function() {
-            currentScore = 0;
-            questionsAttempted = 0;
-            document.getElementById('current-score').innerText = currentScore;
-            document.getElementById('done-count').innerText = questionsAttempted;
-            document.getElementById('quiz-content').style.display = 'block';
-            document.getElementById('quiz-complete').style.display = 'none';
-            
-            document.getElementById('q-text').innerHTML = '<div class="skeleton skeleton-text-lg"></div>';
-            document.getElementById('options').innerHTML = '<div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div>';
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('q-category').innerText = translations[currentLang]['topic'];
-
-
-            if (fullQuestionBank.length === 0) {
-                try {
-                    const querySnapshot = await getDocs(quizRef);
-                    querySnapshot.forEach((doc) => { fullQuestionBank.push({ id: doc.id, ...doc.data() }); });
-                    if (fullQuestionBank.length === 0) {
-                        document.getElementById('q-text').innerText = currentLang === 'vi' ? "Chưa có câu hỏi nào. Vui lòng đóng góp!" : "No questions yet. Please contribute!";
-                        document.getElementById('options').innerHTML = '';
-                        return;
-                    }
-                } catch (e) {
-                    document.getElementById('q-text').innerText = currentLang === 'vi' ? "Lỗi kết nối hoặc chưa có câu hỏi. Vui lòng kiểm tra Rules Firestore." : "Connection error or no questions. Check Firestore Rules.";
-                    document.getElementById('options').innerHTML = '';
-                    return;
-                }
-            }
-
-            const doneIds = JSON.parse(localStorage.getItem('quiz_done_ids') || '[]').map(item => item.id) || [];
-            availableQuestions = fullQuestionBank.filter(q => !doneIds.includes(q.id));
-
-            if(availableQuestions.length === 0) {
-                localStorage.removeItem('quiz_done_ids');
-                availableQuestions = fullQuestionBank;
-            } 
-            loadNextQuestion();
-        }
-
-        window.loadNextQuestion = function() {
-            if(availableQuestions.length === 0) { 
-                endQuizAndSubmitScore();
-                return;
-            }
-
-            document.getElementById('next-btn').style.display = 'none';
-            
-            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-            const qData = availableQuestions[randomIndex];
-            
-            document.getElementById('q-category').innerText = qData.cat || (currentLang === 'vi' ? 'Chung' : 'General');
-            document.getElementById('q-text').innerText = qData.q;
-            
-            const optDiv = document.getElementById('options');
-            optDiv.innerHTML = '';
-            
-            qData.a.forEach((ans, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'opt-btn';
-                btn.innerText = ans;
-                btn.onclick = () => checkAnswer(btn, qData, idx); 
-                optDiv.appendChild(btn);
-            });
-        }
-
-        window.checkAnswer = function(btn, qData, selectedIdx) {
-            const allBtns = document.querySelectorAll('.opt-btn');
-            allBtns.forEach(b => b.disabled = true); 
-
-            questionsAttempted++;
-
-            if(selectedIdx === qData.c) {
-                btn.classList.add('correct');
-                currentScore += 10; 
+        window.startMemoryGame = function(isLangToggle = false) {
+            const boardElement = document.getElementById('memory-game-board');
+            if (!isLangToggle) {
+                // Khởi tạo game mới
+                let gameSymbols = [...cardSymbols, ...cardSymbols];
+                gameSymbols.sort(() => 0.5 - Math.random());
                 
-                const doneIds = JSON.parse(localStorage.getItem('quiz_done_ids') || '[]') || [];
-                if(!doneIds.some(item => item.id === qData.id)) {
-                    doneIds.push({ id: qData.id, date: new Date().getTime() });
-                    localStorage.setItem('quiz_done_ids', JSON.stringify(doneIds));
-                }
-
+                boardElement.innerHTML = '';
+                memoryCards = [];
+                matchesFound = 0;
+                totalTurns = 0;
+                hasFlippedCard = false;
+                lockBoard = false;
+                
+                gameSymbols.forEach((symbol, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('memory-card');
+                    card.setAttribute('data-symbol', symbol);
+                    card.setAttribute('data-index', index);
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front card-face">${symbol}</div>
+                            <div class="card-back card-face">?</div>
+                        </div>
+                    `;
+                    card.addEventListener('click', flipCard);
+                    boardElement.appendChild(card);
+                    memoryCards.push(card);
+                });
             } else {
-                btn.classList.add('wrong');
-                allBtns[qData.c].classList.add('correct'); 
+                // Chỉ cập nhật trạng thái nếu đang trong game
+                if (memoryCards.length > 0) {
+                    // Cập nhật text trạng thái theo ngôn ngữ mới
+                    updateMemoryStatus(false);
+                } else {
+                    // Nếu chưa chơi, đặt lại trạng thái khởi đầu
+                    updateMemoryStatus(true);
+                }
             }
-            
-            document.getElementById('current-score').innerText = currentScore;
-            document.getElementById('done-count').innerText = questionsAttempted;
-            document.getElementById('next-btn').style.display = 'inline-block';
-            
-            availableQuestions = availableQuestions.filter(q => q.id !== qData.id);
-        }
-
-        function endQuizAndSubmitScore() {
-            document.getElementById('quiz-content').style.display = 'none';
-            document.getElementById('quiz-complete').style.display = 'block';
-            document.getElementById('final-score-display').innerText = currentScore;
-            
-            saveScoreToLeaderboard(currentScore, questionsAttempted);
+            updateMemoryStatus(true);
         }
         
-        async function saveScoreToLeaderboard(score, attempts) {
-            if (!currentUserName || score === 0) return; 
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
 
-            try {
-                await addDoc(leaderboardRef, {
-                    name: currentUserName,
-                    score: score,
-                    attempts: attempts,
-                    createdAt: serverTimestamp()
-                });
-                loadLeaderboard(); 
-            } catch (error) {
-                console.error("Lỗi lưu BXH:", error);
-            }
-        }
-
-        window.loadLeaderboard = async function() {
-            const q = query(leaderboardRef, orderBy("score", "desc"), limit(10)); 
-            const snapshot = await getDocs(q);
-            const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = '';
+            this.classList.add('flipped');
             
-            let rank = 1;
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US') : 'N/A';
-                
-                tbody.innerHTML += `
-                    <tr style="border-bottom: 1px solid #f1f1f1; background: ${rank % 2 === 0 ? '#fafafa' : 'white'};">
-                        <td style="padding: 10px; font-weight: 600;">${rank++}</td>
-                        <td style="padding: 10px;">${data.name}</td>
-                        <td style="padding: 10px; font-weight: 700; color: var(--primary-color);">${data.score}</td>
-                        <td style="padding: 10px; font-size: 0.9rem; color: var(--light-text-color);">${date}</td>
-                    </tr>
-                `;
-            });
-
-            if (snapshot.empty) {
-                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Chưa có ai tham gia!' : 'No one has played yet!'}</td></tr>`;
+            if (!hasFlippedCard) {
+                // Lần lật thẻ đầu tiên
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
             }
+
+            // Lần lật thẻ thứ hai
+            secondCard = this;
+            checkForMatch();
         }
 
-        window.resetQuiz = function() {
-            questionsAttempted = 0;
-            currentScore = 0;
-            localStorage.removeItem('quiz_done_ids'); 
-            initQuiz();
-        }
-
-        window.submitUserQuestion = async function() {
-            const qText = document.getElementById('q-text-input').value.trim();
-            const ans0 = document.getElementById('q-ans-0').value.trim();
-            const ans1 = document.getElementById('q-ans-1').value.trim();
-            const ans2 = document.getElementById('q-ans-2').value.trim();
-            const ans3 = document.getElementById('q-ans-3').value.trim();
-            const correctIdx = parseInt(document.getElementById('q-correct-select').value);
-            const category = document.getElementById('q-cat-input').value.trim() || (currentLang === 'vi' ? 'Cộng đồng' : 'Community');
-            const submitButton = document.querySelector('#create-question-section button.btn-send');
-
-            if (!qText || !ans0 || !ans1 || !ans2 || !ans3 || correctIdx === -1) {
-                return alert(currentLang === 'vi' ? "Vui lòng điền đầy đủ nội dung câu hỏi, 4 đáp án và chọn đáp án đúng." : "Please fill in all question content, 4 answers, and select the correct answer.");
-            }
+        function checkForMatch() {
+            totalTurns++;
+            updateMemoryStatus(false);
             
-            submitButton.disabled = true;
-            submitButton.textContent = currentLang === 'vi' ? "Đang xử lý..." : "Processing...";
+            const isMatch = firstCard.getAttribute('data-symbol') === secondCard.getAttribute('data-symbol');
 
+            isMatch ? disableCards() : unflipCards();
+        }
 
-            try {
-                await addDoc(quizRef, { 
-                    q: qText, 
-                    a: [ans0, ans1, ans2, ans3], 
-                    c: correctIdx, 
-                    cat: category,
-                    submittedBy: currentUserName || translations[currentLang]['anonymous'],
-                    createdAt: serverTimestamp(),
-                });
+        function disableCards() {
+            matchesFound++;
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
 
-                alert(currentLang === 'vi' ? "Câu hỏi đã được thêm vào Quiz ngay lập tức! Cảm ơn bạn đã đóng góp." : "Question has been added to the Quiz immediately! Thank ơn bạn đã đóng góp.");
-                
-                fullQuestionBank = []; 
-                await initQuiz(); 
-
-                document.getElementById('q-text-input').value = '';
-                document.getElementById('q-ans-0').value = '';
-                document.getElementById('q-ans-1').value = '';
-                document.getElementById('q-ans-2').value = '';
-                document.getElementById('q-ans-3').value = '';
-                document.getElementById('q-correct-select').value = '-1';
-                document.getElementById('q-cat-input').value = '';
-
-            } catch (error) {
-                console.error("Lỗi gửi câu hỏi:", error);
-                alert((currentLang === 'vi' ? "Lỗi gửi câu hỏi: " : "Error submitting question: ") + error.message);
-            } finally {
-                 submitButton.disabled = false;
-                 submitButton.textContent = translations[currentLang]['submit_q'];
+            resetBoard();
+            
+            if (matchesFound === cardSymbols.length) {
+                document.getElementById('memory-status').textContent = translations[currentLang]['memory_status_win'];
             }
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
         }
         
+        function updateMemoryStatus(isStart) {
+            const statusElement = document.getElementById('memory-status');
+            if (isStart || memoryCards.length === 0) {
+                 statusElement.textContent = translations[currentLang]['memory_status_start'];
+                 return;
+            }
+            if (matchesFound === cardSymbols.length) {
+                 statusElement.textContent = translations[currentLang]['memory_status_win'];
+                 return;
+            }
+            
+            statusElement.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
+        }
+
     </script>
 </body>
 </html>
