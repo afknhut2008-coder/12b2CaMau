@@ -666,7 +666,7 @@
         
         // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (BẮT BUỘC)
         const firebaseConfig = {
-            // DÒNG 1: ĐÃ THAY KHÓA FIREBASE API KEY CỦA BẠN VÀO ĐÂY
+            // DÒNG 1: KHÓA FIREBASE API KEY (ĐÃ DÁN KHÓA CỦA BẠN)
             apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c", 
@@ -678,15 +678,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- CẤU HÌNH GEMINI (KHÓA NÀY ĐÃ ĐƯỢC THAY THẾ Ở BƯỚC TRƯỚC) ---
-        // DÒNG 2: GEMINI API KEY CỦA BẠN!
-        const GEMINI_API_KEY = "AIzaSyAepQavF9cT4_TjrZiws1Ci4viZGCzZZIk"; 
+        // --- CẤU HÌNH GEMINI ---
+        // DÒNG 2: KHÓA GEMINI API KEY (ĐÃ DÁN KHÓA MỚI BẠN CUNG CẤP)
+        const GEMINI_API_KEY = "AIzaSyAbw30FFeydQSF4NX5VwcmLWxZdlsHgmLk"; 
         
         let ai = null;
         let chatSession = null;
         const GEMINI_MODEL = "gemini-2.5-flash"; 
 
-        if (GEMINI_API_KEY && GEMINI_API_KEY !== "KHÓA_API_THỰC_CỦA_BẠN") {
+        if (GEMINI_API_KEY && GEMINI_API_KEY !== "DÁN_KHÓA_GEMINI_THỰC_TẾ_CỦA_BẠN_VÀO_ĐÂY") {
             try {
                 // **FIX LỖI CORS/ORIGIN:** GoogleGenAI là biến toàn cục được cung cấp bởi thẻ <script> CDN mới thêm vào.
                 ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -703,9 +703,11 @@
 
             } catch (error) {
                 console.error("Gemini SDK initialization failed (Check Key or SDK import):", error);
+                // Cảnh báo người dùng nếu có lỗi khi khởi tạo AI
+                 document.getElementById('ai-chat-output').innerHTML = '<div style="color: red; padding: 10px;">Lỗi khởi tạo AI. Vui lòng kiểm tra lại Gemini API Key!</div>';
             }
         } else {
-            console.warn("GEMINI_API_KEY not set. AI Chat feature will be disabled.");
+            console.warn("GEMINI_API_KEY not set or incorrect. AI Chat feature will be disabled.");
         }
 
         // CÁC COLLECTIONS SỬ DỤNG
@@ -717,7 +719,7 @@
         
         window.sendAiMessage = async function() {
             if (!chatSession) {
-                alert(currentLang === 'vi' ? "AI chưa được cấu hình (Thiếu API Key)." : "AI is not configured (Missing API Key).");
+                alert(currentLang === 'vi' ? "AI chưa được cấu hình (Thiếu API Key hoặc Key bị lỗi)." : "AI is not configured (Missing or invalid API Key).");
                 return;
             }
 
@@ -750,7 +752,7 @@
                 console.error("Error calling Gemini API:", e);
                 const thinkingElement = document.getElementById(aiThinkingId);
                 if (thinkingElement) {
-                    thinkingElement.textContent = currentLang === 'vi' ? "Lỗi: Không thể kết nối đến Gemini. Vui lòng kiểm tra API Key." : "Error: Could not connect to Gemini. Check API Key.";
+                    thinkingElement.textContent = currentLang === 'vi' ? "Lỗi: Không thể kết nối đến Gemini. Kiểm tra lại API Key hoặc mạng." : "Error: Could not connect to Gemini. Check API Key or network.";
                     thinkingElement.style.color = 'red';
                 }
             } finally {
