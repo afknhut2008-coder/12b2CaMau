@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lớp 12B2 - Kết nối</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* GIỮ NGUYÊN CSS NHƯ CŨ ĐỂ ĐẸP */
+        :root { --primary: #0084ff; --bg: #f0f2f5; --white: #fff; }
+        * { box-sizing: border-box; font-family: sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); padding-bottom: 60px; }
+        .navbar { background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .logo { font-weight: bold; color: var(--primary); font-size: 1.2rem; }
+        .container { max-width: 600px; margin: 0 auto; padding: 10px; }
+        .create-post { background: var(--white); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .cp-input { width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 20px; margin-bottom: 10px; outline: none; }
+        .post { background: var(--white); padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); animation: fadeIn 0.5s; }
+        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; max-height: 400px; object-fit: cover; }
+        .btn { background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; }
+        .btn:disabled { background: #ccc; }
+        #loading { text-align: center; display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">12B2 Online <i class="fas fa-globe"></i></div>
+        <button class="btn" onclick="location.reload()"><i class="fas fa-sync"></i></button>
+    </div>
+
+    <div class="container">
+        <div class="create-post">
+            <textarea id="post-content" class="cp-input" rows="3" placeholder="Hôm nay lớp có gì mới?"></textarea>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <input type="file" id="post-img-file" accept="image/*" style="font-size: 0.8rem;">
+                <button class="btn" id="btn-submit" onclick="submitPost()">Đăng bài</button>
+            </div>
+            <p id="upload-status" style="font-size: 0.8rem; color: orange; margin-top: 5px;"></p>
+        </div>
+
+        <div id="loading">Đang tải dữ liệu...</div>
+        <div id="feed-list"></div>
+    </div>
+
+    <script type="module">
+        // 1. NHẬP KHẨU THƯ VIỆN FIREBASE
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // --- 2. DÁN MÃ CONFIG CỦA BẠN VÀO ĐÂY (THAY THẾ PHẦN BÊN DƯỚI) ---
+        const firebaseConfig = {
+            aapiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80",
+  authDomain: "b2-6431c.firebaseapp.com",
+  projectId: "b2-6431c",
+  storageBucket: "b2-6431c.firebasestorage.app",
+  messagingSenderId: "164059778488",
+  appId: "1:164059778488:web:9eca97e23ab644df48534d",
+  measurementId: "G-19QWD4RCYC"
+        };
+        // ------------------------------------------------------------------
+
+        // Khởi tạo Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const postsRef = collection(db, "posts_12b2"); // Tên bảng dữ liệu
+
+        // --- XỬ LÝ ĐĂNG BÀI ---
+        window.submitPost = async function() {
+            const content = document.getElementById('post-content').value;
+            const fileInput = document.getElementById('post-img-file');
+            const btn = document.getElementById('btn-submit');
+            const status = document.getElementById('upload-status');
+
+            if (!content && fileInput.files.length === 0) return alert("Viết gì đó đi!");
+
+            btn.disabled = true;
+            btn.innerText = "Đang gửi...";
+
+            let imageBase64 = null;
+
+            // Xử lý ảnh (Chuyển thành chuỗi ký tự để lưu nhanh vào Firestore - Cách đơn giản nhất cho người mới)
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > 1024 * 1024) { // Giới hạn 1MB để tránh lỗi Firestore miễn phí
+                     alert("Ảnh lớn quá! Vui lòng chọn ảnh < 1MB hoặc chụp màn hình lại.");
+                     btn.disabled = false; btn.innerText = "Đăng bài";
+                     return;
+                }
+                status.innerText = "Đang xử lý ảnh...";
+                imageBase64 = await toBase64(file);
+            }
+
+            try {
+                // Gửi lên mây
+                await addDoc(postsRef, {
+                    text: content,
+                    image: imageBase64,
+                    createdAt: serverTimestamp(), // Lấy giờ server
+                    author: "Thành viên lớp" // Sau này có thể làm đăng nhập để lấy tên thật
+                });
+
+                // Reset form
+                document.getElementById('post-content').value = '';
+                fileInput.value = '';
+                status.innerText = "";
+            } catch (e) {
+                alert("Lỗi: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Đăng bài";
+            }
+        }
+
+        // Hàm chuyển ảnh sang mã (Helper)
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        // --- TỰ ĐỘNG TẢI BÀI VIẾT (REAL-TIME) ---
+        const q = query(postsRef, orderBy("createdAt", "desc"));
+        const feedList = document.getElementById("feed-list");
+        const loading = document.getElementById("loading");
+
+        loading.style.display = "block";
+
+        // onSnapshot: Lắng nghe thay đổi. Ai đó đăng bài -> code này tự chạy lại
+        onSnapshot(q, (snapshot) => {
+            loading.style.display = "none";
+            feedList.innerHTML = ""; // Xóa cũ
+            
+            snapshot.forEach((doc) => {
+                const post = doc.data();
+                const time = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleString('vi-VN') : "Vừa xong";
+                
+                let imgHtml = post.image ? `<img src="${post.image}" class="post-img" onclick="alert('Tính năng phóng to đang cập nhật')">` : '';
+
+                const html = `
+                <div class="post">
+                    <div style="font-weight:bold; color:#0084ff; margin-bottom:5px;">${post.author} <span style="color:#999; font-weight:normal; font-size:0.8rem;">- ${time}</span></div>
+                    <div>${post.text}</div>
+                    ${imgHtml}
+                </div>`;
+                
+                feedList.innerHTML += html;
+            });
+        });
+    </script>
+</body>
+</html>
