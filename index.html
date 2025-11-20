@@ -424,7 +424,7 @@
         <div id="ai-chat" class="tab-content" style="display: none;">
             <h3><i class="fas fa-robot" style="color: #dc3545;"></i> <span data-i18n="ai_chat_title">AI Hỗ Trợ (Đã Tắt)</span></h3>
             <div class="card" style="padding: 30px; text-align: center;">
-                <p style="font-weight: bold; color: #dc3545;">Tính năng Chat AI đã bị loại bỏ hoàn toàn theo yêu cầu của bạn.</p>
+                <p style="font-weight: bold; color: #dc3545;"><span data-i18n="ai_disclaimer">Tính năng Chat AI đã bị loại bỏ hoàn toàn theo yêu cầu của bạn.</span></p>
             </div>
         </div>
         <div id="social" class="tab-content">
@@ -593,8 +593,7 @@
                 'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Tuổi Thơ)', 
                 'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn', 'loading_msg': 'Đang tải tin nhắn...', 'load_more_msg': 'Xem thêm tin nhắn', 
                 
-                'ai_chat_title': 'AI Hỗ Trợ (Đã Tắt)', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Model 12B2', 'ai_disclaimer': 'Lưu ý: Tính năng AI đã bị loại bỏ theo yêu cầu.',
-                // Các phản hồi mô phỏng của AI được cập nhật và làm phong phú hơn
+                'ai_chat_title': 'AI Hỗ Trợ (Đã Tắt)', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Model 12B2', 'ai_disclaimer': 'Tính năng Chat AI đã bị loại bỏ hoàn toàn theo yêu cầu của bạn.',
                 'ai_response_vi_math': 'Đây là công thức chính: $\\int_{a}^{b} f(x) dx = F(b) - F(a)$. Nếu gặp bài khó, hãy thử phương pháp đổi biến hoặc tích phân từng phần nhé!',
                 'ai_response_vi_news': 'Gần đây, sự kiện "Văn nghệ cuối năm" đang được bàn tán sôi nổi nhất. Lớp ta đã lên ý tưởng cho tiết mục chưa? Tôi nghĩ một vở kịch hài sẽ rất tuyệt!',
                 'ai_response_vi_schedule': 'Lịch thi sắp tới bao gồm: Toán (20/12), Lý (22/12), Hóa (25/12). Hãy phân bổ thời gian hợp lý và tránh học dồn nhé!', 
@@ -659,7 +658,6 @@
             startNewGuessingGame();
             startMemoryGame(true);
             loadInitialMessages(); 
-            // KHÔNG CẦN initAIChat(true) NỮA
         }
         function applyLanguage(lang) {
             const elements = document.querySelectorAll('[data-i18n]');
@@ -711,28 +709,6 @@
         const quizRef = collection(db, "quiz_questions");
         const leaderboardRef = collection(db, "leaderboard");
 
-        // --- CÁC BIẾN CHO CHAT AI (ĐÃ VÔ HIỆU HÓA) ---
-        // const aiChatOutput = document.getElementById('ai-chat-output');
-        // const aiChatInput = document.getElementById('ai-chat-input');
-        // const aiSendBtn = document.getElementById('btn-send-ai');
-        // let aiChatHistory = [];
-        
-        // --- LOGIC CHAT AI (ĐÃ VÔ HIỆU HÓA HOÀN TOÀN THEO YÊU CẦU CỦA BẠN) ---
-        
-        /* function initAIChat(isLangToggle = false) {
-             // ... toàn bộ logic AI chat bị comment out
-        }
-        function renderAIChat() {
-             // ... toàn bộ logic AI chat bị comment out
-        }
-        window.sendMessageToAI = async function() {
-            // ... toàn bộ logic AI chat bị comment out
-        }
-        function generateAIResponse(input) {
-            // ... toàn bộ logic AI chat bị comment out
-        }
-        */
-        
         // --- LOGIC CHAT ẨN DANH (GIỮ NGUYÊN) ---
         const MESSAGE_LIMIT = 5;
         let lastVisible = null;
@@ -888,6 +864,25 @@
             document.getElementById('done-count').textContent = questionsAttempted;
         }
 
+        // --- HÀM KHỞI TẠO TRẠNG THÁI QUIZ (FIX LỖI) ---
+        function initQuizState(resetScore = false) {
+            if (resetScore) {
+                currentScore = 0;
+                questionsAttempted = 0;
+                localStorage.removeItem('quizScore');
+                localStorage.removeItem('questionsAttempted');
+            }
+            // Luôn đọc lại từ localStorage để đồng bộ hóa
+            currentUserName = localStorage.getItem('quizUserName');
+            currentScore = parseInt(localStorage.getItem('quizScore') || '0');
+            questionsAttempted = parseInt(localStorage.getItem('questionsAttempted') || '0');
+            updateQuizStats();
+            
+            // Đảm bảo ẩn thông báo hoàn thành và hiển thị nội dung quiz
+            document.getElementById('quiz-complete').style.display = 'none';
+            document.getElementById('quiz-content').style.display = 'block';
+        }
+        
         window.saveUserName = function() {
             const nameInput = document.getElementById('user-name-input').value.trim();
             if (nameInput.length < 2) {
@@ -903,10 +898,11 @@
         }
 
         function initQuiz() {
+            initQuizState(false); // Khởi tạo trạng thái (không reset điểm)
+            
             if (currentUserName) {
                 document.getElementById('name-input-section').style.display = 'none';
                 document.getElementById('quiz-section').style.display = 'block';
-                updateQuizStats();
                 loadQuizQuestions();
             } else {
                 document.getElementById('name-input-section').style.display = 'block';
@@ -915,40 +911,39 @@
         }
 
         window.resetQuiz = function() {
-            currentScore = 0;
-            questionsAttempted = 0;
-            localStorage.removeItem('quizScore');
-            localStorage.removeItem('questionsAttempted');
-            document.getElementById('quiz-complete').style.display = 'none';
-            document.getElementById('quiz-content').style.display = 'block';
-            updateQuizStats();
-            loadQuizQuestions(); // Tải lại toàn bộ câu hỏi
+            initQuizState(true); // Reset điểm và trạng thái chơi
+            // Sau khi reset điểm, tải lại toàn bộ câu hỏi và bắt đầu câu hỏi đầu tiên
+            loadQuizQuestions(); 
         }
         
         // TẢI CÂU HỎI TỪ FIRESTORE
         async function loadQuizQuestions() {
             try {
-                const snapshot = await getDocs(quizRef);
-                allQuestions = [];
-                snapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    // --- ĐÃ SỬA LỖI CỐT LÕI: Ánh xạ trường Firestore (q, a, c) sang trường JS (text, answers, correctAnswer) ---
-                    allQuestions.push({
-                        id: doc.id,
-                        text: data.q, // FIX: Lấy nội dung câu hỏi từ trường 'q'
-                        answers: data.a, // FIX: Lấy mảng đáp án từ trường 'a'
-                        correctAnswer: data.c, // FIX: Lấy chỉ mục đáp án đúng từ trường 'c'
-                        category: data.cat || (currentLang === 'vi' ? 'Chung' : 'General'),
+                // Tải toàn bộ câu hỏi từ Firestore (Chỉ tải nếu mảng rỗng)
+                if (allQuestions.length === 0) {
+                    const snapshot = await getDocs(quizRef);
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        // --- ĐÃ SỬA LỖI CỐT LÕI: Ánh xạ trường Firestore (q, a, c) sang trường JS ---
+                        allQuestions.push({
+                            id: doc.id,
+                            text: data.q, // FIX: Lấy nội dung câu hỏi từ trường 'q'
+                            answers: data.a, // FIX: Lấy mảng đáp án từ trường 'a'
+                            correctAnswer: data.c, // FIX: Lấy chỉ mục đáp án đúng từ trường 'c'
+                            category: data.cat || (currentLang === 'vi' ? 'Chung' : 'General'),
+                        });
+                        // --------------------------------------------------------------------------------------------------
                     });
-                    // --------------------------------------------------------------------------------------------------
-                });
+                }
+
 
                 if (allQuestions.length === 0) {
                     document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px;">${currentLang === 'vi' ? 'Hiện chưa có câu hỏi nào.' : 'No questions available yet.'}</p>`;
                     return;
                 }
 
-                // Sao chép và xáo trộn mảng câu hỏi khả dụng
+                // FIX LỖI: Luôn tạo mảng availableQuestions MỚI từ allQuestions và xáo trộn.
+                // Điều này đảm bảo mỗi lần chơi (hoặc reset) đều có đủ câu hỏi.
                 availableQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
                 loadNextQuestion();
 
@@ -965,6 +960,7 @@
             // Hiển thị skeleton trong khi tải
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
             
+            // LỖI ĐÃ KHẮC PHỤC: availableQuestions.pop() sẽ loại bỏ câu hỏi đã hỏi.
             if (availableQuestions.length === 0) {
                 handleQuizComplete();
                 return;
@@ -1076,7 +1072,8 @@
                 document.getElementById('q-ans-3').value = '';
                 document.getElementById('q-correct-select').value = -1;
                 document.getElementById('q-cat-input').value = '';
-                loadQuizQuestions(); // Tải lại bộ câu hỏi để bao gồm câu hỏi mới
+                allQuestions = []; // Đặt lại mảng này để buộc tải lại dữ liệu (bao gồm câu hỏi mới)
+                loadQuizQuestions(); 
             } catch (e) {
                 console.error("Error submitting question: ", e);
                 alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi." : "An error occurred while submitting the question.");
@@ -1387,7 +1384,6 @@
             applyLanguage(currentLang);
             loadInitialMessages();
             initQuiz();
-            // KHÔNG initAIChat() NỮA
             // initTicTacToe() và startNewGuessingGame() sẽ được gọi khi chuyển tab lần đầu
             
             // Khởi tạo các game ở tab games để tránh lỗi
