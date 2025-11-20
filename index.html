@@ -5,27 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>12B2 - Cộng Đồng & Tuổi Thơ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS CHUNG VÀ HIỆU ỨNG MỚI (CẬP NHẬT UI ĐẸP HƠN) */
+        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI */
         :root { 
-            --primary-color: #2193b0;
-            --secondary-color: #fc4a1a;
-            --primary-gradient: linear-gradient(135deg, #6dd5ed, var(--primary-color)); 
-            --secondary-gradient: linear-gradient(135deg, #f7b733, var(--secondary-color)); 
-            --button-hover: linear-gradient(135deg, #4facfe, #00f2fe); 
-            --bg-color: #f0f2f5; 
+            /* MÀU SẮC MỚI: Tông xanh tím sang trọng */
+            --primary-color: #4a00e0;
+            --secondary-color: #8e2de2;
+            --primary-gradient: linear-gradient(135deg, #7474bf, #348ac7); /* Blue-Purple Fade */
+            --button-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            --bg-color: #f8f9fa; /* Nền trắng xám nhẹ */
             --card-bg: #ffffff; 
-            --text-color: #333; 
-            --light-text-color: #666;
-            --border-color: #e0e0e0;
-            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08); 
-            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.12);
+            --text-color: #212529; /* Đen sâu */
+            --light-text-color: #6c757d;
+            --border-color: #dee2e6;
+            
+            /* BÓNG ĐỔ MỀM (Soft Shadow) */
+            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.05), 0 1px 5px rgba(0, 0, 0, 0.03); 
+            --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+            /* BO GÓC */
             --radius-large: 20px;
             --radius-medium: 12px;
-            --radius-small: 8px;
+            --radius-small: 6px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', 'Quicksand', sans-serif; }
         body { 
             background: var(--bg-color); 
             padding-bottom: 70px; 
@@ -33,7 +37,7 @@
             min-height: 100vh;
         }
         
-        /* HIỆU ỨNG NỀN ĐỘNG (NHẸ NHÀNG) */
+        /* HIỆU ỨNG NỀN VÀ MÀU SẮC CHUNG */
         body::before {
             content: '';
             position: fixed;
@@ -41,13 +45,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(109, 213, 237, 0.1) 0%, rgba(33, 147, 176, 0.05) 50%, transparent 100%);
+            background: radial-gradient(circle at 80% 90%, rgba(74, 0, 224, 0.04) 0%, transparent 40%),
+                        radial-gradient(circle at 20% 10%, rgba(142, 45, 226, 0.06) 0%, transparent 40%);
             z-index: -1;
-            animation: gradientMove 15s ease infinite alternate;
-        }
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
         }
 
         .navbar { 
@@ -62,168 +62,274 @@
             justify-content: space-between; 
             align-items: center; 
             box-shadow: var(--shadow-medium); 
-            border-bottom-left-radius: var(--radius-large);
-            border-bottom-right-radius: var(--radius-large);
         }
-        .container { max-width: 650px; margin: 20px auto; padding: 0 15px; }
+        .navbar a { color: white; margin-left: 15px; }
+        .container { max-width: 700px; margin: 25px auto; padding: 0 15px; }
         .card { 
             background: var(--card-bg); 
             padding: 25px; 
-            border-radius: var(--radius-large); /* Bo góc lớn hơn */
-            margin-bottom: 25px; 
-            box-shadow: var(--shadow-light); 
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: var(--radius-large); 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow-soft); /* Bóng đổ mềm */
+            transition: transform 0.2s, box-shadow 0.2s;
             border: 1px solid var(--border-color);
         }
         .card:hover { 
-            transform: translateY(-3px); /* Giảm độ nảy để trông chuyên nghiệp hơn */
+            transform: translateY(-2px); 
             box-shadow: var(--shadow-medium); 
+        }
+
+        /* HEADING & HR */
+        h3 { 
+            color: var(--primary-color); 
+            font-weight: 700; 
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        h3 i { margin-right: 10px; font-size: 1.5rem; }
+        hr { 
+            border: none; 
+            border-top: 1px solid var(--border-color); 
+            margin: 30px 0; 
         }
         
         /* INPUTS & BUTTONS */
         input[type="text"], textarea, select, input[type="number"] {
-            border-radius: var(--radius-medium); 
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-medium);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .btn-send, .next-btn, .game-button { 
-            border-radius: 50px; /* Nút tròn hơn, hiện đại hơn */
+        input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.1);
+            outline: none;
         }
 
-        /* QUIZ SCORE DISPLAY MỚI */
+        .btn-send, .next-btn, .game-button { 
+            padding: 12px 25px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: var(--radius-medium);
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        .btn-send:hover, .next-btn:hover, .game-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-send:disabled {
+            background: var(--light-text-color);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        /* TAB NAVIGATION TỐI ƯU */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 8px;
+            border-radius: 50px; /* Kiểu pill button group */
+            box-shadow: var(--shadow-soft);
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 20px;
+            color: var(--light-text-color);
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 3px 10px rgba(74, 0, 224, 0.3);
+        }
+
+        /* QUIZ */
+        .options-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .opt-btn {
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-medium);
+            background-color: var(--card-bg);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .opt-btn:hover {
+            border-color: var(--secondary-color);
+            background-color: #f0f8ff;
+        }
+        .opt-btn.correct {
+            background-color: #d4edda; 
+            border-color: #28a745;
+            color: #155724;
+            font-weight: 700;
+        }
+        .opt-btn.wrong {
+            background-color: #f8d7da; 
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        
+        /* QUIZ STATS TỐI ƯU */
         .quiz-stat { 
-            font-size: 1rem; 
-            color: var(--light-text-color); 
-            margin-bottom: 15px; 
-            line-height: 1.6; 
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
         }
         .quiz-stat-item {
             display: inline-flex;
             align-items: center;
-            padding: 5px 12px;
-            border-radius: var(--radius-large);
+            padding: 8px 15px;
+            border-radius: 50px;
             font-weight: 600;
+            font-size: 0.9rem;
         }
         #current-score {
-            background-color: #fff3cd; 
-            color: #856404; 
-            border: 1px solid #ffeeba;
+            background-color: #f0f2ff; /* Màu tím nhạt */
+            color: var(--primary-color); 
         }
         #done-count {
-            background-color: #d4edda; 
-            color: #155724; 
-            border: 1px solid #c3e6cb;
+            background-color: #e9f7ef; /* Màu xanh lá nhạt */
+            color: #28a745; 
             margin-right: 10px;
         }
         .quiz-stat i { margin-right: 5px; }
 
 
-        /* CHAT/MESSAGE LIKES MỚI */
-        .post-likes {
+        /* CHAT/MESSAGE TỐI ƯU */
+        .post { 
+            padding: 15px 20px; 
+            border-left: 5px solid var(--secondary-color); /* Điểm nhấn */
+        }
+        .post-header {
             display: flex;
-            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
             color: var(--light-text-color);
-            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .post-author {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .post-likes {
+            margin-top: 10px; 
+            font-size: 0.9rem;
+            color: var(--light-text-color);
             transition: color 0.2s;
-            font-size: 0.95rem;
-            margin-top: 10px; /* Tạo khoảng cách với nội dung */
-            user-select: none;
         }
         .post-likes i {
-            margin-right: 5px;
             color: #ccc;
-            transition: color 0.3s, transform 0.1s;
         }
         .post-likes i.liked {
-            color: #dc3545; /* Màu đỏ cho nút đã thích */
-            transform: scale(1.1);
+            color: #dc3545;
         }
         .post-likes:hover i {
             color: #dc3545;
         }
         
-        /* GAME GHÉP CẶP (MEMORY MATCH) MỚI */
+        /* GAME GHÉP CẶP TỐI ƯU */
         #memory-game-board {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-            margin: 20px auto;
+            gap: 8px;
+            max-width: 450px;
         }
         .memory-card {
-            background-color: var(--primary-color);
-            height: 80px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            height: 90px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-face {
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+        .back-face {
+            color: white !important;
+        }
+        .memory-card.match {
+            background: #e9f7ef; /* Nền xanh lá nhạt khi match */
+            opacity: 1;
+            box-shadow: none;
+            border: 2px solid #28a745;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { margin: 15px auto; padding: 0 10px; }
+            .card { padding: 20px; border-radius: 15px; }
+            .navbar { padding: 12px 15px; }
+            .quiz-stat-item { padding: 5px 10px; }
+            .memory-card { height: 70px; }
+            .card-face { font-size: 1.5rem; }
+        }
+
+        /* Thêm style cho caro */
+        #tictactoe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border: 3px solid var(--primary-color);
+            border-radius: var(--radius-medium);
+        }
+        .cell {
+            border: 1px solid var(--border-color);
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: var(--radius-medium);
+            font-size: 3rem;
             cursor: pointer;
-            perspective: 1000px;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .memory-card.flip {
-            transform: rotateY(180deg);
-        }
-        .memory-card.match {
-            opacity: 0.5;
-            cursor: default;
-        }
-        .memory-card.match .card-face {
-            color: #28a745;
-        }
-
-        .card-face {
-            position: absolute;
-            backface-visibility: hidden;
-            font-size: 2.5rem;
-            color: white;
+            transition: background-color 0.2s;
             font-weight: 700;
         }
-        .front-face {
-            transform: rotateY(180deg);
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+        .cell.x { color: #dc3545; }
+        .cell.o { color: var(--primary-color); }
+        #tictactoe-status {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
             color: var(--text-color);
         }
-
-        /* Responsive cho game ghép cặp */
-        @media (max-width: 480px) {
-            .memory-card {
-                height: 60px;
-            }
-            .card-face {
-                font-size: 1.8rem;
-            }
+        #tictactoe-reset {
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            background: #6c757d;
         }
-        
-        /* Thêm các icon cho game ghép cặp */
-        .memory-card .front-face i {
-            transition: color 0.3s;
+        #tictactoe-reset:hover {
+            background: #5a6268;
         }
-        
-        /* Skeleton Screen cho Quiz */
-        .skeleton {
-            background: #e0e0e0;
-            background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
-            border-radius: 5px;
-            background-size: 200% 100%;
-            animation: 1.5s shine linear infinite;
-        }
-        @keyframes shine {
-            to { background-position: -200% 0; }
-        }
-        .skeleton-text-lg { height: 25px; margin-bottom: 20px; width: 90%; }
-        .skeleton-button { height: 40px; margin-bottom: 12px; }
-
-        /* Animation chung */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .post { animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
 <body onload="initApp()">
@@ -232,7 +338,7 @@
         <div>12B2 <span data-i18n="community">Cộng Đồng</span></div>
         <div style="display: flex; align-items: center;">
             <a href="https://www.tiktok.com/@12b2thptcamau?is_from_webapp=1&sender_device=pc" target="_blank" style="font-size: 1.2rem;" title="TikTok của lớp"><i class="fab fa-tiktok"></i></a>
-            <div id="lang-switch" onclick="toggleLanguage()">VI / EN</div>
+            <div id="lang-switch" onclick="toggleLanguage()" style="cursor: pointer; padding: 5px 10px; background: rgba(255,255,255,0.2); border-radius: var(--radius-small); margin-left: 15px;">VI / EN</div>
         </div>
     </div>
 
@@ -261,7 +367,7 @@
                 </div>
             </div>
             
-            <button id="load-more-btn" class="btn-send" onclick="loadMoreMessages()" data-i18n="load_more_msg" style="display: none;">Xem thêm tin nhắn</button>
+            <button id="load-more-btn" class="btn-send" onclick="loadMoreMessages()" data-i18n="load_more_msg" style="display: none; width: 100%; margin-top: 10px;">Xem thêm tin nhắn</button>
 
 
             <hr>
@@ -271,22 +377,22 @@
             <div id="name-input-section" class="card">
                 <h4 data-i18n="name_prompt">Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):</h4>
                 <input type="text" id="user-name-input" data-i18n-placeholder="name_placeholder" placeholder="Tên của bạn (ví dụ: Nam Kế Toán)">
-                <button onclick="saveUserName()" data-i18n="start_quiz">Bắt đầu Quiz</button>
+                <button class="btn-send" style="width: 100%;" onclick="saveUserName()" data-i18n="start_quiz">Bắt đầu Quiz</button>
             </div>
 
             <div id="quiz-section" style="display: none;">
                 <div class="quiz-card card">
                     <div class="quiz-stat">
-                        <span data-i18n="welcome">Chào mừng</span>, <span id="current-user-display" style="color: var(--primary-color); font-weight: bold;"></span>!
-                        <div>
+                        <span style="font-weight: 500;"><span data-i18n="welcome">Chào mừng</span>, <span id="current-user-display" style="color: var(--primary-color); font-weight: bold;"></span>!</span>
+                        <div style="display: flex;">
                             <span class="quiz-stat-item" id="done-count-container"><i class="fas fa-check-circle"></i> <span data-i18n="completed">Đã xong</span>: <span id="done-count">0</span></span>
                             <span class="quiz-stat-item" id="score-count-container"><i class="fas fa-star"></i> <span data-i18n="score">Điểm</span>: <span id="current-score">0</span></span>
                         </div>
                     </div>
                     
                     <div id="quiz-content">
-                        <div id="q-category" data-i18n="topic">Chủ đề</div>
-                        <div id="q-text" class="question-box">
+                        <div id="q-category" style="font-size: 0.9rem; color: var(--secondary-color); font-weight: 600; margin-bottom: 10px;">Chủ đề</div>
+                        <div id="q-text" class="question-box" style="font-size: 1.2rem; font-weight: 600; margin-bottom: 20px;">
                             <div class="skeleton skeleton-text-lg"></div>
                         </div>
                         <div id="options" class="options-grid">
@@ -295,14 +401,14 @@
                             <div class="skeleton skeleton-button"></div>
                             <div class="skeleton skeleton-button"></div>
                         </div>
-                        <button id="next-btn" class="next-btn" onclick="loadNextQuestion()" data-i18n="next_q" style="display: none;">Câu tiếp theo <i class="fas fa-arrow-right"></i></button>
+                        <button id="next-btn" class="next-btn" onclick="loadNextQuestion()" data-i18n="next_q" style="display: none; width: 100%; margin-top: 15px;">Câu tiếp theo <i class="fas fa-arrow-right"></i></button>
                     </div>
 
                     <div id="quiz-complete" style="display: none; padding: 30px; text-align: center;">
                         <i class="fas fa-trophy" style="font-size: 3.5rem; color: gold; margin-bottom: 20px;"></i>
                         <h3 style="justify-content: center;"><span data-i18n="quiz_done_h3">Hoàn thành!</span></h3>
                         <p style="margin-bottom: 20px;"><span data-i18n="final_score_p">Tổng điểm của bạn</span>: <strong id="final-score-display"></strong>. <span data-i18n="sending_rank">Đang gửi kết quả lên BXH...</span></p>
-                        <button onclick="resetQuiz()" data-i18n="play_again" class="btn-send" style="background: #e0e0e0; color: var(--text-color); width: auto;">Làm lại</button>
+                        <button onclick="resetQuiz()" data-i18n="play_again" class="btn-send" style="background: #e0e0e0; color: var(--text-color); width: auto; background: var(--button-gradient);">Làm lại</button>
                     </div>
                 </div>
             </div>
@@ -311,7 +417,7 @@
 
             <h3><i class="fas fa-plus-circle"></i> <span data-i18n="create_q_title">Tạo Câu Hỏi Mới</span></h3>
             <div id="create-question-section" class="card">
-                <h4 data-i18n="contribute_q">Đóng góp Quiz (Câu hỏi được dùng ngay):</h4>
+                <h4 style="font-size: 1rem; color: var(--light-text-color); margin-bottom: 15px;" data-i18n="contribute_q">Đóng góp Quiz (Câu hỏi được dùng ngay):</h4>
                 <input type="text" id="q-text-input" data-i18n-placeholder="q_content_ph" placeholder="Nội dung Câu hỏi">
                 <input type="text" id="q-ans-0" data-i18n-placeholder="ans_a_ph" placeholder="Đáp án A">
                 <input type="text" id="q-ans-1" data-i18n-placeholder="ans_b_ph" placeholder="Đáp án B">
@@ -325,24 +431,24 @@
                     <option value="3" data-i18n="ans_d_correct">Đáp án D là đúng</option>
                 </select>
                 <input type="text" id="q-cat-input" data-i18n-placeholder="category_ph" placeholder="Chủ đề (ví dụ: Toán, Lý)">
-                <button class="btn-send" style="width: 100%;" onclick="submitUserQuestion()" data-i18n="submit_q">Gửi đóng góp</button>
+                <button class="btn-send" style="width: 100%; margin-top: 10px;" onclick="submitUserQuestion()" data-i18n="submit_q">Gửi đóng góp</button>
             </div>
             
             <hr>
 
             <h3><i class="fas fa-trophy"></i> <span data-i18n="leaderboard_title">Bảng Xếp Hạng (Top 10)</span></h3>
             <div id="leaderboard-section" class="card">
-                <table class="rank-table">
+                <table class="rank-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr>
-                            <th data-i18n="rank">Hạng</th>
-                            <th data-i18n="name">Tên</th>
-                            <th data-i18n="score">Điểm</th>
-                            <th data-i18n="date">Ngày chơi</th>
+                        <tr style="background: #f1f1f1;">
+                            <th data-i18n="rank" style="padding: 10px; text-align: left;">Hạng</th>
+                            <th data-i18n="name" style="padding: 10px; text-align: left;">Tên</th>
+                            <th data-i18n="score" style="padding: 10px; text-align: left;">Điểm</th>
+                            <th data-i18n="date" style="padding: 10px; text-align: left;">Ngày chơi</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboard-body">
-                        <tr><td colspan="4" style="text-align: center;" data-i18n="loading_rank">Đang tải bảng xếp hạng...</td></tr>
+                        <tr><td colspan="4" style="text-align: center; padding: 15px;" data-i18n="loading_rank">Đang tải bảng xếp hạng...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -353,15 +459,17 @@
             <h3 style="margin-bottom: 25px;"><i class="fas fa-gamepad"></i> <span data-i18n="game_h3">Khu Vực Trò Chơi Tuổi Thơ</span></h3>
             
             <div class="guessing-wrapper card">
-                <h4 data-i18n="memory_title">Game Ghép Cặp (Memory Match)</h4>
-                <p id="memory-status" style="margin-bottom: 15px; font-weight: 600;" data-i18n="memory_status_start">Bấm "Chơi mới" để bắt đầu!</p>
+                <h4 style="color: var(--text-color);"><i class="fas fa-th-large"></i> <span data-i18n="memory_title">Game Ghép Cặp (Memory Match)</span></h4>
+                <p id="memory-status" style="margin-bottom: 15px; font-weight: 600; color: var(--primary-color);" data-i18n="memory_status_start">Bấm "Chơi mới" để bắt đầu!</p>
                 <div id="memory-game-board">
                     </div>
-                <button id="memory-new-game-button" class="game-button" onclick="startMemoryGame()" data-i18n="memory_new_game">Chơi mới</button>
+                <button id="memory-new-game-button" class="game-button" onclick="startMemoryGame()" data-i18n="memory_new_game" style="width: 100%; margin-top: 15px;">Chơi mới</button>
             </div>
+            
+            <hr>
 
             <div class="tictactoe-wrapper card">
-                <h4 data-i18n="tictactoe_title">Chơi Cờ Caro (Tic-Tac-Toe)</h4>
+                <h4 style="color: var(--text-color);"><i class="fas fa-border-all"></i> <span data-i18n="tictactoe_title">Chơi Cờ Caro (Tic-Tac-Toe)</span></h4>
                 <div id="tictactoe-status" data-i18n="tictactoe_status_x">Lượt của X</div>
                 <div id="tictactoe-board">
                     <div class="cell" data-index="0"></div>
@@ -374,19 +482,21 @@
                     <div class="cell" data-index="7"></div>
                     <div class="cell" data-index="8"></div>
                 </div>
-                <button id="tictactoe-reset" data-i18n="tictactoe_reset" onclick="resetGame()">Chơi lại</button>
+                <button id="tictactoe-reset" data-i18n="tictactoe_reset" onclick="resetGame()" class="btn-send" style="background: #6c757d;">Chơi lại</button>
             </div>
+            
+            <hr>
 
             <div class="guessing-wrapper card">
-                <h4 data-i18n="guessing_title">Game Đoán Số (1-100)</h4>
+                <h4 style="color: var(--text-color);"><i class="fas fa-hashtag"></i> <span data-i18n="guessing_title">Game Đoán Số (1-100)</span></h4>
                 <p data-i18n="guessing_prompt">Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!</p>
-                <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
-                    <input type="number" id="guess-input" min="1" max="100" data-i18n-placeholder="guess_ph" placeholder="Nhập số">
-                    <button id="guess-button" class="game-button" onclick="checkGuess()" data-i18n="guess_btn">Đoán</button>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <input type="number" id="guess-input" min="1" max="100" data-i18n-placeholder="guess_ph" placeholder="Nhập số" style="flex-grow: 1; margin-bottom: 0;">
+                    <button id="guess-button" class="game-button" onclick="checkGuess()" data-i18n="guess_btn" style="width: 100px;">Đoán</button>
                 </div>
-                <div id="guess-result"></div>
-                <div id="guess-log"></div>
-                <button id="new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="background: var(--secondary-color); margin-top: 15px;">Chơi lại</button>
+                <div id="guess-result" style="margin-top: 15px; font-weight: 600; font-size: 1.1rem;"></div>
+                <div id="guess-log" style="color: var(--light-text-color); font-size: 0.9rem; margin-top: 5px;"></div>
+                <button id="new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="background: var(--secondary-color); margin-top: 15px; width: 100%;">Chơi mới</button>
             </div>
             
         </div> 
@@ -399,128 +509,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- DỮ LIỆU ĐA NGÔN NGỮ ---
+        // --- DỮ LIỆU ĐA NGÔN NGỮ (GIỮ NGUYÊN) ---
         const translations = {
             'vi': {
-                'community': 'Cộng Đồng',
-                'social_tab': 'Social & Quiz',
-                'game_tab': 'Games (Tuổi Thơ)',
-                'chat_title': 'Góc Chat Ẩn Danh',
-                'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...',
-                'send_msg': 'Gửi tin nhắn',
-                'loading_msg': 'Đang tải tin nhắn...',
-                'load_more_msg': 'Xem thêm tin nhắn',
-                'quiz_title': 'Thử Thách Đố Vui',
-                'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):',
-                'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)',
-                'start_quiz': 'Bắt đầu Quiz',
-                'welcome': 'Chào mừng',
-                'completed': 'Đã hoàn thành',
-                'score': 'Điểm',
-                'topic': 'Chủ đề',
-                'next_q': 'Câu tiếp theo',
-                'quiz_done_h3': 'Hoàn thành!',
-                'final_score_p': 'Tổng điểm của bạn',
-                'sending_rank': 'Đang gửi kết quả lên BXH...',
-                'play_again': 'Làm lại',
-                'create_q_title': 'Tạo Câu Hỏi Mới',
-                'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):',
-                'q_content_ph': 'Nội dung Câu hỏi',
-                'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D',
-                'select_correct_ans': 'Chọn Đáp án Đúng',
-                'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng',
-                'category_ph': 'Chủ đề (ví dụ: Toán, Lý)',
-                'submit_q': 'Gửi đóng góp',
-                'leaderboard_title': 'Bảng Xếp Hạng (Top 10)',
-                'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi',
-                'loading_rank': 'Đang tải bảng xếp hạng...',
-                'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ',
-                'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)',
-                'tictactoe_status_x': 'Lượt của X',
-                'tictactoe_status_o': 'Lượt của O',
-                'tictactoe_win_x': 'X thắng! 🥳',
-                'tictactoe_win_o': 'O thắng! 🥳',
-                'tictactoe_draw': 'Hòa! 🤝',
-                'tictactoe_reset': 'Chơi lại',
-                'guessing_title': 'Game Đoán Số (1-100)',
-                'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!',
-                'guess_ph': 'Nhập số',
-                'guess_btn': 'Đoán',
-                'new_game_btn': 'Chơi mới',
-                'guess_too_low': 'Quá thấp! 🤏',
-                'guess_too_high': 'Quá cao! 👆',
-                'guess_win': '🎉 CHÚC MỪNG! Bạn đoán đúng số %s chỉ trong %t lần!',
-                'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.',
-                'guess_try_left': 'Bạn còn %t lần đoán.',
-                'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.',
-                'anonymous': 'Ẩn danh',
-                'memory_title': 'Game Ghép Cặp (Memory Match)',
-                'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!',
-                'memory_status_win': '🎉 CHIẾN THẮNG! Bạn đã ghép đúng tất cả các cặp!',
-                'memory_status_turn': 'Lượt đi: %t',
-                'memory_new_game': 'Chơi mới',
+                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Tuổi Thơ)', 'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn', 'loading_msg': 'Đang tải tin nhắn...', 'load_more_msg': 'Xem thêm tin nhắn', 'quiz_title': 'Thử Thách Đố Vui', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 'welcome': 'Chào mừng', 'completed': 'Đã hoàn thành', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'sending_rank': 'Đang gửi kết quả lên BXH...', 'play_again': 'Làm lại', 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 'leaderboard_title': 'Bảng Xếp Hạng (Top 10)', 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi', 'loading_rank': 'Đang tải bảng xếp hạng...', 'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng! 🥳', 'tictactoe_win_o': 'O thắng! 🥳', 'tictactoe_draw': 'Hòa! 🤝', 'tictactoe_reset': 'Chơi lại', 'guessing_title': 'Game Đoán Số (1-100)', 'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!', 'guess_ph': 'Nhập số', 'guess_btn': 'Đoán', 'new_game_btn': 'Chơi mới', 'guess_too_low': 'Quá thấp! 🤏', 'guess_too_high': 'Quá cao! 👆', 'guess_win': '🎉 CHÚC MỪNG! Bạn đoán đúng số %s chỉ trong %t lần!', 'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.', 'guess_try_left': 'Bạn còn %t lần đoán.', 'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.', 'anonymous': 'Ẩn danh', 'memory_title': 'Game Ghép Cặp (Memory Match)', 'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!', 'memory_status_win': '🎉 CHIẾN THẮNG! Bạn đã ghép đúng tất cả các cặp!', 'memory_status_turn': 'Lượt đi: %t', 'memory_new_game': 'Chơi mới',
             },
             'en': {
-                'community': 'Community',
-                'social_tab': 'Social & Quiz',
-                'game_tab': 'Games (Childhood)',
-                'chat_title': 'Anonymous Chat Corner',
-                'chat_placeholder': 'Send an anonymous message to the class...',
-                'send_msg': 'Send Message',
-                'loading_msg': 'Loading messages...',
-                'load_more_msg': 'Load more messages',
-                'quiz_title': 'Quiz Challenge',
-                'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):',
-                'name_placeholder': 'Your name (e.g., John Doe)',
-                'start_quiz': 'Start Quiz',
-                'welcome': 'Welcome',
-                'completed': 'Completed',
-                'score': 'Score',
-                'topic': 'Topic',
-                'next_q': 'Next Question',
-                'quiz_done_h3': 'Finished!',
-                'final_score_p': 'Your total score',
-                'sending_rank': 'Submitting score to Leaderboard...',
-                'play_again': 'Play Again',
-                'create_q_title': 'Create New Question',
-                'contribute_q': 'Contribute Quiz (Question is used immediately):',
-                'q_content_ph': 'Question Content',
-                'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D',
-                'select_correct_ans': 'Select Correct Answer',
-                'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct',
-                'category_ph': 'Category (e.g., Math, Physics)',
-                'submit_q': 'Submit Contribution',
-                'leaderboard_title': 'Leaderboard (Top 10)',
-                'rank': 'Rank', 'name': 'Name', 'date': 'Play Date',
-                'loading_rank': 'Loading leaderboard...',
-                'game_h3': 'Childhood Games Zone',
-                'tictactoe_title': 'Play Tic-Tac-Toe',
-                'tictactoe_status_x': 'X\'s turn',
-                'tictactoe_status_o': 'O\'s turn',
-                'tictactoe_win_x': 'X wins! 🥳',
-                'tictactoe_win_o': 'O wins! 🥳',
-                'tictactoe_draw': 'Draw! 🤝',
-                'tictactoe_reset': 'Play Again',
-                'guessing_title': 'Number Guessing Game (1-100)',
-                'guessing_prompt': 'I have picked a number between 1 and 100. You have 10 tries!',
-                'guess_ph': 'Enter number',
-                'guess_btn': 'Guess',
-                'new_game_btn': 'New Game',
-                'guess_too_low': 'Too low! 🤏',
-                'guess_too_high': 'Too high! 👆',
-                'guess_win': '🎉 CONGRATS! You guessed %s in %t tries!',
-                'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.',
-                'guess_try_left': 'You have %t tries left.',
-                'guess_input_invalid': 'Please enter a valid number between 1 and 100.',
-                'anonymous': 'Anonymous',
-                'memory_title': 'Memory Match Game',
-                'memory_status_start': 'Click "New Game" to start!',
-                'memory_status_win': '🎉 CONGRATS! You matched all pairs!',
-                'memory_status_turn': 'Turns: %t',
-                'memory_new_game': 'New Game',
+                'community': 'Community', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Childhood)', 'chat_title': 'Anonymous Chat Corner', 'chat_placeholder': 'Send an anonymous message to the class...', 'send_msg': 'Send Message', 'loading_msg': 'Loading messages...', 'load_more_msg': 'Load more messages', 'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again', 'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 'game_h3': 'Childhood Games Zone', 'tictactoe_title': 'Play Tic-Tac-Toe', 'tictactoe_status_x': 'X\'s turn', 'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X wins! 🥳', 'tictactoe_win_o': 'O wins! 🥳', 'tictactoe_draw': 'Draw! 🤝', 'tictactoe_reset': 'Play Again', 'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have picked a number between 1 and 100. You have 10 tries!', 'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'new_game_btn': 'New Game', 'guess_too_low': 'Too low! 🤏', 'guess_too_high': 'Too high! 👆', 'guess_win': '🎉 CONGRATS! You guessed %s in %t tries!', 'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.', 'guess_try_left': 'You have %t tries left.', 'guess_input_invalid': 'Please enter a valid number between 1 and 100.', 'anonymous': 'Anonymous', 'memory_title': 'Memory Match Game', 'memory_status_start': 'Click "New Game" to start!', 'memory_status_win': '🎉 CONGRATS! You matched all pairs!', 'memory_status_turn': 'Turns: %t', 'memory_new_game': 'New Game',
             }
         };
-
+        // --- LOGIC ĐA NGÔN NGỮ (GIỮ NGUYÊN) ---
         let currentLang = localStorage.getItem('appLang') || 'vi';
 
         window.toggleLanguage = function() {
@@ -529,7 +527,7 @@
             applyLanguage(currentLang);
             updateGameStatusDisplay();
             startNewGuessingGame(); 
-            startMemoryGame(true); // Khởi tạo lại game ghép cặp
+            startMemoryGame(true); 
             loadInitialMessages(); 
         }
 
@@ -549,7 +547,7 @@
             loadLeaderboard(); 
         }
         
-        // --- LOGIC TAB CON ---
+        // --- LOGIC TAB CON (GIỮ NGUYÊN) ---
         window.showTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
             document.getElementById(tabId).style.display = 'block';
@@ -565,7 +563,7 @@
             }
         }
 
-        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY
+        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (GIỮ NGUYÊN)
         const firebaseConfig = {
             apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
@@ -595,7 +593,7 @@
         let lastVisible = null;
         const MESSAGE_LIMIT = 5;
 
-        // --- HÀM KHỞI TẠO CHUNG (CHẠY KHI TẢI TRANG) ---
+        // --- HÀM KHỞI TẠO CHUNG (CHẠY KHI TẢI TRANG) (GIỮ NGUYÊN) ---
         window.initApp = function() {
             applyLanguage(currentLang);
             loadLeaderboard();
@@ -609,20 +607,15 @@
                 document.getElementById('name-input-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
             }
-            // Khởi tạo Games khi chuyển tab lần đầu
-            // initTicTacToe(); 
-            // startNewGuessingGame(); 
-            // startMemoryGame(true);
         }
 
-        // --- LOGIC CHAT PHÂN TRANG & LIKE MỚI ---
+        // --- LOGIC CHAT PHÂN TRANG & LIKE MỚI (GIỮ NGUYÊN) ---
         
         async function loadInitialMessages() {
             const list = document.getElementById("message-list");
             list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${translations[currentLang]['loading_msg']}</div>`;
             lastVisible = null; 
 
-            // Lắng nghe realtime cho 1 tin nhắn mới nhất 
             onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(1)), (snapshot) => {
                 if(snapshot.empty) return;
                 const latestDocId = snapshot.docs[0].id;
@@ -632,11 +625,9 @@
                     return;
                 }
                 
-                // Tải lại 5 tin đầu nếu có tin nhắn mới hơn 
                 loadMoreMessages(true);
             });
 
-            // Tải 5 tin nhắn đầu tiên (không phải realtime)
             await loadMoreMessages(true);
         }
 
@@ -745,7 +736,6 @@
                 });
             } catch (error) {
                 console.error("Lỗi cập nhật like:", error);
-                // Hoàn tác nếu lỗi
                 if (!hasLiked) {
                     likesCountElement.textContent = currentLikes;
                     delete likedMessages[docId];
@@ -788,7 +778,7 @@
             }
         }
         
-        // --- LOGIC TIC-TAC-TOE (CỜ CARO) ---
+        // --- LOGIC TIC-TAC-TOE (CỜ CARO) (GIỮ NGUYÊN) ---
         let board = ['', '', '', '', '', '', '', '', ''];
         let currentPlayer = 'X';
         let gameActive = true;
@@ -872,7 +862,7 @@
             resetGame(); 
         }
 
-        // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) ---
+        // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) (GIỮ NGUYÊN) ---
         let secretNumber;
         let guessesLeft;
         const maxGuesses = 10;
@@ -936,7 +926,7 @@
             inputElement.focus();
         }
 
-        // --- LOGIC GAME GHÉP CẶP (MEMORY MATCH) MỚI ---
+        // --- LOGIC GAME GHÉP CẶP (MEMORY MATCH) (GIỮ NGUYÊN) ---
         const MEMORY_ICONS = [
             '<i class="fas fa-apple-alt"></i>', '<i class="fas fa-bell"></i>', '<i class="fas fa-birthday-cake"></i>', '<i class="fas fa-cat"></i>', 
             '<i class="fas fa-camera"></i>', '<i class="fas fa-cookie"></i>', '<i class="fas fa-dog"></i>', '<i class="fas fa-feather"></i>'
@@ -1004,7 +994,6 @@
 
                 const [card1, card2] = flippedCards;
                 if (card1.dataset.icon === card2.dataset.icon) {
-                    // Match Found!
                     matchesFound++;
                     setTimeout(() => {
                         card1.classList.add('match');
@@ -1018,7 +1007,6 @@
                     }, 500);
 
                 } else {
-                    // No Match
                     setTimeout(() => {
                         card1.classList.remove('flip');
                         card2.classList.remove('flip');
@@ -1054,7 +1042,6 @@
             document.getElementById('quiz-content').style.display = 'block';
             document.getElementById('quiz-complete').style.display = 'none';
             
-            // Hiển thị skeleton loading
             document.getElementById('q-text').innerHTML = '<div class="skeleton skeleton-text-lg"></div>';
             document.getElementById('options').innerHTML = '<div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div>';
             document.getElementById('next-btn').style.display = 'none';
@@ -1177,17 +1164,17 @@
                 const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US') : 'N/A';
                 
                 tbody.innerHTML += `
-                    <tr>
-                        <td>${rank++}</td>
-                        <td>${data.name}</td>
-                        <td>${data.score}</td>
-                        <td>${date}</td>
+                    <tr style="border-bottom: 1px solid #f1f1f1; background: ${rank % 2 === 0 ? '#fafafa' : 'white'};">
+                        <td style="padding: 10px; font-weight: 600;">${rank++}</td>
+                        <td style="padding: 10px;">${data.name}</td>
+                        <td style="padding: 10px; font-weight: 700; color: var(--primary-color);">${data.score}</td>
+                        <td style="padding: 10px; font-size: 0.9rem; color: var(--light-text-color);">${date}</td>
                     </tr>
                 `;
             });
 
             if (snapshot.empty) {
-                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">${currentLang === 'vi' ? 'Chưa có ai tham gia!' : 'No one has played yet!'}</td></tr>`;
+                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Chưa có ai tham gia!' : 'No one has played yet!'}</td></tr>`;
             }
         }
 
