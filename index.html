@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>12B2 - Cộng Đồng & Tuổi Thơ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght=400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
         :root { 
@@ -566,13 +566,15 @@
         </div> 
     </div>
 
+    <script src="https://unpkg.com/@google/genai@0.15.0/dist/client.umd.js"></script> 
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { GoogleGenAI } from "https://esm.run/@google/genai"; // Thêm thư viện Gemini SDK
+        // **Đã XÓA dòng import GoogleGenAI từ esm.run để FIX lỗi CORS/Origin**
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
@@ -678,15 +680,18 @@
 
         // --- CẤU HÌNH GEMINI (THAY KEY CỦA BẠN VÀO ĐÂY) ---
         // DÒNG 2: DÁN GEMINI API KEY CỦA BẠN VÀO DÒNG NÀY!
+        // **Đã thay key của bạn vào đây**
         const GEMINI_API_KEY = "AIzaSyAepQavF9cT4_TjrZiws1Ci4viZGCzZZIk"; 
         
         let ai = null;
         let chatSession = null;
-        const GEMINI_MODEL = "gemini-2.5-flash"; // Mô hình nhanh và hiệu quả
+        const GEMINI_MODEL = "gemini-2.5-flash"; 
 
-        if (GEMINI_API_KEY && GEMINI_API_KEY !== "AIzaSyAepQavF9cT4_TjrZiws1Ci4viZGCzZZIk") {
+        if (GEMINI_API_KEY && GEMINI_API_KEY !== "KHÓA_API_THỰC_CỦA_BẠN") {
             try {
+                // **FIX LỖI CORS/ORIGIN:** GoogleGenAI là biến toàn cục được cung cấp bởi thẻ <script> CDN mới thêm vào.
                 ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+                console.log("Gemini SDK initialized.");
                 
                 // Cấu hình Chat Session (Quan trọng cho đối thoại)
                 chatSession = ai.chats.create({
@@ -698,7 +703,7 @@
                 console.log("Gemini Chat Session created.");
 
             } catch (error) {
-                console.error("Gemini SDK initialization failed:", error);
+                console.error("Gemini SDK initialization failed (Check Key or SDK import):", error);
             }
         } else {
             console.warn("GEMINI_API_KEY not set. AI Chat feature will be disabled.");
@@ -909,22 +914,20 @@
         }
 
         // --- LOGIC QUIZ (GIỚI HẠN 10 CÂU & NGẪU NHIÊN) ---
-        const MAX_QUIZ_QUESTIONS = 10; // Giới hạn 10 câu hỏi
+        const MAX_QUIZ_QUESTIONS = 10; 
 
         let currentUserName = localStorage.getItem('quizUserName');
         let currentScore = parseInt(localStorage.getItem('quizScore') || '0');
         let questionsAttempted = parseInt(localStorage.getItem('questionsAttempted') || '0');
-        let allQuestions = []; // Nơi lưu trữ tất cả câu hỏi từ Firestore
-        let availableQuestions = []; // Câu hỏi còn lại để hỏi trong lần chơi này
+        let allQuestions = []; 
+        let availableQuestions = []; 
 
         function updateQuizStats() {
             document.getElementById('current-user-display').textContent = currentUserName;
             document.getElementById('current-score').textContent = currentScore;
-            // Hiển thị số câu đã làm trên tổng số câu tối đa (10)
             document.getElementById('done-count').textContent = `${questionsAttempted}/${MAX_QUIZ_QUESTIONS}`; 
         }
 
-        // --- HÀM KHỞI TẠO TRẠNG THÁI QUIZ ---
         function initQuizState(resetScore = false) {
             if (resetScore) {
                 currentScore = 0;
@@ -941,7 +944,6 @@
             document.getElementById('quiz-content').style.display = 'block';
         }
         
-        // FIX LỖI: Thêm initQuizState(true) để đảm bảo game mới luôn bắt đầu từ 0
         window.saveUserName = function() {
             const nameInput = document.getElementById('user-name-input').value.trim();
             if (nameInput.length < 2) {
@@ -951,7 +953,6 @@
             currentUserName = nameInput;
             localStorage.setItem('quizUserName', currentUserName);
             
-            // **FIX QUAN TRỌNG:** Reset hoàn toàn trạng thái game khi BẮT ĐẦU game mới
             initQuizState(true); 
 
             document.getElementById('name-input-section').style.display = 'none';
@@ -978,13 +979,10 @@
             loadQuizQuestions(); 
         }
         
-        // TẢI CÂU HỎI TỪ FIRESTORE (ĐÃ TỐI ƯU HÓA LOGIC KẾT THÚC)
         async function loadQuizQuestions() {
-            // Hiển thị skeleton loading
             document.getElementById('q-text').innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 20px; width: 80%; margin-bottom: 10px; border-radius: 4px;"></div>';
 
             try {
-                // 1. Buộc TẢI LẠI TOÀN BỘ dữ liệu từ Firestore
                 const snapshot = await getDocs(quizRef);
                 allQuestions = []; 
 
@@ -1004,10 +1002,8 @@
                     return;
                 }
 
-                // 2. Xáo trộn toàn bộ ngân hàng câu hỏi
                 const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
                 
-                // 3. Giới hạn số câu hỏi có thể làm (MAX_QUIZ_QUESTIONS)
                 availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
                 
                 loadNextQuestion();
@@ -1022,22 +1018,19 @@
             document.getElementById('next-btn').style.display = 'none';
             
             const optionsDiv = document.getElementById('options');
-            // Hiển thị skeleton cho options
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
             
-            // ⚠️ FIX TRỌNG TÂM: Luôn kiểm tra điều kiện kết thúc ngay LÚC BẮT ĐẦU tải câu hỏi
             if (questionsAttempted >= MAX_QUIZ_QUESTIONS || availableQuestions.length === 0) {
                 handleQuizComplete();
                 return;
             }
 
-            const currentQ = availableQuestions.pop(); // Lấy câu hỏi và loại bỏ khỏi mảng
-            window.currentQuestion = currentQ; // Lưu câu hỏi hiện tại vào biến toàn cục
+            const currentQ = availableQuestions.pop(); 
+            window.currentQuestion = currentQ; 
 
             document.getElementById('q-category').textContent = currentQ.category;
             document.getElementById('q-text').textContent = currentQ.text;
             
-            // Xáo trộn vị trí 4 đáp án
             let options = currentQ.answers.map((ans, index) => ({ text: ans, index: index }));
             options = options.sort(() => 0.5 - Math.random());
 
@@ -1046,7 +1039,6 @@
                 const btn = document.createElement('button');
                 btn.classList.add('opt-btn');
                 btn.textContent = option.text;
-                // Gắn index ban đầu (0, 1, 2, 3) vào onclick để kiểm tra đáp án đúng
                 btn.onclick = () => checkAnswer(option.index); 
                 btn.setAttribute('data-index', option.index); 
                 optionsDiv.appendChild(btn);
@@ -1059,7 +1051,7 @@
             
             questionsAttempted++;
             localStorage.setItem('questionsAttempted', questionsAttempted);
-            updateQuizStats(); // Cập nhật hiển thị (ví dụ: 2/10)
+            updateQuizStats(); 
 
             document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
 
@@ -1078,25 +1070,19 @@
                 document.getElementById('current-score').textContent = currentScore;
             }
 
-            // Nếu chưa hết 10 câu VÀ còn câu hỏi: hiển thị nút tiếp theo
             if (questionsAttempted < MAX_QUIZ_QUESTIONS && availableQuestions.length > 0) {
                  document.getElementById('next-btn').style.display = 'block';
             } else {
-                 // Đợi một chút rồi kết thúc game (đủ 10 câu hoặc hết câu hỏi)
                  setTimeout(handleQuizComplete, 1500);
             }
         }
 
-        // HÀM KẾT THÚC QUIZ (ĐÃ XÓA PHẦN GỬI ĐIỂM LÊN LEADERBOARD)
         async function handleQuizComplete() {
             document.getElementById('quiz-content').style.display = 'none';
             document.getElementById('quiz-complete').style.display = 'block';
             document.getElementById('final-score-display').textContent = currentScore;
-            
-            // Không gửi điểm lên Leaderboard
         }
 
-        // GỬI CÂU HỎI ĐÓNG GÓP CỦA NGƯỜI DÙNG
         window.submitUserQuestion = async function() {
             const qText = document.getElementById('q-text-input').value.trim();
             const ans0 = document.getElementById('q-ans-0').value.trim();
@@ -1123,7 +1109,6 @@
             try {
                 await addDoc(quizRef, newQuestion);
                 alert(currentLang === 'vi' ? "Đóng góp thành công! Câu hỏi của bạn đã được thêm vào ngân hàng câu hỏi!" : "Contribution successful! Your question has been added to the question bank!"); 
-                // Reset form
                 document.getElementById('q-text-input').value = '';
                 document.getElementById('q-ans-0').value = '';
                 document.getElementById('q-ans-1').value = '';
@@ -1131,7 +1116,7 @@
                 document.getElementById('q-ans-3').value = '';
                 document.getElementById('q-correct-select').value = -1;
                 document.getElementById('q-cat-input').value = '';
-                allQuestions = []; // Đặt lại mảng này để buộc tải lại dữ liệu (bao gồm câu hỏi mới)
+                allQuestions = []; 
                 loadQuizQuestions(); 
             } catch (e) {
                 console.error("Error submitting question: ", e);
