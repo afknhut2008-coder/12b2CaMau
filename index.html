@@ -3,93 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lớp 12B2 - VIP Edition</title>
+    <title>12B2 - Chat, Quiz & Rank</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* CSS GIAO DIỆN (Đã sửa để Tab hiện rõ hơn) */
-        :root { --primary: #6a11cb; --secondary: #2575fc; --bg: #f0f2f5; --white: #ffffff; --text: #333; }
+        /* CSS CHUNG */
+        :root { --primary: #007bff; --secondary: #6c757d; --bg: #e9ecef; --white: #ffffff; --text: #343a40; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); padding-bottom: 70px; color: var(--text); }
-        
-        .navbar { background: linear-gradient(to right, var(--primary), var(--secondary)); padding: 15px; position: sticky; top: 0; z-index: 100; color: white; font-weight: bold; display: flex; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .navbar { background: var(--primary); padding: 15px; position: sticky; top: 0; z-index: 100; color: white; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .container { max-width: 600px; margin: 15px auto; padding: 0 10px; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         
-        /* TABS */
-        .tabs { display: flex; background: var(--white); padding: 5px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab-btn { flex: 1; border: none; background: none; padding: 10px; font-weight: bold; color: #777; cursor: pointer; border-radius: 8px; transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .section { display: none; animation: fadeUp 0.4s ease; }
-        .section.active { display: block; }
-
-        /* POST STYLES */
-        .create-post { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .cp-textarea { width: 100%; border: 1px solid #eee; border-radius: 10px; padding: 12px; outline: none; font-size: 1rem; resize: none; }
-        .cp-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .btn-upload { background: #e4e6eb; color: #333; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
-        .btn-post { background: var(--primary); color: white; border: none; padding: 8px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; opacity: 0.9; transition: 0.3s; }
-        .btn-post:disabled { background: #ccc; cursor: not-allowed; }
-        
-        .post { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* CHAT/MESSAGE STYLES */
+        .create-message textarea { width: 100%; border: 1px solid #eee; border-radius: 10px; padding: 12px; outline: none; font-size: 1rem; resize: none; }
+        .create-message .msg-actions { text-align: right; margin-top: 10px; }
+        .btn-send { background: var(--primary); color: white; border: none; padding: 8px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         .post-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem; color: #666; }
         .post-author { font-weight: bold; color: var(--primary); font-size: 1rem; }
-        .post-img { width: 100%; border-radius: 8px; margin-top: 10px; object-fit: cover; }
         
         /* QUIZ STYLES */
-        .quiz-card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .quiz-card { text-align: center; }
         .quiz-stat { font-size: 0.9rem; color: #777; margin-bottom: 15px; }
         .question-box { font-size: 1.2rem; font-weight: bold; margin: 20px 0; min-height: 60px; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
         .opt-btn { padding: 15px; border: 1px solid #eee; background: white; border-radius: 10px; font-size: 1rem; cursor: pointer; transition: 0.2s; text-align: left; }
-        .opt-btn:hover { background: #f9f9f9; }
         .opt-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
         .opt-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
         .next-btn { margin-top: 20px; background: var(--secondary); color: white; border: none; padding: 10px 30px; border-radius: 25px; font-size: 1rem; cursor: pointer; display: none; }
+        
+        /* RANKING */
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .rank-table th, .rank-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        .rank-table th { background: #f8f9fa; color: var(--text); }
+        .rank-table tr:nth-child(1) td { font-weight: bold; color: gold; font-size: 1.1em; }
+        .rank-table tr:nth-child(2) td { font-weight: bold; color: silver; }
+        .rank-table tr:nth-child(3) td { font-weight: bold; color: #cd7f32; }
+        
+        /* INPUT NAME */
+        #name-input-section input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; width: 100%; margin-bottom: 10px; }
+        #name-input-section button { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; }
 
-        /* Loading Bar */
-        #progress-container { width: 100%; background: #eee; height: 5px; margin-top: 10px; display: none; border-radius: 5px; overflow: hidden; }
-        #progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
-
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        /* QUESTION SUBMISSION FORM */
+        #create-question-section input, #create-question-section select {
+            padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%;
+        }
     </style>
 </head>
-<body onload="initQuiz()">
+<body onload="initApp()">
 
     <div class="navbar">
-        <div>12B2 Official</div>
+        <div>12B2 Cộng Đồng</div>
         <div onclick="location.reload()" style="cursor: pointer;"><i class="fas fa-sync-alt"></i></div>
     </div>
 
     <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('feed', this)">Bảng tin</button>
-            <button class="tab-btn" onclick="switchTab('quiz', this)">Đố vui</button>
-        </div>
-
-        <div id="feed" class="section active">
-            <div class="create-post">
-                <textarea id="post-text" class="cp-textarea" rows="3" placeholder="Chia sẻ khoảnh khắc hoặc thông báo..."></textarea>
-                
-                <div id="progress-container"><div id="progress-bar"></div></div>
-                <div id="upload-msg" style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;"></div>
-
-                <div class="cp-actions">
-                    <input type="file" id="file-input" accept="image/*,video/*" style="display: none;" onchange="checkFile()">
-                    <div class="btn-upload" onclick="document.getElementById('file-input').click()">
-                        <i class="fas fa-image" style="color: green;"></i> Ảnh/Video (Max 10MB)
-                    </div>
-                    <button id="btn-submit" class="btn-post" onclick="uploadAndPost()">Đăng</button>
-                </div>
-            </div>
-
-            <div id="post-list">
-                <div style="text-align: center; color: #888; margin-top: 20px;">Đang tải dữ liệu...</div>
+        
+        <h3 style="margin-top: 15px; color: #555;"><i class="fas fa-comments"></i> Góc Chat Ẩn Danh</h3>
+        <div class="create-message card">
+            <textarea id="message-text" rows="3" placeholder="Gửi tin nhắn ẩn danh cho cả lớp..."></textarea>
+            <div class="msg-actions">
+                <button id="btn-send-msg" class="btn-send" onclick="sendMessage()">Gửi tin nhắn</button>
             </div>
         </div>
+        <div id="message-list">
+            <div style="text-align: center; color: #888; margin-top: 20px;">Đang tải tin nhắn...</div>
+        </div>
 
-        <div id="quiz" class="section">
-            <div class="quiz-card">
-                <h2 style="color: var(--primary);">Thử thách trí tuệ 🧠</h2>
-                <div class="quiz-stat">Đã hoàn thành: <span id="done-count">0</span> câu</div>
+        <hr style="margin: 30px 0; border-top: 1px dashed #ccc;">
+
+        <h3 style="color: #555;"><i class="fas fa-brain"></i> Thử Thách Đố Vui</h3>
+        
+        <div id="name-input-section" class="card">
+            <h4>Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):</h4>
+            <input type="text" id="user-name-input" placeholder="Tên của bạn (ví dụ: Nam Kế Toán)">
+            <button onclick="saveUserName()">Bắt đầu Quiz</button>
+        </div>
+
+        <div id="quiz-section" style="display: none;">
+            <div class="quiz-card card">
+                <div class="quiz-stat">Chào mừng, <span id="current-user-display" style="color: var(--primary); font-weight: bold;"></span>!</div>
+                <div class="quiz-stat">Đã hoàn thành: <span id="done-count">0</span> câu | Điểm hiện tại: <span id="current-score">0</span></div>
                 
                 <div id="quiz-content">
                     <div id="q-category" style="display: inline-block; background: #eee; padding: 2px 10px; border-radius: 10px; font-size: 0.8rem; margin-bottom: 10px;">Chủ đề</div>
@@ -100,26 +93,65 @@
 
                 <div id="quiz-complete" style="display: none; padding: 30px;">
                     <i class="fas fa-trophy" style="font-size: 3rem; color: gold; margin-bottom: 15px;"></i>
-                    <h3>Bạn đã trả lời hết ngân hàng câu hỏi!</h3>
-                    <p>Hãy quay lại sau khi Admin cập nhật thêm nhé.</p>
-                    <button onclick="resetQuiz()" style="margin-top: 15px; padding: 10px 20px; border:1px solid #ddd; background:white; border-radius: 20px; cursor:pointer;">Làm lại từ đầu</button>
+                    <h3>Hoàn thành!</h3>
+                    <p>Tổng điểm của bạn: <strong id="final-score-display"></strong>. Đang gửi kết quả lên BXH...</p>
+                    <button onclick="resetQuiz()" style="margin-top: 15px; padding: 10px 20px; border:1px solid #ddd; background:white; border-radius: 20px; cursor:pointer;">Làm lại</button>
                 </div>
             </div>
         </div>
+
+        <hr style="margin: 30px 0; border-top: 1px dashed #ccc;">
+
+        <h3 style="color: #555;"><i class="fas fa-plus-circle"></i> Tạo Câu Hỏi Mới</h3>
+        <div id="create-question-section" class="card">
+            <h4 style="margin-bottom: 10px;">Đóng góp Quiz (sẽ được Admin duyệt):</h4>
+            <input type="text" id="q-text-input" placeholder="Nội dung Câu hỏi"><br>
+            <input type="text" id="q-ans-0" placeholder="Đáp án A"><br>
+            <input type="text" id="q-ans-1" placeholder="Đáp án B"><br>
+            <input type="text" id="q-ans-2" placeholder="Đáp án C"><br>
+            <input type="text" id="q-ans-3" placeholder="Đáp án D"><br>
+            <select id="q-correct-select">
+                <option value="-1">Chọn Đáp án Đúng</option>
+                <option value="0">Đáp án A là đúng</option>
+                <option value="1">Đáp án B là đúng</option>
+                <option value="2">Đáp án C là đúng</option>
+                <option value="3">Đáp án D là đúng</option>
+            </select>
+            <input type="text" id="q-cat-input" placeholder="Chủ đề (ví dụ: Toán, Lý)">
+            <button class="btn-send" style="width: 100%;" onclick="submitUserQuestion()">Gửi đóng góp</button>
+        </div>
+        
+        <hr style="margin: 30px 0; border-top: 1px dashed #ccc;">
+
+        <h3 style="color: #555;"><i class="fas fa-trophy"></i> Bảng Xếp Hạng (Top 10)</h3>
+        <div id="leaderboard-section" class="card">
+            <table class="rank-table">
+                <thead>
+                    <tr>
+                        <th>Hạng</th>
+                        <th>Tên</th>
+                        <th>Điểm</th>
+                        <th>Ngày chơi</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <tr><td colspan="4" style="text-align: center;">Đang tải bảng xếp hạng...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
     </div>
 
     <script type="module">
-        // --- KẾT NỐI FIREBASE (CẬP NHẬT THÊM STORAGE) ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY
+        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (VUI LÒNG DÙNG THÔNG TIN CỦA BẠN)
         const firebaseConfig = {
-            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // DÁN KEY CỦA BẠN VÀO
+            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c",
-            storageBucket: "b2-6431c.appspot.com", // ĐÃ SỬA THÀNH APPSPOT.COM CHUẨN
+            storageBucket: "b2-6431c.appspot.com",
             messagingSenderId: "164059778488",
             appId: "1:164059778488:web:9eca97e23ab644df48534d",
             measurementId: "G-19QWD4RCYC"
@@ -127,171 +159,132 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
-        const postsRef = collection(db, "posts_12b2");
-
-        // --- HÀM CHUYỂN TAB ---
-        window.switchTab = function(tabId, element) {
-            document.querySelectorAll('.section').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-            if(tabId === 'quiz') initQuiz();
-        }
-
-        // --- PHẦN 1: XỬ LÝ ĐĂNG BÀI & ẢNH LỚN (STORAGE) ---
         
-        window.checkFile = function() {
-            const file = document.getElementById('file-input').files[0];
-            if(file) {
-                document.getElementById('upload-msg').innerText = `Đã chọn: ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
+        // CÁC COLLECTIONS SỬ DỤNG
+        const chatRef = collection(db, "anonymous_messages");
+        const quizRef = collection(db, "quiz_questions");
+        const submittedQuestionsRef = collection(db, "user_submitted_questions"); 
+        const leaderboardRef = collection(db, "quiz_leaderboard"); 
+
+        // BIẾN TOÀN CỤC QUIZ
+        let availableQuestions = [];
+        let fullQuestionBank = [];
+        let currentScore = 0;
+        let questionsAttempted = 0;
+        let currentUserName = localStorage.getItem('userName12B2') || null;
+
+        // --- HÀM KHỞI TẠO CHUNG (CHẠY KHI TẢI TRANG) ---
+        window.initApp = function() {
+            loadLeaderboard();
+            if (currentUserName) {
+                document.getElementById('current-user-display').innerText = currentUserName;
+                document.getElementById('name-input-section').style.display = 'none';
+                document.getElementById('quiz-section').style.display = 'block';
+                initQuiz();
+            } else {
+                document.getElementById('name-input-section').style.display = 'block';
+                document.getElementById('quiz-section').style.display = 'none';
             }
         }
 
-        window.uploadAndPost = async function() {
-            const text = document.getElementById('post-text').value;
-            const file = document.getElementById('file-input').files[0];
-            const btn = document.getElementById('btn-submit');
-            
-            if (!text && !file) return alert("Chưa nhập nội dung!");
+        // --- HÀM XỬ LÝ TÊN NGƯỜI DÙNG ---
+        window.saveUserName = function() {
+            const nameInput = document.getElementById('user-name-input').value.trim();
+            if (nameInput.length < 2 || nameInput.length > 20) {
+                alert("Tên phải từ 2 đến 20 ký tự!");
+                return;
+            }
+            currentUserName = nameInput;
+            localStorage.setItem('userName12B2', currentUserName);
+            document.getElementById('current-user-display').innerText = currentUserName;
+            document.getElementById('name-input-section').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'block';
+            initQuiz();
+        }
+
+        // --- PHẦN 1: GỬI VÀ HIỂN THỊ TIN NHẮN ẨN DANH ---
+        window.sendMessage = async function() {
+            const messageText = document.getElementById('message-text').value;
+            const btn = document.getElementById('btn-send-msg');
+            if (!messageText.trim()) return;
 
             btn.disabled = true;
-            btn.innerText = "Đang xử lý...";
-
-            let downloadURL = null;
+            btn.innerText = "Đang gửi...";
 
             try {
-                // 1. Nếu có ảnh -> Upload lên Storage
-                if (file) {
-                    if (file.size > 10 * 1024 * 1024) throw new Error("File quá lớn (> 10MB)!");
-                    
-                    document.getElementById('progress-container').style.display = 'block';
-                    const storageRef = ref(storage, 'uploads/' + new Date().getTime() + '_' + file.name);
-                    const uploadTask = uploadBytesResumable(storageRef, file);
-
-                    // Xử lý Promise để đợi upload xong
-                    await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed', 
-                            (snapshot) => {
-                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                document.getElementById('progress-bar').style.width = progress + '%';
-                                document.getElementById('upload-msg').innerText = `Đang tải lên: ${Math.round(progress)}%`;
-                            }, 
-                            (error) => reject(error), 
-                            () => resolve()
-                        );
-                    });
-
-                    downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                }
-
-                // 2. Lưu bài viết vào Firestore (chứa link ảnh)
-                await addDoc(postsRef, {
-                    text: text,
-                    imageUrl: downloadURL, // Link ảnh lấy từ Storage
-                    fileType: file ? file.type : null,
+                await addDoc(chatRef, {
+                    text: messageText,
                     createdAt: serverTimestamp(),
-                    author: "Thành viên lớp"
+                    author: "Ẩn danh"
                 });
-
-                // Reset
-                document.getElementById('post-text').value = '';
-                document.getElementById('file-input').value = '';
-                document.getElementById('progress-container').style.display = 'none';
-                document.getElementById('upload-msg').innerText = '';
-                alert("Đăng thành công!");
-
+                document.getElementById('message-text').value = '';
             } catch (error) {
-                console.error(error);
-                alert("Lỗi: " + error.message);
+                console.error("Lỗi gửi tin nhắn:", error);
+                alert("Lỗi gửi tin nhắn: " + error.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Đăng";
+                btn.innerText = "Gửi tin nhắn";
             }
         }
-
-        // --- LOAD BÀI VIẾT REALTIME ---
-        onSnapshot(query(postsRef, orderBy("createdAt", "desc")), (snapshot) => {
-            const list = document.getElementById("post-list");
+        onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(10)), (snapshot) => {
+            const list = document.getElementById("message-list");
             list.innerHTML = "";
             snapshot.forEach(doc => {
-                const p = doc.data();
-                const date = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleString('vi-VN') : 'Vừa xong';
-                
-                let mediaHtml = "";
-                if(p.imageUrl) {
-                    if(p.fileType && p.fileType.includes('video')) {
-                        mediaHtml = `<video src="${p.imageUrl}" controls class="post-img"></video>`;
-                    } else {
-                        mediaHtml = `<img src="${p.imageUrl}" class="post-img" loading="lazy">`;
-                    }
-                }
-
-                list.innerHTML += `
-                    <div class="post">
-                        <div class="post-header">
-                            <span class="post-author"><i class="fas fa-user-circle"></i> ${p.author}</span>
-                            <span>${date}</span>
-                        </div>
-                        <div style="font-size: 1rem; line-height: 1.5;">${p.text}</div>
-                        ${mediaHtml}
-                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; display: flex; gap: 20px; color: #666;">
-                            <span><i class="far fa-heart"></i> Thích</span>
-                            <span><i class="far fa-comment"></i> Bình luận</span>
-                        </div>
-                    </div>`;
+                const msg = doc.data();
+                const date = msg.createdAt ? new Date(msg.createdAt.seconds * 1000).toLocaleString('vi-VN') : 'Vừa xong';
+                list.innerHTML += `<div class="post card"><div class="post-header"><span class="post-author"><i class="fas fa-user-secret"></i> ${msg.author}</span><span>${date}</span></div><div style="font-size: 1rem; line-height: 1.5;">${msg.text}</div></div>`;
             });
         });
 
-
-        // --- PHẦN 2: QUIZ THÔNG MINH (CẬP NHẬT & KHÔNG TRÙNG) ---
+        // --- PHẦN 2: QUIZ VỚI ĐIỂM SỐ & TÊN ---
         
-        // NGÂN HÀNG CÂU HỎI (Bạn có thể thêm bao nhiêu tùy thích vào đây)
-        const fullQuestionBank = [
-            { id: 1, cat: "Toán", q: "Tập xác định của hàm số y = log(x)?", a: ["(0; +∞)", "[0; +∞)", "R", "R\\{0}"], c: 0 },
-            { id: 2, cat: "Lý", q: "Trong chân không, vận tốc ánh sáng là?", a: ["3.10^8 m/s", "340 m/s", "3.10^5 km/h", "Vô cực"], c: 0 },
-            { id: 3, cat: "Hóa", q: "Dung dịch làm quỳ tím chuyển đỏ?", a: ["NaOH", "HCl", "NaCl", "C2H5OH"], c: 1 },
-            { id: 4, cat: "Sử", q: "Việt Nam gia nhập ASEAN năm nào?", a: ["1990", "1995", "2000", "1986"], c: 1 },
-            { id: 5, cat: "Địa", q: "Tỉnh nào có diện tích lớn nhất VN?", a: ["Thanh Hóa", "Nghệ An", "Gia Lai", "Lâm Đồng"], c: 1 },
-            { id: 6, cat: "Bóng Đá", q: "CLB nào vô địch C1 năm 2023?", a: ["Real Madrid", "Man City", "Inter Milan", "Liverpool"], c: 1 },
-            { id: 7, cat: "Tin Học", q: "Phím tắt Copy là gì?", a: ["Ctrl+V", "Ctrl+C", "Ctrl+X", "Alt+F4"], c: 1 },
-            { id: 8, cat: "Văn", q: "Tác giả của 'Sóng' là?", a: ["Xuân Quỳnh", "Hàn Mặc Tử", "Huy Cận", "Tố Hữu"], c: 0 },
-            // THÊM CÂU MỚI Ở DƯỚI ĐÂY, NHỚ ĐỔI SỐ ID KHÁC NHAU NHÉ
-            { id: 9, cat: "Đời sống", q: "Lớp 12B2 có bao nhiêu thành viên?", a: ["38", "39", "40", "45"], c: 0 }, 
-        ];
+        window.initQuiz = async function() {
+            currentScore = 0;
+            questionsAttempted = 0;
+            document.getElementById('current-score').innerText = currentScore;
+            document.getElementById('done-count').innerText = questionsAttempted;
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('quiz-complete').style.display = 'none';
+            document.getElementById('q-text').innerText = "Đang tải câu hỏi mới..."; 
+            
+            // Tải câu hỏi từ Firestore HOẶC dùng câu hỏi tạo sẵn
+            if (fullQuestionBank.length === 0) {
+                try {
+                    const querySnapshot = await getDocs(quizRef);
+                    querySnapshot.forEach((doc) => { fullQuestionBank.push({ id: doc.id, ...doc.data() }); });
+                    if (fullQuestionBank.length < 10) { 
+                        // Nếu Firestore ít/không có, thêm câu hỏi mẫu vào
+                        fullQuestionBank.push(...generate1000Questions()); 
+                    }
+                } catch (e) {
+                    fullQuestionBank = generate1000Questions(); // Fallback nếu lỗi kết nối
+                }
+            }
 
-        // Biến toàn cục
-        let availableQuestions = [];
-
-        window.initQuiz = function() {
-            // 1. Lấy danh sách ID đã làm từ bộ nhớ máy
-            const doneIds = JSON.parse(localStorage.getItem('quiz_done_ids')) || [];
-            document.getElementById('done-count').innerText = doneIds.length;
-
-            // 2. Lọc ra những câu CHƯA làm
+            // Lấy ID các câu đã làm thành công
+            const doneIds = JSON.parse(localStorage.getItem('quiz_done_ids') || '[]').map(item => item.id) || [];
             availableQuestions = fullQuestionBank.filter(q => !doneIds.includes(q.id));
 
             if(availableQuestions.length === 0) {
-                document.getElementById('quiz-content').style.display = 'none';
-                document.getElementById('quiz-complete').style.display = 'block';
-            } else {
-                document.getElementById('quiz-content').style.display = 'block';
-                document.getElementById('quiz-complete').style.display = 'none';
-                loadNextQuestion();
-            }
+                // Nếu hết câu hỏi, reset trạng thái đã làm (cho phép chơi lại toàn bộ)
+                localStorage.removeItem('quiz_done_ids');
+                availableQuestions = fullQuestionBank;
+            } 
+            loadNextQuestion();
         }
 
         window.loadNextQuestion = function() {
-            if(availableQuestions.length === 0) { initQuiz(); return; }
+            if(availableQuestions.length === 0) { 
+                endQuizAndSubmitScore();
+                return;
+            }
 
             document.getElementById('next-btn').style.display = 'none';
             
-            // Random câu hỏi
             const randomIndex = Math.floor(Math.random() * availableQuestions.length);
             const qData = availableQuestions[randomIndex];
             
-            // Hiển thị
-            document.getElementById('q-category').innerText = qData.cat;
+            document.getElementById('q-category').innerText = qData.cat || 'Chung';
             document.getElementById('q-text').innerText = qData.q;
             
             const optDiv = document.getElementById('options');
@@ -301,39 +294,158 @@
                 const btn = document.createElement('button');
                 btn.className = 'opt-btn';
                 btn.innerText = ans;
-                btn.onclick = () => checkAnswer(btn, qData, idx);
+                btn.onclick = () => checkAnswer(btn, qData, idx); 
                 optDiv.appendChild(btn);
             });
         }
 
         window.checkAnswer = function(btn, qData, selectedIdx) {
             const allBtns = document.querySelectorAll('.opt-btn');
-            allBtns.forEach(b => b.disabled = true); // Khóa nút
+            allBtns.forEach(b => b.disabled = true); 
+
+            questionsAttempted++;
 
             if(selectedIdx === qData.c) {
                 btn.classList.add('correct');
-                // Lưu ID vào bộ nhớ để không hỏi lại
-                const doneIds = JSON.parse(localStorage.getItem('quiz_done_ids')) || [];
-                if(!doneIds.includes(qData.id)) {
-                    doneIds.push(qData.id);
+                currentScore += 10; // CỘNG ĐIỂM
+                
+                // Lưu ID câu hỏi đã làm thành công
+                const doneIds = JSON.JSON.parse(localStorage.getItem('quiz_done_ids') || '[]') || [];
+                if(!doneIds.some(item => item.id === qData.id)) {
+                    doneIds.push({ id: qData.id, date: new Date().getTime() });
                     localStorage.setItem('quiz_done_ids', JSON.stringify(doneIds));
                 }
+
             } else {
                 btn.classList.add('wrong');
-                allBtns[qData.c].classList.add('correct'); // Hiện đáp án đúng
+                allBtns[qData.c].classList.add('correct'); 
             }
             
+            document.getElementById('current-score').innerText = currentScore;
+            document.getElementById('done-count').innerText = questionsAttempted;
             document.getElementById('next-btn').style.display = 'inline-block';
             
-            // Xóa câu vừa làm khỏi danh sách tạm thời để next ngay câu khác
             availableQuestions = availableQuestions.filter(q => q.id !== qData.id);
         }
 
-        window.resetQuiz = function() {
-            if(confirm("Bạn có muốn xóa lịch sử để làm lại từ đầu?")) {
-                localStorage.removeItem('quiz_done_ids');
-                initQuiz();
+        function endQuizAndSubmitScore() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('quiz-complete').style.display = 'block';
+            document.getElementById('final-score-display').innerText = currentScore;
+            
+            saveScoreToLeaderboard(currentScore, questionsAttempted);
+        }
+
+        // --- HÀM LƯU VÀ HIỂN THỊ BẢNG XẾP HẠNG ---
+        async function saveScoreToLeaderboard(score, attempts) {
+            if (!currentUserName || score === 0) return; 
+
+            try {
+                await addDoc(leaderboardRef, {
+                    name: currentUserName,
+                    score: score,
+                    attempts: attempts,
+                    createdAt: serverTimestamp()
+                });
+                loadLeaderboard(); // Tải lại BXH ngay lập tức
+            } catch (error) {
+                console.error("Lỗi lưu BXH:", error);
             }
+        }
+
+        window.loadLeaderboard = async function() {
+            const q = query(leaderboardRef, orderBy("score", "desc"), limit(10)); // Lấy 10 người cao điểm nhất
+            const snapshot = await getDocs(q);
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            
+            let rank = 1;
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('vi-VN') : 'N/A';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${rank++}</td>
+                        <td>${data.name}</td>
+                        <td>${data.score}</td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            });
+
+            if (snapshot.empty) {
+                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Chưa có ai tham gia!</td></tr>`;
+            }
+        }
+
+        window.resetQuiz = function() {
+            questionsAttempted = 0;
+            currentScore = 0;
+            localStorage.removeItem('quiz_done_ids'); 
+            initQuiz();
+        }
+
+        // --- PHẦN 3: TẠO CÂU HỎI MỚI ---
+        window.submitUserQuestion = async function() {
+            const qText = document.getElementById('q-text-input').value.trim();
+            const ans0 = document.getElementById('q-ans-0').value.trim();
+            const ans1 = document.getElementById('q-ans-1').value.trim();
+            const ans2 = document.getElementById('q-ans-2').value.trim();
+            const ans3 = document.getElementById('q-ans-3').value.trim();
+            const correctIdx = parseInt(document.getElementById('q-correct-select').value);
+            const category = document.getElementById('q-cat-input').value.trim() || 'Cộng đồng';
+
+            if (!qText || !ans0 || !ans1 || !ans2 || !ans3 || correctIdx === -1) {
+                return alert("Vui lòng điền đầy đủ nội dung câu hỏi, 4 đáp án và chọn đáp án đúng.");
+            }
+
+            try {
+                await addDoc(submittedQuestionsRef, {
+                    q: qText,
+                    a: [ans0, ans1, ans2, ans3],
+                    c: correctIdx,
+                    cat: category,
+                    submittedBy: currentUserName || 'Ẩn danh',
+                    createdAt: serverTimestamp(),
+                    status: 'Chưa duyệt' 
+                });
+
+                alert("Gửi câu hỏi thành công! Cảm ơn bạn đã đóng góp.");
+                // Reset form
+                document.getElementById('q-text-input').value = '';
+                document.getElementById('q-ans-0').value = '';
+                document.getElementById('q-ans-1').value = '';
+                document.getElementById('q-ans-2').value = '';
+                document.getElementById('q-ans-3').value = '';
+                document.getElementById('q-correct-select').value = '-1';
+                document.getElementById('q-cat-input').value = '';
+
+            } catch (error) {
+                console.error("Lỗi gửi câu hỏi:", error);
+                alert("Lỗi gửi câu hỏi: " + error.message);
+            }
+        }
+
+        // --- HÀM TẠO 1000 CÂU HỎI MẪU (Dùng làm fallback) ---
+        function generate1000Questions() {
+            const questions = [];
+            const subjects = ["Toán", "Lý", "Hóa", "Văn", "Sử"];
+            for (let i = 0; i < 1000; i++) {
+                const subject = subjects[i % subjects.length];
+                const correctIdx = Math.floor(Math.random() * 4);
+                const a = ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"];
+                a[correctIdx] = "ĐÁP ÁN ĐÚNG"; 
+
+                questions.push({
+                    id: `gen_${i}`, 
+                    cat: subject,
+                    q: `Câu hỏi mẫu số ${i + 1} về môn ${subject}. Đây là câu hỏi tạo tự động.`,
+                    a: a,
+                    c: correctIdx
+                });
+            }
+            return questions;
         }
     </script>
 </body>
