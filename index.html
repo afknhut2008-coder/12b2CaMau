@@ -453,7 +453,7 @@
             <h3><i class="fas fa-brain"></i> <span data-i18n="quiz_title">Thử Thách Đố Vui (10 Câu)</span></h3>
             
             <div id="name-input-section" class="card">
-                <h4 data-i18n="name_prompt">Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):</h4>
+                <h4 data-i18n="name_prompt">Bắt đầu Quiz! Vui lòng nhập tên:</h4>
                 <input type="text" id="user-name-input" data-i18n-placeholder="name_placeholder" placeholder="Tên của bạn (ví dụ: Nam Kế Toán)">
                 <button class="btn-send" style="width: 100%;" onclick="saveUserName()" data-i18n="start_quiz">Bắt đầu Quiz</button>
             </div>
@@ -485,7 +485,7 @@
                     <div id="quiz-complete" style="display: none; padding: 30px; text-align: center;">
                         <i class="fas fa-trophy" style="font-size: 3.5rem; color: gold; margin-bottom: 20px;"></i>
                         <h3 style="justify-content: center;"><span data-i18n="quiz_done_h3">Hoàn thành!</span></h3>
-                        <p style="margin-bottom: 20px;"><span data-i18n="final_score_p">Tổng điểm của bạn</span>: <strong id="final-score-display"></strong>. <span data-i18n="sending_rank">Đang gửi kết quả lên BXH...</span></p>
+                        <p style="margin-bottom: 20px;"><span data-i18n="final_score_p">Tổng điểm của bạn</span>: <strong id="final-score-display"></strong>.</p>
                         <button onclick="resetQuiz()" data-i18n="play_again" class="btn-send" style="width: auto; background: var(--button-gradient);">Làm lại</button>
                     </div>
                 </div>
@@ -512,25 +512,6 @@
                 <button class="btn-send" style="width: 100%; margin-top: 10px;" onclick="submitUserQuestion()" data-i18n="submit_q">Gửi đóng góp</button>
             </div>
             
-            <hr>
-
-            <h3><i class="fas fa-trophy"></i> <span data-i18n="leaderboard_title">Bảng Xếp Hạng (Top 10)</span></h3>
-            <div id="leaderboard-section" class="card">
-                <table class="rank-table" style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background: #f1f1f1;">
-                            <th data-i18n="rank" style="padding: 10px; text-align: left;">Hạng</th>
-                            <th data-i18n="name" style="padding: 10px; text-align: left;">Tên</th>
-                            <th data-i18n="score" style="padding: 10px; text-align: left;">Điểm</th>
-                            <th data-i18n="date" style="padding: 10px; text-align: left;">Ngày chơi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboard-body">
-                        <tr><td colspan="4" style="text-align: center; padding: 15px;" data-i18n="loading_rank">Đang tải bảng xếp hạng...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
         </div> 
 
         <div id="games" class="tab-content" style="display: none;">
@@ -585,7 +566,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, setDoc, getDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
@@ -602,10 +583,9 @@
                 'ai_response_vi_default': 'Câu hỏi của bạn rất thú vị! Hãy thử nhìn vấn đề từ một góc độ khác, có lẽ câu trả lời nằm ở phần kiến thức nền tảng mà bạn đã học.', 
                 'ai_response_vi_code': 'Được, đây là một đoạn code JavaScript đơn giản để tính tổng: <pre>function calculateSum(a, b) {\n return a + b;\n}\nconsole.log(calculateSum(5, 10));</pre>', 
                 
-                'quiz_title': 'Thử Thách Đố Vui', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 
-                'welcome': 'Chào mừng', 'completed': 'Đã xong', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'sending_rank': 'Đang gửi kết quả lên BXH...', 'play_again': 'Làm lại',
+                'quiz_title': 'Thử Thách Đố Vui (10 Câu)', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên:', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 
+                'welcome': 'Chào mừng', 'completed': 'Đã xong', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'play_again': 'Làm lại',
                 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 
-                'leaderboard_title': 'Bảng Xếp Hạng (Top 10)', 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi', 'loading_rank': 'Đang tải bảng xếp hạng...', 
                 
                 'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 
                 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng! 🥳', 'tictactoe_win_o': 'O thắng! 🥳', 'tictactoe_draw': 'Hòa! 🤝', 'tictactoe_reset': 'Chơi lại', 
@@ -631,10 +611,9 @@
                 'ai_response_en_default': 'Your question is very interesting! Try looking at the problem from a different angle; perhaps the answer lies in the fundamental knowledge you have learned.', 
                 'ai_response_en_code': 'Sure, here is a simple JavaScript code snippet to calculate the sum: <pre>function calculateSum(a, b) {\n return a + b;\n}\nconsole.log(calculateSum(5, 10));</pre>', 
                 
-                'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 
-                'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again',
+                'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name:', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 
+                'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'play_again': 'Play Again',
                 'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 
-                'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 
                 
                 'game_h3': 'Childhood Games Area', 
                 'tictactoe_title': 'Tic-Tac-Toe Game', 'tictactoe_status_x': 'X\'s turn', 'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X wins! 🥳', 'tictactoe_win_o': 'O wins! 🥳', 'tictactoe_draw': 'Draw! 🤝', 'tictactoe_reset': 'Play Again', 
@@ -675,7 +654,6 @@
                     el.placeholder = translations[lang][key];
                 }
             });
-            loadLeaderboard();
         }
 
         // --- LOGIC TAB CON ---
@@ -708,7 +686,7 @@
         // CÁC COLLECTIONS SỬ DỤNG
         const chatRef = collection(db, "anonymous_messages");
         const quizRef = collection(db, "quiz_questions");
-        const leaderboardRef = collection(db, "leaderboard");
+        // const leaderboardRef = collection(db, "leaderboard"); // ĐÃ XÓA THEO YÊU CẦU
 
         // --- LOGIC CHAT ẨN DANH ---
         const MESSAGE_LIMIT = 5;
@@ -912,8 +890,11 @@
             loadQuizQuestions(); 
         }
         
-        // TẢI CÂU HỎI TỪ FIRESTORE (ĐÃ SỬA LỖI BUỘC TẢI LẠI TOÀN BỘ VÀ GIỚI HẠN)
+        // TẢI CÂU HỎI TỪ FIRESTORE (ĐÃ TỐI ƯU HÓA LOGIC KẾT THÚC)
         async function loadQuizQuestions() {
+            // Hiển thị skeleton loading
+            document.getElementById('q-text').innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 20px; width: 80%; margin-bottom: 10px; border-radius: 4px;"></div>';
+
             try {
                 // 1. Buộc TẢI LẠI TOÀN BỘ dữ liệu từ Firestore
                 const snapshot = await getDocs(quizRef);
@@ -939,7 +920,6 @@
                 const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
                 
                 // 3. Giới hạn số câu hỏi có thể làm (MAX_QUIZ_QUESTIONS)
-                // Lưu ý: Nếu DB có ít hơn 10 câu, availableQuestions sẽ có số câu ít hơn.
                 availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
                 
                 loadNextQuestion();
@@ -954,9 +934,10 @@
             document.getElementById('next-btn').style.display = 'none';
             
             const optionsDiv = document.getElementById('options');
+            // Hiển thị skeleton cho options
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
             
-            // Kiểm tra xem đã hết 10 câu chưa (hoặc đã hết câu trong DB)
+            // ⚠️ FIX TRỌNG TÂM: Luôn kiểm tra điều kiện kết thúc ngay LÚC BẮT ĐẦU tải câu hỏi
             if (questionsAttempted >= MAX_QUIZ_QUESTIONS || availableQuestions.length === 0) {
                 handleQuizComplete();
                 return;
@@ -1009,33 +990,22 @@
                 document.getElementById('current-score').textContent = currentScore;
             }
 
-            // Nếu chưa hết 10 câu VÀ còn câu hỏi, hiển thị nút tiếp theo. 
-            // Nếu hết câu hỏi (dù chưa đủ 10 câu), hàm loadNextQuestion sẽ tự gọi handleQuizComplete.
-            if (questionsAttempted < MAX_QUIZ_QUESTIONS) {
+            // Nếu chưa hết 10 câu VÀ còn câu hỏi: hiển thị nút tiếp theo
+            if (questionsAttempted < MAX_QUIZ_QUESTIONS && availableQuestions.length > 0) {
                  document.getElementById('next-btn').style.display = 'block';
             } else {
-                 // Đợi một chút rồi kết thúc game (đủ 10 câu)
+                 // Đợi một chút rồi kết thúc game (đủ 10 câu hoặc hết câu hỏi)
                  setTimeout(handleQuizComplete, 1500);
             }
         }
 
+        // HÀM KẾT THÚC QUIZ (ĐÃ XÓA PHẦN GỬI ĐIỂM LÊN LEADERBOARD)
         async function handleQuizComplete() {
             document.getElementById('quiz-content').style.display = 'none';
             document.getElementById('quiz-complete').style.display = 'block';
             document.getElementById('final-score-display').textContent = currentScore;
-
-            // Gửi điểm lên Leaderboard
-            try {
-                await addDoc(leaderboardRef, {
-                    name: currentUserName,
-                    score: currentScore,
-                    timestamp: serverTimestamp(),
-                    questions_count: questionsAttempted
-                });
-                loadLeaderboard();
-            } catch (e) {
-                console.error("Error submitting score: ", e);
-            }
+            
+            // Không gửi điểm lên Leaderboard
         }
 
         // GỬI CÂU HỎI ĐÓNG GÓP CỦA NGƯỜI DÙNG
@@ -1078,54 +1048,6 @@
             } catch (e) {
                 console.error("Error submitting question: ", e);
                 alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi." : "An error occurred while submitting the question.");
-            }
-        }
-
-        // TẢI BẢNG XẾP HẠNG (ĐÃ SỬA LỖI XỬ LÝ THỜI GIAN VÀ HIỂN THỊ LỖI)
-        async function loadLeaderboard() {
-            const leaderboardBody = document.getElementById('leaderboard-body');
-            leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${translations[currentLang]['loading_rank']}</td></tr>`;
-            try {
-                // Sắp xếp: Điểm cao nhất, sau đó là thời gian sớm nhất
-                const q = query(leaderboardRef, orderBy("score", "desc"), orderBy("timestamp"), limit(10));
-                const snapshot = await getDocs(q);
-                
-                if (snapshot.empty) {
-                    leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Chưa có ai tham gia.' : 'No one has played yet.'}</td></tr>`;
-                    return;
-                }
-                
-                leaderboardBody.innerHTML = '';
-                snapshot.docs.forEach((doc, index) => {
-                    const data = doc.data();
-                    
-                    let date = translations[currentLang]['date_not_found'];
-                    
-                    // Xử lý an toàn timestamp
-                    if (data.timestamp && typeof data.timestamp.toDate === 'function') {
-                        try {
-                            // Chuyển đổi Firestore Timestamp sang đối tượng Date và định dạng chuỗi
-                            date = new Date(data.timestamp.toDate()).toLocaleDateString(currentLang);
-                        } catch (e) {
-                            console.warn("Error parsing timestamp:", e);
-                        }
-                    }
-                    
-                    const row = `
-                        <tr>
-                            <td style="padding: 10px; font-weight: bold;">${index + 1}</td>
-                            <td style="padding: 10px;">${data.name}</td>
-                            <td style="padding: 10px; font-weight: bold; color: var(--primary-color);">${data.score}</td>
-                            <td style="padding: 10px; font-size: 0.9rem; color: var(--light-text-color);">${date}</td>
-                        </tr>
-                    `;
-                    leaderboardBody.innerHTML += row;
-                });
-
-            } catch (e) {
-                console.error("Error loading leaderboard: ", e);
-                // Hiển thị lỗi rõ ràng hơn để người dùng kiểm tra Security Rules
-                leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px; color: #dc3545;">${currentLang === 'vi' ? 'LỖI: Không thể tải BXH. Vui lòng kiểm tra Firebase Security Rules cho collection "leaderboard".' : 'ERROR: Cannot load Leaderboard. Check Firebase Security Rules for "leaderboard" collection.'}</td></tr>`;
             }
         }
 
