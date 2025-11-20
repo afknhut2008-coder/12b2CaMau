@@ -335,6 +335,7 @@
         
         /* MEMORY MATCH STYLES (GHÉP CẶP) */
         #memory-game-board {
+            display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             max-width: 350px;
@@ -566,15 +567,16 @@
         </div> 
     </div>
 
-    <script src="https://unpkg.com/@google/genai@0.15.0/dist/client.umd.js"></script> 
-    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
     
     <script type="module">
+        // 🚨 KHAI BÁO IMPORT GoogleGenAI ĐỂ TRÁNH LỖI ReferenceError
+        import { GoogleGenAI } from "https://unpkg.com/@google/genai@0.15.0/dist/client.esm.js";
+        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        // **Đã XÓA dòng import GoogleGenAI từ esm.run để FIX lỗi CORS/Origin**
+        
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
@@ -666,7 +668,7 @@
         
         // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (BẮT BUỘC)
         const firebaseConfig = {
-            // DÒNG 1: KHÓA FIREBASE API KEY (ĐÃ DÁN KHÓA CỦA BẠN)
+            // DÒNG 1: KHÓA FIREBASE API KEY (ĐÃ CHÍNH XÁC)
             apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c", 
@@ -679,7 +681,7 @@
         const db = getFirestore(app);
 
         // --- CẤU HÌNH GEMINI ---
-        // DÒNG 2: KHÓA GEMINI API KEY (ĐÃ DÁN KHÓA MỚI BẠN CUNG CẤP)
+        // 🚨🚨 KHÓA GEMINI API KEY ĐÃ CUNG CẤP (DÁN VÀO ĐÂY) 🚨🚨
         const GEMINI_API_KEY = "AIzaSyAbw30FFeydQSF4NX5VwcmLWxZdlsHgmLk"; 
         
         let ai = null;
@@ -688,7 +690,7 @@
 
         if (GEMINI_API_KEY && GEMINI_API_KEY !== "DÁN_KHÓA_GEMINI_THỰC_TẾ_CỦA_BẠN_VÀO_ĐÂY") {
             try {
-                // **FIX LỖI CORS/ORIGIN:** GoogleGenAI là biến toàn cục được cung cấp bởi thẻ <script> CDN mới thêm vào.
+                // SỬ DỤNG GoogleGenAI TỪ IMPORT MODULE TRÊN CÙNG
                 ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
                 console.log("Gemini SDK initialized.");
                 
