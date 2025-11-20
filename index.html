@@ -631,6 +631,7 @@
             localStorage.setItem('appLang', currentLang);
             applyLanguage(currentLang);
             updateGameStatusDisplay();
+            startNewGuessingGame();
             startMemoryGame(true);
             loadInitialMessages(); 
         }
@@ -665,10 +666,10 @@
             }
         }
         
-        // ⚠️ CẤU HÌNH FIREBASE
-        // Dòng 1: Khóa Firebase API KEY (PHẢI THAY THẾ BẰNG KEY CỦA BẠN!)
+        // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (BẮT BUỘC)
         const firebaseConfig = {
-            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // 👈 THAY THẾ KEY NÀY!
+            // DÒNG 1: KHÓA FIREBASE API KEY (ĐÃ CHÍNH XÁC)
+            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c", 
             storageBucket: "b2-6431c.appspot.com",
@@ -676,36 +677,22 @@
             appId: "1:164059778488:web:9eca97e23ab644df48534d",
             measurementId: "G-19QWD4RCYC"
         };
-        
-        let db = null;
-        let chatRef = null;
-        let quizRef = null;
-        
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            chatRef = collection(db, "anonymous_messages");
-            quizRef = collection(db, "quiz_questions");
-            console.log("Firebase initialized successfully.");
-        } catch (e) {
-            console.error("Lỗi FATAL: Firebase KHÔNG THỂ KHỞI TẠO.", e);
-            document.getElementById('message-list').innerHTML = '<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể kết nối Firebase! (Check Console Log).</div>';
-        }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-
-        // --- CẤU HÌNH GEMINI (ĐÃ CẬP NHẬT KEY MỚI) ---
-        // 🔑 KHÓA API GEMINI MỚI ĐÃ ĐƯỢC CẬP NHẬT 🔑
-        const GEMINI_API_KEY = "AIzaSyDcXObLlpznf1eeTOyMYkuY8kJWOJ6N_EQ"; 
+        // --- CẤU HÌNH GEMINI ---
+        // 🚨🚨 KHÓA GEMINI API KEY ĐÃ CUNG CẤP (DÁN VÀO ĐÂY) 🚨🚨
+        const GEMINI_API_KEY = "AIzaSyAbw30FFeydQSF4NX5VwcmLWxZdlsHgmLk"; 
         
         let ai = null;
         let chatSession = null;
         const GEMINI_MODEL = "gemini-2.5-flash"; 
-        const aiChatOutput = document.getElementById('ai-chat-output');
 
-        if (GEMINI_API_KEY) {
+        if (GEMINI_API_KEY && GEMINI_API_KEY !== "DÁN_KHÓA_GEMINI_THỰC_TẾ_CỦA_BẠN_VÀO_ĐÂY") {
             try {
                 // SỬ DỤNG GoogleGenAI TỪ IMPORT MODULE TRÊN CÙNG
                 ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+                console.log("Gemini SDK initialized.");
                 
                 // Cấu hình Chat Session (Quan trọng cho đối thoại)
                 chatSession = ai.chats.create({
@@ -715,21 +702,22 @@
                     },
                 });
                 console.log("Gemini Chat Session created.");
-                aiChatOutput.innerHTML = '<div style="color: green; padding: 10px; text-align: center;">Trợ lý AI Gemini sẵn sàng phục vụ!</div>';
-
 
             } catch (error) {
                 console.error("Gemini SDK initialization failed (Check Key or SDK import):", error);
                 // Cảnh báo người dùng nếu có lỗi khi khởi tạo AI
-                 aiChatOutput.innerHTML = '<div style="color: red; padding: 10px;">Lỗi khởi tạo AI. Vui lòng kiểm tra lại Gemini API Key!</div>';
+                 document.getElementById('ai-chat-output').innerHTML = '<div style="color: red; padding: 10px;">Lỗi khởi tạo AI. Vui lòng kiểm tra lại Gemini API Key!</div>';
             }
         } else {
-            aiChatOutput.innerHTML = '<div style="color: orange; padding: 10px;">Tính năng AI bị vô hiệu hóa. Vui lòng dán Gemini API Key hợp lệ vào code.</div>';
             console.warn("GEMINI_API_KEY not set or incorrect. AI Chat feature will be disabled.");
         }
 
+        // CÁC COLLECTIONS SỬ DỤNG
+        const chatRef = collection(db, "anonymous_messages");
+        const quizRef = collection(db, "quiz_questions");
 
         // --- HÀM GỌI GEMINI API ---
+        const aiChatOutput = document.getElementById('ai-chat-output');
         
         window.sendAiMessage = async function() {
             if (!chatSession) {
@@ -802,11 +790,6 @@
         let likedMessages = JSON.parse(localStorage.getItem('likedMessages')) || {};
 
         window.sendMessage = async function() {
-            if (!chatRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống chat chưa được khởi tạo (Lỗi Firebase)." : "Error: Chat system not initialized (Firebase error).");
-                 return;
-            }
-            
             const messageText = document.getElementById('message-text').value.trim();
             if (messageText.length === 0) {
                 alert(currentLang === 'vi' ? "Vui lòng nhập nội dung tin nhắn!" : "Please enter message content!");
@@ -826,45 +809,36 @@
                 loadInitialMessages();
             } catch (e) {
                 console.error("Error adding document: ", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi tin nhắn. Kiểm tra Rules Firebase!" : "An error occurred while sending the message. Check Firebase Rules!");
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi tin nhắn." : "An error occurred while sending the message.");
             } finally {
                 sendBtn.disabled = false;
             }
         }
 
         window.loadInitialMessages = function() {
-            if (!chatRef) return;
-
             const q = query(chatRef, orderBy("timestamp", "desc"), limit(MESSAGE_LIMIT));
-            try {
-                onSnapshot(q, (snapshot) => {
-                    document.getElementById('message-list').innerHTML = '';
-                    let tempLastVisible = null;
-                    snapshot.docs.forEach((doc, index) => {
-                        const data = doc.data();
-                        renderMessage(doc.id, data);
-                        if (index === snapshot.docs.length - 1) {
-                            tempLastVisible = doc;
-                        }
-                    });
-                    if (snapshot.docs.length >= MESSAGE_LIMIT) {
-                        lastVisible = tempLastVisible;
-                        document.getElementById('load-more-btn').style.display = 'block';
-                    } else {
-                        lastVisible = null;
-                        document.getElementById('load-more-btn').style.display = 'none';
+            onSnapshot(q, (snapshot) => {
+                document.getElementById('message-list').innerHTML = '';
+                let tempLastVisible = null;
+                snapshot.docs.forEach((doc, index) => {
+                    const data = doc.data();
+                    renderMessage(doc.id, data);
+                    if (index === snapshot.docs.length - 1) {
+                        tempLastVisible = doc;
                     }
-                }, (error) => {
-                     console.error("Lỗi Real-time Snapshot (Firebase Rules?): ", error);
-                     document.getElementById('message-list').innerHTML = '<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể tải tin nhắn. (Kiểm tra Firebase Rules).</div>';
                 });
-            } catch (e) {
-                 console.error("Lỗi tạo query chat: ", e);
-            }
+                if (snapshot.docs.length >= MESSAGE_LIMIT) {
+                    lastVisible = tempLastVisible;
+                    document.getElementById('load-more-btn').style.display = 'block';
+                } else {
+                    lastVisible = null;
+                    document.getElementById('load-more-btn').style.display = 'none';
+                }
+            });
         }
 
         window.loadMoreMessages = async function() {
-            if (!lastVisible || !chatRef) {
+            if (!lastVisible) {
                 document.getElementById('load-more-btn').style.display = 'none';
                 return;
             }
@@ -924,8 +898,6 @@
         }
 
         window.toggleLike = async function(id, currentLikes) {
-            if (!db) return; 
-
             const isLiked = localStorage.getItem(`liked_${id}`) === 'true';
             const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
             const docRef = doc(db, "anonymous_messages", id);
@@ -954,7 +926,7 @@
         let availableQuestions = []; 
 
         function updateQuizStats() {
-            document.getElementById('current-user-display').textContent = currentUserName || translations[currentLang]['anonymous'];
+            document.getElementById('current-user-display').textContent = currentUserName;
             document.getElementById('current-score').textContent = currentScore;
             document.getElementById('done-count').textContent = `${questionsAttempted}/${MAX_QUIZ_QUESTIONS}`; 
         }
@@ -1011,11 +983,6 @@
         }
         
         async function loadQuizQuestions() {
-            if (!quizRef) {
-                 document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Lỗi tải dữ liệu Quiz: Chưa kết nối Firebase.' : 'Quiz data loading error: Firebase not connected.'}</p>`;
-                 return;
-            }
-            
             document.getElementById('q-text').innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 20px; width: 80%; margin-bottom: 10px; border-radius: 4px;"></div>';
 
             try {
@@ -1120,11 +1087,6 @@
         }
 
         window.submitUserQuestion = async function() {
-            if (!quizRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống quiz chưa được khởi tạo (Lỗi Firebase)." : "Error: Quiz system not initialized (Firebase error).");
-                 return;
-            }
-
             const qText = document.getElementById('q-text-input').value.trim();
             const ans0 = document.getElementById('q-ans-0').value.trim();
             const ans1 = document.getElementById('q-ans-1').value.trim();
@@ -1161,7 +1123,7 @@
                 loadQuizQuestions(); 
             } catch (e) {
                 console.error("Error submitting question: ", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi. Kiểm tra Rules Firebase!" : "An error occurred while submitting the question. Check Firebase Rules!");
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi." : "An error occurred while submitting the question.");
             }
         }
 
@@ -1410,7 +1372,6 @@
             [firstCard, secondCard] = [null, null];
         }
         
-        // ĐÃ SỬA LỖI HIỂN THỊ TRẠNG THÁI KHI HOÀN THÀNH
         function updateMemoryStatus(isStart) {
             const statusElement = document.getElementById('memory-status');
             if (isStart || memoryCards.length === 0) {
@@ -1425,27 +1386,17 @@
             statusElement.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
         }
 
-        // --- KHỞI TẠO ỨNG DỤNG (ĐÃ THÊM TRY/CATCH) ---
+        // --- KHỞI TẠO ỨNG DỤNG ---
         window.initApp = function() {
-             try {
-                applyLanguage(currentLang);
-                if (db) { // Chỉ tải chat/quiz nếu Firebase đã khởi tạo thành công
-                    loadInitialMessages();
-                    initQuiz();
-                } else {
-                     console.warn("Bỏ qua tải Chat/Quiz vì Firebase initialization lỗi.");
-                }
-                
-                initTicTacToe();
-                startNewGuessingGame();
-                startMemoryGame(true); 
+            applyLanguage(currentLang);
+            loadInitialMessages();
+            initQuiz();
+            
+            initTicTacToe();
+            startNewGuessingGame();
+            startMemoryGame(true); 
 
-                showTab('social'); 
-            } catch (e) {
-                // Lỗi này sẽ bắt các lỗi xảy ra trong các hàm khởi tạo
-                console.error("Lỗi KHỞI TẠO ỨNG DỤNG (FATAL ERROR):", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi nghiêm trọng khi tải ứng dụng. (Lỗi JavaScript). Vui lòng kiểm tra Console Log (F12) để biết chi tiết." : "A fatal error occurred during app initialization. Please check Console Log (F12).");
-            }
+            showTab('social'); 
         }
 
     </script>
