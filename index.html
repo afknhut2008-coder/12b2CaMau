@@ -308,7 +308,6 @@
         #tictactoe-board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
             width: 200px;
             height: 200px;
             margin: 15px auto;
@@ -427,6 +426,7 @@
                 <p style="font-weight: bold; color: #dc3545;"><span data-i18n="ai_disclaimer">Tính năng Chat AI đã bị loại bỏ hoàn toàn theo yêu cầu của bạn.</span></p>
             </div>
         </div>
+        
         <div id="social" class="tab-content">
             
             <h3><i class="fas fa-comments"></i> <span data-i18n="chat_title">Góc Chat Ẩn Danh</span></h3>
@@ -450,7 +450,7 @@
 
             <hr>
 
-            <h3><i class="fas fa-brain"></i> <span data-i18n="quiz_title">Thử Thách Đố Vui</span></h3>
+            <h3><i class="fas fa-brain"></i> <span data-i18n="quiz_title">Thử Thách Đố Vui (10 Câu)</span></h3>
             
             <div id="name-input-section" class="card">
                 <h4 data-i18n="name_prompt">Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):</h4>
@@ -463,7 +463,7 @@
                     <div class="quiz-stat">
                         <span style="font-weight: 500;"><span data-i18n="welcome">Chào mừng</span>, <span id="current-user-display" style="color: var(--primary-color); font-weight: bold;"></span>!</span>
                         <div style="display: flex;">
-                            <span class="quiz-stat-item" id="done-count-container"><i class="fas fa-check-circle"></i> <span data-i18n="completed">Đã xong</span>: <span id="done-count">0</span></span>
+                            <span class="quiz-stat-item" id="done-count-container"><i class="fas fa-check-circle"></i> <span data-i18n="completed">Đã xong</span>: <span id="done-count">0/10</span></span>
                             <span class="quiz-stat-item" id="score-count-container"><i class="fas fa-star"></i> <span data-i18n="score">Điểm</span>: <span id="current-score">0</span></span>
                         </div>
                     </div>
@@ -616,7 +616,7 @@
                 'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!',
                 'memory_status_turn': 'Lượt đi: %t',
                 'memory_status_win': '🎉 Hoàn thành! %t lượt đi.',
-                
+                'date_not_found': 'Không rõ',
             },
             'en': {
                 'community': 'Community', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Childhood)',
@@ -645,6 +645,7 @@
                 'memory_status_start': 'Click "New Game" to start!',
                 'memory_status_turn': 'Turns: %t',
                 'memory_status_win': '🎉 Complete! %t turns.',
+                'date_not_found': 'N/A',
             }
         };
 
@@ -729,7 +730,6 @@
                     likes: 0 
                 });
                 document.getElementById('message-text').value = '';
-                // Sau khi gửi thành công, tải lại tin nhắn để tin nhắn mới xuất hiện ngay
                 lastVisible = null;
                 document.getElementById('message-list').innerHTML = '';
                 loadInitialMessages();
@@ -753,7 +753,6 @@
                         tempLastVisible = doc;
                     }
                 });
-                // Chỉ cập nhật lastVisible nếu có đủ số lượng tin nhắn (để bật nút "Xem thêm")
                 if (snapshot.docs.length >= MESSAGE_LIMIT) {
                     lastVisible = tempLastVisible;
                     document.getElementById('load-more-btn').style.display = 'block';
@@ -800,9 +799,8 @@
 
         function renderMessage(id, data) {
             const messageList = document.getElementById('message-list');
-            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(currentLang) : translations[currentLang]['loading_msg'];
+            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(currentLang) : translations[currentLang]['date_not_found'];
             
-            // Check if message already exists (needed for loadMore to prevent duplicates)
             if (document.getElementById(`msg-${id}`)) return; 
             
             const messageElement = document.createElement('div');
@@ -810,7 +808,6 @@
             messageElement.id = `msg-${id}`;
             const liked = localStorage.getItem(`liked_${id}`) === 'true';
 
-            // DÙNG data.text VÌ data.nhan_tin KHÔNG TỒN TẠI TRONG CODE NÀY, CÒN data.tag THƯỜNG KHÔNG CÓ
             messageElement.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--secondary-color); font-size: 0.95rem;">
                     <i class="fas fa-mask"></i> ${translations[currentLang]['anonymous']} 
@@ -834,16 +831,10 @@
                 await updateDoc(docRef, { likes: newLikes });
                 localStorage.setItem(`liked_${id}`, !isLiked ? 'true' : 'false');
 
-                // Cập nhật lại giao diện ngay lập tức
-                const heartIcon = document.querySelector(`#msg-${id} .fa-heart`);
-                const likesCount = document.getElementById(`likes-count-${id}`);
                 const likesText = document.querySelector(`#msg-${id} .post-likes`);
-                
                 if (!isLiked) {
-                    heartIcon.classList.add('liked');
                     likesText.innerHTML = `<i class="fas fa-heart liked"></i> <span id="likes-count-${id}">${newLikes}</span> ${currentLang === 'vi' ? 'Lượt thích (Đã thích)' : 'Likes (Liked)'}`;
                 } else {
-                    heartIcon.classList.remove('liked');
                     likesText.innerHTML = `<i class="fas fa-heart"></i> <span id="likes-count-${id}">${newLikes}</span> ${currentLang === 'vi' ? 'Lượt thích' : 'Likes'}`;
                 }
             } catch (e) {
@@ -851,20 +842,23 @@
             }
         }
 
-        // --- LOGIC QUIZ (ĐÃ SỬA LỖI CỐT LÕI) ---
+        // --- LOGIC QUIZ (ĐÃ SỬA LỖI & THÊM GIỚI HẠN) ---
+        const MAX_QUIZ_QUESTIONS = 10; // Giới hạn 10 câu hỏi
+
         let currentUserName = localStorage.getItem('quizUserName');
         let currentScore = parseInt(localStorage.getItem('quizScore') || '0');
         let questionsAttempted = parseInt(localStorage.getItem('questionsAttempted') || '0');
         let allQuestions = []; // Nơi lưu trữ tất cả câu hỏi từ Firestore
-        let availableQuestions = []; // Câu hỏi còn lại để hỏi
+        let availableQuestions = []; // Câu hỏi còn lại để hỏi trong lần chơi này
 
         function updateQuizStats() {
             document.getElementById('current-user-display').textContent = currentUserName;
             document.getElementById('current-score').textContent = currentScore;
-            document.getElementById('done-count').textContent = questionsAttempted;
+            // Hiển thị số câu đã làm trên tổng số câu tối đa (10)
+            document.getElementById('done-count').textContent = `${questionsAttempted}/${MAX_QUIZ_QUESTIONS}`; 
         }
 
-        // --- HÀM KHỞI TẠO TRẠNG THÁI QUIZ (FIX LỖI) ---
+        // --- HÀM KHỞI TẠO TRẠNG THÁI QUIZ ---
         function initQuizState(resetScore = false) {
             if (resetScore) {
                 currentScore = 0;
@@ -872,13 +866,11 @@
                 localStorage.removeItem('quizScore');
                 localStorage.removeItem('questionsAttempted');
             }
-            // Luôn đọc lại từ localStorage để đồng bộ hóa
             currentUserName = localStorage.getItem('quizUserName');
             currentScore = parseInt(localStorage.getItem('quizScore') || '0');
             questionsAttempted = parseInt(localStorage.getItem('questionsAttempted') || '0');
             updateQuizStats();
             
-            // Đảm bảo ẩn thông báo hoàn thành và hiển thị nội dung quiz
             document.getElementById('quiz-complete').style.display = 'none';
             document.getElementById('quiz-content').style.display = 'block';
         }
@@ -898,7 +890,7 @@
         }
 
         function initQuiz() {
-            initQuizState(false); // Khởi tạo trạng thái (không reset điểm)
+            initQuizState(false); 
             
             if (currentUserName) {
                 document.getElementById('name-input-section').style.display = 'none';
@@ -911,45 +903,44 @@
         }
 
         window.resetQuiz = function() {
-            initQuizState(true); // Reset điểm và trạng thái chơi
-            // Sau khi reset điểm, tải lại toàn bộ câu hỏi và bắt đầu câu hỏi đầu tiên
+            initQuizState(true); 
             loadQuizQuestions(); 
         }
         
-        // TẢI CÂU HỎI TỪ FIRESTORE
+        // TẢI CÂU HỎI TỪ FIRESTORE (ĐÃ SỬA LỖI BUỘC TẢI LẠI TOÀN BỘ VÀ GIỚI HẠN)
         async function loadQuizQuestions() {
             try {
-                // Tải toàn bộ câu hỏi từ Firestore (Chỉ tải nếu mảng rỗng)
-                if (allQuestions.length === 0) {
-                    const snapshot = await getDocs(quizRef);
-                    snapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        // --- ĐÃ SỬA LỖI CỐT LÕI: Ánh xạ trường Firestore (q, a, c) sang trường JS ---
-                        allQuestions.push({
-                            id: doc.id,
-                            text: data.q, // FIX: Lấy nội dung câu hỏi từ trường 'q'
-                            answers: data.a, // FIX: Lấy mảng đáp án từ trường 'a'
-                            correctAnswer: data.c, // FIX: Lấy chỉ mục đáp án đúng từ trường 'c'
-                            category: data.cat || (currentLang === 'vi' ? 'Chung' : 'General'),
-                        });
-                        // --------------------------------------------------------------------------------------------------
+                // 1. Buộc TẢI LẠI TOÀN BỘ dữ liệu từ Firestore
+                const snapshot = await getDocs(quizRef);
+                allQuestions = []; 
+
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    allQuestions.push({
+                        id: doc.id,
+                        text: data.q, 
+                        answers: data.a, 
+                        correctAnswer: data.c, 
+                        category: data.cat || (currentLang === 'vi' ? 'Chung' : 'General'),
                     });
-                }
-
+                });
 
                 if (allQuestions.length === 0) {
-                    document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px;">${currentLang === 'vi' ? 'Hiện chưa có câu hỏi nào.' : 'No questions available yet.'}</p>`;
+                    document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px;">${currentLang === 'vi' ? 'Hiện chưa có câu hỏi nào trong DB.' : 'No questions available yet in DB.'}</p>`;
                     return;
                 }
 
-                // FIX LỖI: Luôn tạo mảng availableQuestions MỚI từ allQuestions và xáo trộn.
-                // Điều này đảm bảo mỗi lần chơi (hoặc reset) đều có đủ câu hỏi.
-                availableQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
+                // 2. Xáo trộn toàn bộ ngân hàng câu hỏi
+                const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
+                
+                // 3. Giới hạn số câu hỏi có thể làm (MAX_QUIZ_QUESTIONS)
+                availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
+                
                 loadNextQuestion();
 
             } catch (e) {
                 console.error("Error loading quiz questions: ", e);
-                document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Lỗi tải dữ liệu Quiz.' : 'Error loading Quiz data.'}</p>`;
+                document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Lỗi tải dữ liệu Quiz. Vui lòng kiểm tra lại thông tin cấu hình Firebase.' : 'Error loading Quiz data. Check Firebase configuration.'}</p>`;
             }
         }
 
@@ -957,22 +948,21 @@
             document.getElementById('next-btn').style.display = 'none';
             
             const optionsDiv = document.getElementById('options');
-            // Hiển thị skeleton trong khi tải
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
             
-            // LỖI ĐÃ KHẮC PHỤC: availableQuestions.pop() sẽ loại bỏ câu hỏi đã hỏi.
-            if (availableQuestions.length === 0) {
+            // Kiểm tra xem đã hết 10 câu chưa
+            if (questionsAttempted >= MAX_QUIZ_QUESTIONS || availableQuestions.length === 0) {
                 handleQuizComplete();
                 return;
             }
 
-            const currentQ = availableQuestions.pop();
+            const currentQ = availableQuestions.pop(); // Lấy câu hỏi và loại bỏ khỏi mảng
             window.currentQuestion = currentQ; // Lưu câu hỏi hiện tại vào biến toàn cục
 
             document.getElementById('q-category').textContent = currentQ.category;
             document.getElementById('q-text').textContent = currentQ.text;
             
-            // Shuffle options for display order (not the content itself)
+            // Xáo trộn vị trí 4 đáp án
             let options = currentQ.answers.map((ans, index) => ({ text: ans, index: index }));
             options = options.sort(() => 0.5 - Math.random());
 
@@ -981,8 +971,9 @@
                 const btn = document.createElement('button');
                 btn.classList.add('opt-btn');
                 btn.textContent = option.text;
-                btn.onclick = () => checkAnswer(option.index);
-                btn.setAttribute('data-index', option.index); // Lưu chỉ mục ban đầu (0, 1, 2, 3)
+                // Gắn index ban đầu (0, 1, 2, 3) vào onclick để kiểm tra đáp án đúng
+                btn.onclick = () => checkAnswer(option.index); 
+                btn.setAttribute('data-index', option.index); 
                 optionsDiv.appendChild(btn);
             });
         }
@@ -993,12 +984,10 @@
             
             questionsAttempted++;
             localStorage.setItem('questionsAttempted', questionsAttempted);
-            document.getElementById('done-count').textContent = questionsAttempted;
+            updateQuizStats(); // Cập nhật hiển thị (ví dụ: 2/10)
 
-            // Vô hiệu hóa tất cả các nút
             document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
 
-            // Đánh dấu đáp án
             document.querySelectorAll('.opt-btn').forEach(btn => {
                 const index = parseInt(btn.getAttribute('data-index'));
                 if (index === correctIndex) {
@@ -1014,7 +1003,13 @@
                 document.getElementById('current-score').textContent = currentScore;
             }
 
-            document.getElementById('next-btn').style.display = 'block';
+            // Nếu chưa hết 10 câu, hiển thị nút tiếp theo. Nếu hết, hàm loadNextQuestion sẽ tự gọi handleQuizComplete.
+            if (questionsAttempted < MAX_QUIZ_QUESTIONS) {
+                 document.getElementById('next-btn').style.display = 'block';
+            } else {
+                 // Đợi một chút rồi kết thúc game
+                 setTimeout(handleQuizComplete, 1500);
+            }
         }
 
         async function handleQuizComplete() {
@@ -1052,7 +1047,6 @@
             }
 
             const newQuestion = {
-                // SỬ DỤNG ĐÚNG CÁC TRƯỜNG CỦA FIRESTORE: q, a, c
                 q: qText,
                 a: [ans0, ans1, ans2, ans3],
                 c: correctAnsIndex,
@@ -1080,10 +1074,12 @@
             }
         }
 
+        // TẢI BẢNG XẾP HẠNG (ĐÃ SỬA LỖI THỜI GIAN)
         async function loadLeaderboard() {
             const leaderboardBody = document.getElementById('leaderboard-body');
             leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${translations[currentLang]['loading_rank']}</td></tr>`;
             try {
+                // Sắp xếp: Điểm cao nhất, sau đó là thời gian sớm nhất (người chơi nhanh hơn)
                 const q = query(leaderboardRef, orderBy("score", "desc"), orderBy("timestamp"), limit(10));
                 const snapshot = await getDocs(q);
                 
@@ -1095,8 +1091,8 @@
                 leaderboardBody.innerHTML = '';
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
-                    // Firestore v9 serverTimestamp() cần toDate() và kiểm tra tồn tại
-                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString(currentLang) : '';
+                    // Đảm bảo lấy được timestamp và chuyển sang chuỗi ngày tháng địa phương
+                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString(currentLang) : translations[currentLang]['date_not_found'];
                     const row = `
                         <tr>
                             <td style="padding: 10px; font-weight: bold;">${index + 1}</td>
@@ -1110,7 +1106,7 @@
 
             } catch (e) {
                 console.error("Error loading leaderboard: ", e);
-                leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Lỗi tải BXH.' : 'Error loading Leaderboard.'}</td></tr>`;
+                leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Lỗi tải BXH. Vui lòng kiểm tra kết nối.' : 'Error loading Leaderboard. Check connection.'}</td></tr>`;
             }
         }
 
@@ -1144,7 +1140,6 @@
             if (board[clickedCellIndex] !== "" || !gameActive) return;
 
             handlePlayerMove(clickedCell, clickedCellIndex);
-            handleResultValidation();
         }
 
         function handlePlayerMove(clickedCell, clickedCellIndex) {
@@ -1164,7 +1159,6 @@
                 if (a === '' || b === '' || c === '') continue;
                 if (a === b && b === c) {
                     roundWon = true;
-                    // Highlight winning cells
                     winCondition.forEach(index => {
                         cells[index].style.backgroundColor = a === 'X' ? '#d4edda' : '#f8d7da';
                     });
@@ -1260,11 +1254,9 @@
         }
 
         function updateGameStatusDisplay() {
-            // Cập nhật trạng thái Guessing Game khi đổi ngôn ngữ
             if (gameGuActive) {
                 document.getElementById('guess-log').textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft) + ` (${currentLang === 'vi' ? 'Đã đoán' : 'Guessed'}: ${guessLog.join(', ')})`;
             }
-            // Cập nhật trạng thái Memory Game khi đổi ngôn ngữ (do logic phức tạp, chỉ reset trạng thái hiển thị)
             updateMemoryStatus(false);
         }
 
@@ -1280,7 +1272,6 @@
         window.startMemoryGame = function(isLangToggle = false) {
             const boardElement = document.getElementById('memory-game-board');
             if (!isLangToggle) { 
-                // Khởi tạo game mới
                 let gameSymbols = [...cardSymbols, ...cardSymbols];
                 gameSymbols.sort(() => 0.5 - Math.random());
                 boardElement.innerHTML = '';
@@ -1289,7 +1280,7 @@
                 totalTurns = 0;
                 hasFlippedCard = false;
                 lockBoard = false;
-                boardElement.style.display = 'grid'; // Hiển thị board
+                boardElement.style.display = 'grid'; 
 
                 gameSymbols.forEach((symbol, index) => {
                     const card = document.createElement('div');
@@ -1337,7 +1328,6 @@
         function disableCards() {
             matchesFound++;
             
-            // Xóa sự kiện click
             firstCard.removeEventListener('click', flipCard);
             secondCard.removeEventListener('click', flipCard);
             
@@ -1347,7 +1337,7 @@
             resetBoard();
             
             if (matchesFound === cardSymbols.length) {
-                updateMemoryStatus(false); // Cập nhật trạng thái thắng
+                updateMemoryStatus(false);
             }
         }
 
@@ -1384,14 +1374,12 @@
             applyLanguage(currentLang);
             loadInitialMessages();
             initQuiz();
-            // initTicTacToe() và startNewGuessingGame() sẽ được gọi khi chuyển tab lần đầu
             
-            // Khởi tạo các game ở tab games để tránh lỗi
             initTicTacToe();
             startNewGuessingGame();
-            startMemoryGame(true); // Khởi tạo với trạng thái ban đầu
+            startMemoryGame(true); 
 
-            showTab('social'); // Mở tab Social & Quiz mặc định
+            showTab('social'); 
         }
 
     </script>
