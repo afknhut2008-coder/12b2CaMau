@@ -875,6 +875,7 @@
             document.getElementById('quiz-content').style.display = 'block';
         }
         
+        // FIX LỖI: Thêm initQuizState(true) để đảm bảo game mới luôn bắt đầu từ 0
         window.saveUserName = function() {
             const nameInput = document.getElementById('user-name-input').value.trim();
             if (nameInput.length < 2) {
@@ -883,6 +884,10 @@
             }
             currentUserName = nameInput;
             localStorage.setItem('quizUserName', currentUserName);
+            
+            // **FIX QUAN TRỌNG:** Reset hoàn toàn trạng thái game khi BẮT ĐẦU game mới
+            initQuizState(true); 
+
             document.getElementById('name-input-section').style.display = 'none';
             document.getElementById('quiz-section').style.display = 'block';
             updateQuizStats();
@@ -934,6 +939,7 @@
                 const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
                 
                 // 3. Giới hạn số câu hỏi có thể làm (MAX_QUIZ_QUESTIONS)
+                // Lưu ý: Nếu DB có ít hơn 10 câu, availableQuestions sẽ có số câu ít hơn.
                 availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
                 
                 loadNextQuestion();
@@ -950,7 +956,7 @@
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
             
-            // Kiểm tra xem đã hết 10 câu chưa
+            // Kiểm tra xem đã hết 10 câu chưa (hoặc đã hết câu trong DB)
             if (questionsAttempted >= MAX_QUIZ_QUESTIONS || availableQuestions.length === 0) {
                 handleQuizComplete();
                 return;
@@ -1003,11 +1009,12 @@
                 document.getElementById('current-score').textContent = currentScore;
             }
 
-            // Nếu chưa hết 10 câu, hiển thị nút tiếp theo. Nếu hết, hàm loadNextQuestion sẽ tự gọi handleQuizComplete.
+            // Nếu chưa hết 10 câu VÀ còn câu hỏi, hiển thị nút tiếp theo. 
+            // Nếu hết câu hỏi (dù chưa đủ 10 câu), hàm loadNextQuestion sẽ tự gọi handleQuizComplete.
             if (questionsAttempted < MAX_QUIZ_QUESTIONS) {
                  document.getElementById('next-btn').style.display = 'block';
             } else {
-                 // Đợi một chút rồi kết thúc game
+                 // Đợi một chút rồi kết thúc game (đủ 10 câu)
                  setTimeout(handleQuizComplete, 1500);
             }
         }
