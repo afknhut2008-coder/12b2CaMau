@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS CHUNG VÀ HIỆU ỨNG MỚI (GIỮ NGUYÊN) */
+        /* CSS CHUNG VÀ HIỆU ỨNG MỚI */
         :root { 
             --primary-gradient: linear-gradient(135deg, #6dd5ed, #2193b0); /* Xanh biển tươi sáng */
             --secondary-gradient: linear-gradient(135deg, #f7b733, #fc4a1a); /* Cam-Vàng năng động */
@@ -173,9 +173,127 @@
         .next-btn { background: var(--secondary-gradient); }
         .next-btn:hover { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
 
-        /* ... (Các style khác cho Chat, Quiz, Rank giữ nguyên) ... */
+        /* CHAT/MESSAGE STYLES */
+        .post-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 10px; 
+            font-size: 0.9rem; 
+            color: var(--light-text-color); 
+            align-items: center;
+        }
+        .post-author { 
+            font-weight: 700; 
+            color: #4CAF50; 
+            font-size: 1.05rem; 
+            display: flex;
+            align-items: center;
+        }
+        .post-author i { margin-right: 5px; font-size: 0.9em; }
+        
+        /* QUIZ STYLES */
+        .quiz-stat { 
+            font-size: 1rem; 
+            color: var(--light-text-color); 
+            margin-bottom: 15px; 
+            line-height: 1.6;
+        }
+        .quiz-stat strong { color: var(--text-color); }
+        .question-box { 
+            font-size: 1.35rem; 
+            font-weight: 700; 
+            margin: 25px 0; 
+            min-height: 70px; 
+            color: var(--text-color);
+            animation: fadeIn 0.7s ease-out; 
+            line-height: 1.5;
+        }
+        #q-category { 
+            display: inline-block; 
+            background: #e9ecef; 
+            padding: 6px 15px; 
+            border-radius: var(--radius-large); 
+            font-size: 0.85rem; 
+            margin-bottom: 15px; 
+            color: #555;
+            font-weight: 600;
+        }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .opt-btn { 
+            padding: 15px 20px; 
+            border: 1px solid var(--border-color); 
+            background: #fdfdfd; 
+            border-radius: var(--radius-medium); 
+            font-size: 1rem; 
+            cursor: pointer; 
+            transition: all 0.3s ease-in-out; 
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            line-height: 1.4;
+        }
+        .opt-btn:not(:disabled):hover { 
+            background: #e8f7ff; 
+            border-color: #6dd5ed; 
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .opt-btn.correct { 
+            background: #d4edda; 
+            border-color: #28a745; 
+            color: #155724; 
+            font-weight: 700; 
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+        .opt-btn.wrong { 
+            background: #f8d7da; 
+            border-color: #dc3545; 
+            color: #721c24; 
+            font-weight: 700; 
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+        }
+        
+        /* QUIZ COMPLETE */
+        #quiz-complete h3 { color: #4CAF50; margin-top: 10px; }
+        #quiz-complete .fa-trophy { color: #FFD700; }
+        #quiz-complete button { 
+            background: #f0f0f0; 
+            color: var(--text-color); 
+            border: 1px solid #ddd;
+            font-weight: 600;
+        }
+        #quiz-complete button:hover { 
+            background: #e0e0e0; 
+            transform: translateY(-2px); 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
 
-        /* BỔ SUNG: TIC-TAC-TOE (CỜ CARO) STYLES */
+        /* RANKING */
+        .rank-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; }
+        .rank-table th, .rank-table td { 
+            padding: 12px 15px; 
+            border-bottom: 1px solid #eee; 
+            text-align: left; 
+        }
+        .rank-table th { 
+            background: #f8f9fa; 
+            color: #2193b0; 
+            font-weight: 700; 
+            text-transform: uppercase;
+        }
+        .rank-table tr:first-child th:first-child { border-top-left-radius: var(--radius-medium); }
+        .rank-table tr:first-child th:last-child { border-top-right-radius: var(--radius-medium); }
+        .rank-table tr:last-child td:first-child { border-bottom-left-radius: var(--radius-medium); }
+        .rank-table tr:last-child td:last-child { border-bottom-right-radius: var(--radius-medium); }
+
+
+        .rank-table tr:nth-child(even) { background-color: #fcfcfc; }
+        .rank-table tr:hover { background-color: #f5f5f5; }
+
+        .rank-table tr:nth-child(1) td { font-weight: 700; color: #FFD700; font-size: 1.15em; } /* Vàng */
+        .rank-table tr:nth-child(2) td { font-weight: 600; color: #C0C0C0; font-size: 1.1em; } /* Bạc */
+        .rank-table tr:nth-child(3) td { font-weight: 600; color: #CD7F32; font-size: 1.05em; } /* Đồng */
+        
+        /* TIC-TAC-TOE (CỜ CARO) STYLES */
         .tictactoe-wrapper {
             text-align: center;
         }
@@ -202,7 +320,7 @@
             transition: background 0.2s;
         }
         .cell:hover:not(.x):not(.o) {
-            background: #f0f8ff; /* Hiệu ứng hover nhẹ */
+            background: #f0f8ff; 
         }
         /* Loại bỏ border không cần thiết */
         .cell:nth-child(3n) { border-right: none; }
@@ -210,8 +328,8 @@
         .cell:nth-child(-n+3) { border-top: none; }
         .cell:nth-child(n+7) { border-bottom: none; }
 
-        .cell.x { color: #2193b0; } /* Màu xanh cho X */
-        .cell.o { color: #fc4a1a; } /* Màu cam cho O */
+        .cell.x { color: #2193b0; } 
+        .cell.o { color: #fc4a1a; } 
 
         #tictactoe-status {
             font-size: 1.2rem;
@@ -220,7 +338,7 @@
             color: var(--text-color);
         }
         #tictactoe-reset {
-            background: #4CAF50; /* Màu xanh lá cây nổi bật */
+            background: #4CAF50; 
             margin-top: 15px;
         }
         @media (max-width: 400px) {
@@ -306,7 +424,7 @@
 
             <h3><i class="fas fa-plus-circle"></i> <span data-i18n="create_q_title">Tạo Câu Hỏi Mới</span></h3>
             <div id="create-question-section" class="card">
-                <h4 data-i18n="contribute_q">Đóng góp Quiz (sẽ được Admin duyệt):</h4>
+                <h4 data-i18n="contribute_q">Đóng góp Quiz (Câu hỏi được dùng ngay):</h4>
                 <input type="text" id="q-text-input" data-i18n-placeholder="q_content_ph" placeholder="Nội dung Câu hỏi">
                 <input type="text" id="q-ans-0" data-i18n-placeholder="ans_a_ph" placeholder="Đáp án A">
                 <input type="text" id="q-ans-1" data-i18n-placeholder="ans_b_ph" placeholder="Đáp án B">
@@ -374,7 +492,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- DỮ LIỆU ĐA NGÔN NGỮ (BỔ SUNG CARO) ---
+        // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
             'vi': {
                 'community': 'Cộng Đồng',
@@ -399,7 +517,7 @@
                 'sending_rank': 'Đang gửi kết quả lên BXH...',
                 'play_again': 'Làm lại',
                 'create_q_title': 'Tạo Câu Hỏi Mới',
-                'contribute_q': 'Đóng góp Quiz (sẽ được Admin duyệt):',
+                'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):',
                 'q_content_ph': 'Nội dung Câu hỏi',
                 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D',
                 'select_correct_ans': 'Chọn Đáp án Đúng',
@@ -442,7 +560,7 @@
                 'sending_rank': 'Submitting score to Leaderboard...',
                 'play_again': 'Play Again',
                 'create_q_title': 'Create New Question',
-                'contribute_q': 'Contribute Quiz (To be approved by Admin):',
+                'contribute_q': 'Contribute Quiz (Question is used immediately):',
                 'q_content_ph': 'Question Content',
                 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D',
                 'select_correct_ans': 'Select Correct Answer',
@@ -470,7 +588,7 @@
             currentLang = currentLang === 'vi' ? 'en' : 'vi';
             localStorage.setItem('appLang', currentLang);
             applyLanguage(currentLang);
-            updateGameStatusDisplay(); // Cập nhật trạng thái game sau khi đổi ngôn ngữ
+            updateGameStatusDisplay(); 
         }
 
         function applyLanguage(lang) {
@@ -488,7 +606,7 @@
             
             loadLeaderboard(); 
             onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(10)), updateChatList);
-            updateGameStatusDisplay(); // Cập nhật trạng thái game sau khi đổi ngôn ngữ
+            updateGameStatusDisplay(); 
         }
         
         // --- LOGIC TAB CON ---
@@ -499,7 +617,6 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
 
-            // Không cần init game phức tạp, chỉ cần đảm bảo game caro được khởi động nếu chưa
             if (tabId === 'games') {
                 if (!window.ticTacToeInitialized) {
                     initTicTacToe();
@@ -510,7 +627,7 @@
 
         // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (VUI LÒNG DÙNG THÔNG TIN CỦA BẠN)
         const firebaseConfig = {
-            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
+            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // 👈 THAY THẾ KEY CỦA BẠN
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c",
             storageBucket: "b2-6431c.appspot.com",
@@ -524,8 +641,7 @@
 
         // CÁC COLLECTIONS SỬ DỤNG
         const chatRef = collection(db, "anonymous_messages");
-        const quizRef = collection(db, "quiz_questions");
-        const submittedQuestionsRef = collection(db, "user_submitted_questions"); 
+        const quizRef = collection(db, "quiz_questions"); 
         const leaderboardRef = collection(db, "quiz_leaderboard"); 
 
         // BIẾN TOÀN CỤC QUIZ
@@ -548,7 +664,6 @@
                 document.getElementById('name-input-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
             }
-            // Khởi tạo game caro (sẽ chạy ẩn cho đến khi tab được mở)
             initTicTacToe(); 
         }
 
@@ -560,14 +675,13 @@
         const cells = document.querySelectorAll('.cell');
         const statusDisplay = document.getElementById('tictactoe-status');
         const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-            [0, 4, 8], [2, 4, 6]            // diagonals
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+            [0, 4, 8], [2, 4, 6]           
         ];
 
         function updateGameStatusDisplay() {
             if (!gameActive) {
-                // Giữ nguyên trạng thái thắng/hòa
                 return; 
             }
             const key = currentPlayer === 'X' ? 'tictactoe_status_x' : 'tictactoe_status_o';
@@ -639,12 +753,8 @@
             resetGame(); 
         }
 
-        // --- LOGIC QUIZ & CHAT & FIREBASE (GIỮ NGUYÊN) ---
-
-        // (Code Quiz, Chat, Leaderboard logic giữ nguyên từ bản sửa lỗi trước)
-
+        // --- HÀM XỬ LÝ TÊN NGƯỜI DÙNG ---
         window.saveUserName = function() {
-            // ... (Logic cũ)
             const nameInput = document.getElementById('user-name-input').value.trim();
             if (nameInput.length < 2 || nameInput.length > 20) {
                 alert(currentLang === 'vi' ? "Tên phải từ 2 đến 20 ký tự!" : "Name must be between 2 and 20 characters!");
@@ -658,8 +768,8 @@
             initQuiz();
         }
 
+        // --- PHẦN 1: GỬI VÀ HIỂN THỊ TIN NHẮN ẨN DANH ---
         window.sendMessage = async function() {
-            // ... (Logic cũ)
             const messageText = document.getElementById('message-text').value;
             const btn = document.getElementById('btn-send-msg');
             if (!messageText.trim()) return;
@@ -684,7 +794,6 @@
         }
         
         const updateChatList = (snapshot) => {
-            // ... (Logic cũ)
             const list = document.getElementById("message-list");
             list.innerHTML = "";
             snapshot.forEach(doc => {
@@ -697,8 +806,9 @@
 
         onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(10)), updateChatList);
 
+        // --- PHẦN 2: QUIZ VỚI ĐIỂM SỐ & TÊN (CHỈ DÙNG FIRESTORE) ---
+        
         window.initQuiz = async function() {
-            // ... (Logic cũ)
             currentScore = 0;
             questionsAttempted = 0;
             document.getElementById('current-score').innerText = currentScore;
@@ -733,7 +843,6 @@
         }
 
         window.loadNextQuestion = function() {
-            // ... (Logic cũ)
             if(availableQuestions.length === 0) { 
                 endQuizAndSubmitScore();
                 return;
@@ -760,7 +869,6 @@
         }
 
         window.checkAnswer = function(btn, qData, selectedIdx) {
-            // ... (Logic cũ)
             const allBtns = document.querySelectorAll('.opt-btn');
             allBtns.forEach(b => b.disabled = true); 
 
@@ -789,7 +897,6 @@
         }
 
         function endQuizAndSubmitScore() {
-            // ... (Logic cũ)
             document.getElementById('quiz-content').style.display = 'none';
             document.getElementById('quiz-complete').style.display = 'block';
             document.getElementById('final-score-display').innerText = currentScore;
@@ -798,7 +905,6 @@
         }
         
         async function saveScoreToLeaderboard(score, attempts) {
-            // ... (Logic cũ)
             if (!currentUserName || score === 0) return; 
 
             try {
@@ -815,7 +921,6 @@
         }
 
         window.loadLeaderboard = async function() {
-            // ... (Logic cũ)
             const q = query(leaderboardRef, orderBy("score", "desc"), limit(10)); 
             const snapshot = await getDocs(q);
             const tbody = document.getElementById('leaderboard-body');
@@ -842,15 +947,14 @@
         }
 
         window.resetQuiz = function() {
-            // ... (Logic cũ)
             questionsAttempted = 0;
             currentScore = 0;
             localStorage.removeItem('quiz_done_ids'); 
             initQuiz();
         }
 
+        // --- PHẦN 3: TẠO CÂU HỎI MỚI (TỰ ĐỘNG ĐƯA VÀO QUIZ) ---
         window.submitUserQuestion = async function() {
-            // ... (Logic cũ)
             const qText = document.getElementById('q-text-input').value.trim();
             const ans0 = document.getElementById('q-ans-0').value.trim();
             const ans1 = document.getElementById('q-ans-1').value.trim();
@@ -858,19 +962,33 @@
             const ans3 = document.getElementById('q-ans-3').value.trim();
             const correctIdx = parseInt(document.getElementById('q-correct-select').value);
             const category = document.getElementById('q-cat-input').value.trim() || (currentLang === 'vi' ? 'Cộng đồng' : 'Community');
+            const submitButton = document.querySelector('#create-question-section button.btn-send');
 
             if (!qText || !ans0 || !ans1 || !ans2 || !ans3 || correctIdx === -1) {
                 return alert(currentLang === 'vi' ? "Vui lòng điền đầy đủ nội dung câu hỏi, 4 đáp án và chọn đáp án đúng." : "Please fill in all question content, 4 answers, and select the correct answer.");
             }
+            
+            submitButton.disabled = true;
+            submitButton.textContent = currentLang === 'vi' ? "Đang xử lý..." : "Processing...";
+
 
             try {
-                await addDoc(submittedQuestionsRef, {
-                    q: qText, a: [ans0, ans1, ans2, ans3], c: correctIdx, cat: category,
+                // LƯU THẲNG VÀO collection quiz_questions
+                await addDoc(quizRef, { 
+                    q: qText, 
+                    a: [ans0, ans1, ans2, ans3], 
+                    c: correctIdx, 
+                    cat: category,
                     submittedBy: currentUserName || translations[currentLang]['anonymous'],
-                    createdAt: serverTimestamp(), status: 'Chưa duyệt' 
+                    createdAt: serverTimestamp(),
                 });
 
-                alert(currentLang === 'vi' ? "Gửi câu hỏi thành công! Cảm ơn bạn đã đóng góp." : "Question submitted successfully! Thank you for contributing.");
+                alert(currentLang === 'vi' ? "Câu hỏi đã được thêm vào Quiz ngay lập tức! Cảm ơn bạn đã đóng góp." : "Question has been added to the Quiz immediately! Thank you for contributing.");
+                
+                // Cập nhật lại bộ câu hỏi trong bộ nhớ để người dùng có thể chơi ngay
+                fullQuestionBank = []; 
+                await initQuiz(); 
+
                 // Reset form
                 document.getElementById('q-text-input').value = '';
                 document.getElementById('q-ans-0').value = '';
@@ -883,6 +1001,9 @@
             } catch (error) {
                 console.error("Lỗi gửi câu hỏi:", error);
                 alert((currentLang === 'vi' ? "Lỗi gửi câu hỏi: " : "Error submitting question: ") + error.message);
+            } finally {
+                 submitButton.disabled = false;
+                 submitButton.textContent = translations[currentLang]['submit_q'];
             }
         }
         
