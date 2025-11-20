@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS CHUNG VÀ HIỆU ỨNG MỚI */
+        /* CSS CHUNG VÀ HIỆU ỨNG MỚI (CẬP NHẬT UI ĐẸP HƠN) */
         :root { 
-            --primary-gradient: linear-gradient(135deg, #6dd5ed, #2193b0); /* Xanh biển tươi sáng */
-            --secondary-gradient: linear-gradient(135deg, #f7b733, #fc4a1a); /* Cam-Vàng năng động */
-            --button-hover: linear-gradient(135deg, #4facfe, #00f2fe); /* Xanh nhạt cho hover */
-            --bg-color: #f0f2f5; /* Nền xám nhạt */
+            --primary-color: #2193b0;
+            --secondary-color: #fc4a1a;
+            --primary-gradient: linear-gradient(135deg, #6dd5ed, var(--primary-color)); 
+            --secondary-gradient: linear-gradient(135deg, #f7b733, var(--secondary-color)); 
+            --button-hover: linear-gradient(135deg, #4facfe, #00f2fe); 
+            --bg-color: #f0f2f5; 
             --card-bg: #ffffff; 
             --text-color: #333; 
             --light-text-color: #666;
@@ -28,9 +30,26 @@
             background: var(--bg-color); 
             padding-bottom: 70px; 
             color: var(--text-color); 
-            transition: background 0.4s ease-in-out;
             min-height: 100vh;
         }
+        
+        /* HIỆU ỨNG NỀN ĐỘNG (NHẸ NHÀNG) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(109, 213, 237, 0.1) 0%, rgba(33, 147, 176, 0.05) 50%, transparent 100%);
+            z-index: -1;
+            animation: gradientMove 15s ease infinite alternate;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
         .navbar { 
             background: var(--primary-gradient); 
             padding: 15px 20px; 
@@ -46,236 +65,165 @@
             border-bottom-left-radius: var(--radius-large);
             border-bottom-right-radius: var(--radius-large);
         }
-        .navbar a { 
-            color: white; 
-            text-decoration: none; 
-            margin-left: 15px; 
-            font-size: 0.95rem; 
-            transition: opacity 0.3s ease-in-out; 
-        }
-        .navbar a:hover { opacity: 0.9; transform: translateY(-1px); }
-        
-        /* LANGUAGE SWITCH */
-        #lang-switch { 
-            background: rgba(255, 255, 255, 0.3); 
-            border-radius: var(--radius-large); 
-            padding: 5px 12px; 
-            cursor: pointer; 
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: background 0.3s ease-in-out;
-            margin-left: 15px;
-        }
-        #lang-switch:hover { background: rgba(255, 255, 255, 0.45); }
-        
         .container { max-width: 650px; margin: 20px auto; padding: 0 15px; }
         .card { 
             background: var(--card-bg); 
             padding: 25px; 
-            border-radius: var(--radius-large); 
+            border-radius: var(--radius-large); /* Bo góc lớn hơn */
             margin-bottom: 25px; 
             box-shadow: var(--shadow-light); 
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             border: 1px solid var(--border-color);
         }
         .card:hover { 
-            transform: translateY(-5px); 
+            transform: translateY(-3px); /* Giảm độ nảy để trông chuyên nghiệp hơn */
             box-shadow: var(--shadow-medium); 
         }
         
-        /* TAB NAVIGATION */
-        .tab-nav {
-            display: flex;
-            justify-content: space-around;
-            background: var(--card-bg);
-            padding: 8px;
-            border-radius: var(--radius-large);
-            box-shadow: var(--shadow-light);
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-        }
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--light-text-color);
-            padding: 12px 25px;
-            cursor: pointer;
-            font-size: 1.05rem;
-            font-weight: 600;
-            border-radius: var(--radius-medium);
-            transition: color 0.3s ease-in-out, background 0.3s ease-in-out, transform 0.2s ease-in-out;
-            flex-grow: 1;
-            margin: 0 5px;
-        }
-        .tab-btn:hover:not(.active) {
-            color: var(--text-color);
-            background: #f0f0f0;
-            transform: translateY(-2px);
-        }
-        .tab-btn.active {
-            color: white;
-            background: var(--primary-gradient);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            font-weight: 700;
-        }
-        .tab-content { animation: fadeIn 0.6s ease-out; }
-        
-        /* HEADINGS */
-        h3 { 
-            color: #34495e; 
-            margin-bottom: 20px; 
-            display: flex; 
-            align-items: center; 
-            font-weight: 700;
-        }
-        h3 i { 
-            margin-right: 10px; 
-            color: #4CAF50; 
-            font-size: 1.2em;
-        }
-        h4 { color: #555; margin-bottom: 15px; font-weight: 600; }
-
         /* INPUTS & BUTTONS */
         input[type="text"], textarea, select, input[type="number"] {
-            width: 100%; 
-            padding: 12px 15px; 
-            border: 1px solid var(--border-color); 
             border-radius: var(--radius-medium); 
-            outline: none; 
+        }
+        .btn-send, .next-btn, .game-button { 
+            border-radius: 50px; /* Nút tròn hơn, hiện đại hơn */
+        }
+
+        /* QUIZ SCORE DISPLAY MỚI */
+        .quiz-stat { 
             font-size: 1rem; 
-            margin-bottom: 15px; 
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            color: var(--text-color);
-        }
-        input[type="text"]:focus, textarea:focus, select:focus, input[type="number"]:focus { 
-            border-color: #6dd5ed; 
-            box-shadow: 0 0 0 3px rgba(109, 213, 237, 0.2);
-        }
-        textarea { resize: vertical; min-height: 80px; }
-
-        .btn-send, .next-btn, #name-input-section button, #tictactoe-reset, .game-button { 
-            background: var(--primary-gradient); 
-            color: white; 
-            border: none; 
-            padding: 12px 30px; 
-            border-radius: var(--radius-large); 
-            cursor: pointer; 
-            font-weight: 700;
-            font-size: 1.05rem;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .btn-send:hover, .next-btn:hover, #name-input-section button:hover, #tictactoe-reset:hover, .game-button:hover { 
-            background: var(--button-hover); 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        }
-        .next-btn { background: var(--secondary-gradient); }
-        .next-btn:hover { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
-
-        /* CHAT/MESSAGE STYLES */
-        .post-header { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 10px; 
-            font-size: 0.9rem; 
             color: var(--light-text-color); 
-            align-items: center;
+            margin-bottom: 15px; 
+            line-height: 1.6; 
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
         }
-        .post-author { 
-            font-weight: 700; 
-            color: #4CAF50; 
-            font-size: 1.05rem; 
+        .quiz-stat-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: var(--radius-large);
+            font-weight: 600;
+        }
+        #current-score {
+            background-color: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeeba;
+        }
+        #done-count {
+            background-color: #d4edda; 
+            color: #155724; 
+            border: 1px solid #c3e6cb;
+            margin-right: 10px;
+        }
+        .quiz-stat i { margin-right: 5px; }
+
+
+        /* CHAT/MESSAGE LIKES MỚI */
+        .post-likes {
             display: flex;
             align-items: center;
+            color: var(--light-text-color);
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+            margin-top: 10px; /* Tạo khoảng cách với nội dung */
+            user-select: none;
         }
-        .post-author i { margin-right: 5px; font-size: 0.9em; }
-        
-        /* QUIZ STYLES (Giữ nguyên) */
-        .quiz-stat { font-size: 1rem; color: var(--light-text-color); margin-bottom: 15px; line-height: 1.6; }
-        .question-box { font-size: 1.35rem; font-weight: 700; margin: 25px 0; min-height: 70px; color: var(--text-color); animation: fadeIn 0.7s ease-out; line-height: 1.5; }
-        #q-category { display: inline-block; background: #e9ecef; padding: 6px 15px; border-radius: var(--radius-large); font-size: 0.85rem; margin-bottom: 15px; color: #555; font-weight: 600; }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        .opt-btn { padding: 15px 20px; border: 1px solid var(--border-color); background: #fdfdfd; border-radius: var(--radius-medium); font-size: 1rem; cursor: pointer; transition: all 0.3s ease-in-out; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.05); line-height: 1.4; }
-        .opt-btn:not(:disabled):hover { background: #e8f7ff; border-color: #6dd5ed; transform: translateX(8px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .opt-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; font-weight: 700; box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); }
-        .opt-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; font-weight: 700; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); }
-
-        /* RANKING (Giữ nguyên) */
-        .rank-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; }
-        .rank-table th, .rank-table td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
-        .rank-table th { background: #f8f9fa; color: #2193b0; font-weight: 700; text-transform: uppercase; }
-        .rank-table tr:nth-child(even) { background-color: #fcfcfc; }
-        .rank-table tr:hover { background-color: #f5f5f5; }
-        .rank-table tr:nth-child(1) td { font-weight: 700; color: #FFD700; font-size: 1.15em; } 
-        .rank-table tr:nth-child(2) td { font-weight: 600; color: #C0C0C0; font-size: 1.1em; } 
-        .rank-table tr:nth-child(3) td { font-weight: 600; color: #CD7F32; font-size: 1.05em; } 
-
-        /* TIC-TAC-TOE (CỜ CARO) STYLES (Giữ nguyên) */
-        .tictactoe-wrapper { text-align: center; margin-bottom: 30px; }
-        #tictactoe-board { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 300px; height: 300px; margin: 20px auto; border: 5px solid #333; border-radius: var(--radius-medium); background: #fff; }
-        .cell { border: 3px solid #333; display: flex; justify-content: center; align-items: center; font-size: 3.5rem; cursor: pointer; font-weight: 700; color: #333; transition: background 0.2s; }
-        .cell:hover:not(.x):not(.o) { background: #f0f8ff; } 
-        .cell:nth-child(3n) { border-right: none; } .cell:nth-child(3n+1) { border-left: none; }
-        .cell:nth-child(-n+3) { border-top: none; } .cell:nth-child(n+7) { border-bottom: none; }
-        .cell.x { color: #2193b0; } .cell.o { color: #fc4a1a; } 
-
-        /* NUMBER GUESSING GAME STYLES MỚI */
-        #guess-input {
-            text-align: center;
-            font-size: 1.5rem;
-            max-width: 150px;
-            display: block;
-            margin: 0 auto 15px auto;
+        .post-likes i {
+            margin-right: 5px;
+            color: #ccc;
+            transition: color 0.3s, transform 0.1s;
         }
-        #guess-button {
-            display: inline-block;
+        .post-likes i.liked {
+            color: #dc3545; /* Màu đỏ cho nút đã thích */
+            transform: scale(1.1);
         }
-        #guess-result {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            min-height: 25px;
-        }
-        #guess-result.win {
-            color: #28a745;
-        }
-        #guess-result.lose {
+        .post-likes:hover i {
             color: #dc3545;
         }
-        #guess-log {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: var(--radius-medium);
-            background: #f8f9fa;
-            border: 1px dashed var(--border-color);
-            text-align: left;
-            font-size: 0.95rem;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        /* LOAD MORE BUTTON CHO CHAT */
-        #load-more-btn {
-            background: #f0f0f0;
-            color: var(--text-color);
-            border: 1px solid #ddd;
+        
+        /* GAME GHÉP CẶP (MEMORY MATCH) MỚI */
+        #memory-game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 10px;
             width: 100%;
-            margin-top: 10px;
-            padding: 10px;
-            font-weight: 600;
+            max-width: 400px;
+            margin: 20px auto;
         }
-        #load-more-btn:hover {
-             background: #e0e0e0;
+        .memory-card {
+            background-color: var(--primary-color);
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: var(--radius-medium);
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .memory-card.flip {
+            transform: rotateY(180deg);
+        }
+        .memory-card.match {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .memory-card.match .card-face {
+            color: #28a745;
         }
 
+        .card-face {
+            position: absolute;
+            backface-visibility: hidden;
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+        }
+        .front-face {
+            transform: rotateY(180deg);
+            color: var(--text-color);
+        }
 
-        /* ANIMATIONS (Giữ nguyên) */
+        /* Responsive cho game ghép cặp */
+        @media (max-width: 480px) {
+            .memory-card {
+                height: 60px;
+            }
+            .card-face {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Thêm các icon cho game ghép cặp */
+        .memory-card .front-face i {
+            transition: color 0.3s;
+        }
+        
+        /* Skeleton Screen cho Quiz */
+        .skeleton {
+            background: #e0e0e0;
+            background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+            border-radius: 5px;
+            background-size: 200% 100%;
+            animation: 1.5s shine linear infinite;
+        }
+        @keyframes shine {
+            to { background-position: -200% 0; }
+        }
+        .skeleton-text-lg { height: 25px; margin-bottom: 20px; width: 90%; }
+        .skeleton-button { height: 40px; margin-bottom: 12px; }
+
+        /* Animation chung */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        hr { border-top: 1px dashed var(--border-color); margin: 30px 0; }
+        .post { animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
 <body onload="initApp()">
@@ -306,7 +254,11 @@
             </div>
             
             <div id="message-list">
-                <div style="text-align: center; color: var(--light-text-color); margin-top: 20px;" data-i18n="loading_msg">Đang tải tin nhắn...</div>
+                <div class="card" style="padding: 15px;">
+                    <div class="skeleton" style="width: 50%; height: 15px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="width: 100%; height: 10px; margin-bottom: 5px;"></div>
+                    <div class="skeleton" style="width: 80%; height: 10px;"></div>
+                </div>
             </div>
             
             <button id="load-more-btn" class="btn-send" onclick="loadMoreMessages()" data-i18n="load_more_msg" style="display: none;">Xem thêm tin nhắn</button>
@@ -324,14 +276,26 @@
 
             <div id="quiz-section" style="display: none;">
                 <div class="quiz-card card">
-                    <div class="quiz-stat"><span data-i18n="welcome">Chào mừng</span>, <span id="current-user-display" style="color: #4CAF50; font-weight: bold;"></span>!</div>
-                    <div class="quiz-stat"><span data-i18n="completed">Đã hoàn thành</span>: <span id="done-count">0</span> <span data-i18n="q_count">câu</span> | <span data-i18n="score">Điểm hiện tại</span>: <span id="current-score">0</span></div>
+                    <div class="quiz-stat">
+                        <span data-i18n="welcome">Chào mừng</span>, <span id="current-user-display" style="color: var(--primary-color); font-weight: bold;"></span>!
+                        <div>
+                            <span class="quiz-stat-item" id="done-count-container"><i class="fas fa-check-circle"></i> <span data-i18n="completed">Đã xong</span>: <span id="done-count">0</span></span>
+                            <span class="quiz-stat-item" id="score-count-container"><i class="fas fa-star"></i> <span data-i18n="score">Điểm</span>: <span id="current-score">0</span></span>
+                        </div>
+                    </div>
                     
                     <div id="quiz-content">
                         <div id="q-category" data-i18n="topic">Chủ đề</div>
-                        <div id="q-text" class="question-box"></div>
-                        <div id="options" class="options-grid"></div>
-                        <button id="next-btn" class="next-btn" onclick="loadNextQuestion()" data-i18n="next_q">Câu tiếp theo <i class="fas fa-arrow-right"></i></button>
+                        <div id="q-text" class="question-box">
+                            <div class="skeleton skeleton-text-lg"></div>
+                        </div>
+                        <div id="options" class="options-grid">
+                            <div class="skeleton skeleton-button"></div>
+                            <div class="skeleton skeleton-button"></div>
+                            <div class="skeleton skeleton-button"></div>
+                            <div class="skeleton skeleton-button"></div>
+                        </div>
+                        <button id="next-btn" class="next-btn" onclick="loadNextQuestion()" data-i18n="next_q" style="display: none;">Câu tiếp theo <i class="fas fa-arrow-right"></i></button>
                     </div>
 
                     <div id="quiz-complete" style="display: none; padding: 30px; text-align: center;">
@@ -388,6 +352,14 @@
         <div id="games" class="tab-content" style="display: none;">
             <h3 style="margin-bottom: 25px;"><i class="fas fa-gamepad"></i> <span data-i18n="game_h3">Khu Vực Trò Chơi Tuổi Thơ</span></h3>
             
+            <div class="guessing-wrapper card">
+                <h4 data-i18n="memory_title">Game Ghép Cặp (Memory Match)</h4>
+                <p id="memory-status" style="margin-bottom: 15px; font-weight: 600;" data-i18n="memory_status_start">Bấm "Chơi mới" để bắt đầu!</p>
+                <div id="memory-game-board">
+                    </div>
+                <button id="memory-new-game-button" class="game-button" onclick="startMemoryGame()" data-i18n="memory_new_game">Chơi mới</button>
+            </div>
+
             <div class="tictactoe-wrapper card">
                 <h4 data-i18n="tictactoe_title">Chơi Cờ Caro (Tic-Tac-Toe)</h4>
                 <div id="tictactoe-status" data-i18n="tictactoe_status_x">Lượt của X</div>
@@ -414,7 +386,7 @@
                 </div>
                 <div id="guess-result"></div>
                 <div id="guess-log"></div>
-                <button id="new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="background: #fc4a1a; margin-top: 15px;">Chơi lại</button>
+                <button id="new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="background: var(--secondary-color); margin-top: 15px;">Chơi lại</button>
             </div>
             
         </div> 
@@ -425,7 +397,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
@@ -444,8 +416,7 @@
                 'start_quiz': 'Bắt đầu Quiz',
                 'welcome': 'Chào mừng',
                 'completed': 'Đã hoàn thành',
-                'q_count': 'câu',
-                'score': 'Điểm hiện tại',
+                'score': 'Điểm',
                 'topic': 'Chủ đề',
                 'next_q': 'Câu tiếp theo',
                 'quiz_done_h3': 'Hoàn thành!',
@@ -482,7 +453,12 @@
                 'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.',
                 'guess_try_left': 'Bạn còn %t lần đoán.',
                 'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.',
-                'anonymous': 'Ẩn danh'
+                'anonymous': 'Ẩn danh',
+                'memory_title': 'Game Ghép Cặp (Memory Match)',
+                'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!',
+                'memory_status_win': '🎉 CHIẾN THẮNG! Bạn đã ghép đúng tất cả các cặp!',
+                'memory_status_turn': 'Lượt đi: %t',
+                'memory_new_game': 'Chơi mới',
             },
             'en': {
                 'community': 'Community',
@@ -499,8 +475,7 @@
                 'start_quiz': 'Start Quiz',
                 'welcome': 'Welcome',
                 'completed': 'Completed',
-                'q_count': 'questions',
-                'score': 'Current Score',
+                'score': 'Score',
                 'topic': 'Topic',
                 'next_q': 'Next Question',
                 'quiz_done_h3': 'Finished!',
@@ -537,7 +512,12 @@
                 'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.',
                 'guess_try_left': 'You have %t tries left.',
                 'guess_input_invalid': 'Please enter a valid number between 1 and 100.',
-                'anonymous': 'Anonymous'
+                'anonymous': 'Anonymous',
+                'memory_title': 'Memory Match Game',
+                'memory_status_start': 'Click "New Game" to start!',
+                'memory_status_win': '🎉 CONGRATS! You matched all pairs!',
+                'memory_status_turn': 'Turns: %t',
+                'memory_new_game': 'New Game',
             }
         };
 
@@ -548,8 +528,9 @@
             localStorage.setItem('appLang', currentLang);
             applyLanguage(currentLang);
             updateGameStatusDisplay();
-            startNewGuessingGame(); // Khởi tạo lại game đoán số để cập nhật ngôn ngữ
-            loadInitialMessages(); // Tải lại tin nhắn để cập nhật ngôn ngữ
+            startNewGuessingGame(); 
+            startMemoryGame(true); // Khởi tạo lại game ghép cặp
+            loadInitialMessages(); 
         }
 
         function applyLanguage(lang) {
@@ -566,7 +547,6 @@
             });
             
             loadLeaderboard(); 
-            // Chỉ cần gọi loadInitialMessages để tải lại 5 tin đầu và cập nhật ngôn ngữ
         }
         
         // --- LOGIC TAB CON ---
@@ -577,12 +557,11 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
 
-            if (tabId === 'games') {
-                if (!window.ticTacToeInitialized) {
-                    initTicTacToe();
-                    startNewGuessingGame();
-                    window.ticTacToeInitialized = true;
-                }
+            if (tabId === 'games' && !window.gamesInitialized) {
+                initTicTacToe();
+                startNewGuessingGame();
+                startMemoryGame(true);
+                window.gamesInitialized = true;
             }
         }
 
@@ -620,7 +599,7 @@
         window.initApp = function() {
             applyLanguage(currentLang);
             loadLeaderboard();
-            loadInitialMessages(); // Khởi tạo tải 5 tin nhắn đầu
+            loadInitialMessages(); 
             if (currentUserName) {
                 document.getElementById('current-user-display').innerText = currentUserName;
                 document.getElementById('name-input-section').style.display = 'none';
@@ -630,38 +609,31 @@
                 document.getElementById('name-input-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
             }
-            initTicTacToe(); 
-            startNewGuessingGame(); 
+            // Khởi tạo Games khi chuyển tab lần đầu
+            // initTicTacToe(); 
+            // startNewGuessingGame(); 
+            // startMemoryGame(true);
         }
 
-        // --- LOGIC CHAT PHÂN TRANG MỚI ---
+        // --- LOGIC CHAT PHÂN TRANG & LIKE MỚI ---
         
-        // Tải 5 tin nhắn đầu tiên (và thiết lập lắng nghe cho tin nhắn mới)
         async function loadInitialMessages() {
             const list = document.getElementById("message-list");
             list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${translations[currentLang]['loading_msg']}</div>`;
             lastVisible = null; 
 
-            // Lắng nghe realtime cho 1 tin nhắn mới nhất để hiển thị ngay lập tức
+            // Lắng nghe realtime cho 1 tin nhắn mới nhất 
             onSnapshot(query(chatRef, orderBy("createdAt", "desc"), limit(1)), (snapshot) => {
                 if(snapshot.empty) return;
-                const latestMsg = snapshot.docs[0];
-                const latestDocId = latestMsg.id;
+                const latestDocId = snapshot.docs[0].id;
                 
-                // Lấy ra tin nhắn đầu tiên trong list cũ
                 const firstMsgElement = list.querySelector('.post.card:first-child');
                 if (firstMsgElement && firstMsgElement.getAttribute('data-doc-id') === latestDocId) {
-                    // Tin nhắn này đã có trong list, không làm gì
                     return;
                 }
                 
-                // Tải lại 5 tin đầu nếu có tin nhắn mới hơn tin nhắn đầu tiên trong list
-                if (lastVisible) {
-                    loadMoreMessages(true);
-                } else {
-                    // Nếu là lần đầu tiên tải, hoặc list đang rỗng thì tải lại 5 tin đầu.
-                    loadMoreMessages(true);
-                }
+                // Tải lại 5 tin đầu nếu có tin nhắn mới hơn 
+                loadMoreMessages(true);
             });
 
             // Tải 5 tin nhắn đầu tiên (không phải realtime)
@@ -693,26 +665,39 @@
                 }
                 
                 const newMessages = [];
+                const likedMessages = JSON.parse(localStorage.getItem('likedMessages12B2') || '{}');
+
                 snapshot.docs.forEach(doc => {
                     const msg = doc.data();
                     const date = msg.createdAt ? new Date(msg.createdAt.seconds * 1000).toLocaleString(currentLang === 'vi' ? 'vi-VN' : 'en-US') : (currentLang === 'vi' ? 'Vừa xong' : 'Just now');
                     const authorDisplay = msg.author || translations[currentLang]['anonymous'];
-                    newMessages.push(`<div class="post card" data-doc-id="${doc.id}"><div class="post-header"><span class="post-author"><i class="fas fa-user-secret"></i> ${authorDisplay}</span><span>${date}</span></div><div style="font-size: 1rem; line-height: 1.5;">${msg.text}</div></div>`);
+                    const likes = msg.likes || 0;
+                    const likedClass = likedMessages[doc.id] ? 'liked' : '';
+
+                    newMessages.push(`
+                        <div class="post card" data-doc-id="${doc.id}">
+                            <div class="post-header">
+                                <span class="post-author"><i class="fas fa-user-secret"></i> ${authorDisplay}</span>
+                                <span>${date}</span>
+                            </div>
+                            <div style="font-size: 1rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word;">${msg.text}</div>
+                            <div class="post-likes" onclick="toggleLike('${doc.id}', ${likes})">
+                                <i class="fas fa-heart ${likedClass}"></i>
+                                <span data-likes-count="${doc.id}">${likes}</span>
+                            </div>
+                        </div>`);
                 });
 
-                // Chèn tin nhắn mới (chèn lên đầu nếu là initial/realtime load, chèn xuống cuối nếu là load more)
                 if (isInitialLoad) {
                     list.innerHTML = newMessages.join('');
                 } else {
                     list.insertAdjacentHTML('beforeend', newMessages.join(''));
                 }
 
-                // Cập nhật lastVisible cho lần tải tiếp theo
                 if (snapshot.docs.length > 0) {
                     lastVisible = snapshot.docs[snapshot.docs.length - 1];
                 }
 
-                // Hiển thị nút "Xem thêm" nếu vẫn còn tin nhắn để tải (hoặc đã tải đủ limit)
                 if (snapshot.docs.length === MESSAGE_LIMIT) {
                     loadMoreBtn.style.display = 'block';
                     loadMoreBtn.textContent = translations[currentLang]['load_more_msg'];
@@ -721,13 +706,58 @@
                     loadMoreBtn.style.display = 'none'; 
                 }
 
-
             } catch (error) {
                 console.error("Lỗi tải tin nhắn:", error);
                 if (isInitialLoad) list.innerHTML = `<div style="text-align: center; color: var(--light-text-color); margin-top: 20px;">Lỗi tải tin nhắn.</div>`;
                 loadMoreBtn.style.display = 'none';
             }
         }
+
+
+        window.toggleLike = async function(docId, currentLikes) {
+            const likesCountElement = document.querySelector(`[data-likes-count="${docId}"]`);
+            const likeIcon = likesCountElement ? likesCountElement.previousElementSibling : null;
+            
+            if (!likesCountElement || !likeIcon) return;
+            
+            const likedMessages = JSON.parse(localStorage.getItem('likedMessages12B2') || '{}');
+            const hasLiked = likedMessages[docId];
+            
+            let newLikes = currentLikes;
+
+            if (!hasLiked) {
+                newLikes = currentLikes + 1;
+                likedMessages[docId] = true;
+                likeIcon.classList.add('liked');
+            } else {
+                newLikes = Math.max(0, currentLikes - 1);
+                delete likedMessages[docId];
+                likeIcon.classList.remove('liked');
+            }
+            
+            likesCountElement.textContent = newLikes;
+            localStorage.setItem('likedMessages12B2', JSON.stringify(likedMessages));
+
+            try {
+                const docRef = doc(db, "anonymous_messages", docId);
+                await updateDoc(docRef, {
+                    likes: newLikes
+                });
+            } catch (error) {
+                console.error("Lỗi cập nhật like:", error);
+                // Hoàn tác nếu lỗi
+                if (!hasLiked) {
+                    likesCountElement.textContent = currentLikes;
+                    delete likedMessages[docId];
+                    likeIcon.classList.remove('liked');
+                } else {
+                    likesCountElement.textContent = currentLikes;
+                    likedMessages[docId] = true;
+                    likeIcon.classList.add('liked');
+                }
+                localStorage.setItem('likedMessages12B2', JSON.stringify(likedMessages));
+            }
+        };
 
 
         window.sendMessage = async function() {
@@ -742,11 +772,11 @@
                 await addDoc(chatRef, {
                     text: messageText,
                     createdAt: serverTimestamp(),
-                    author: currentUserName || translations[currentLang]['anonymous'] 
+                    author: currentUserName || translations[currentLang]['anonymous'],
+                    likes: 0
                 });
                 document.getElementById('message-text').value = '';
                 
-                // Sau khi gửi thành công, reset lại list và tải 5 tin đầu
                 await loadMoreMessages(true); 
 
             } catch (error) {
@@ -842,16 +872,16 @@
             resetGame(); 
         }
 
-        // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) MỚI ---
+        // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) ---
         let secretNumber;
         let guessesLeft;
         const maxGuesses = 10;
-        let gameStatus = 'playing';
+        let guessingGameStatus = 'playing';
 
         window.startNewGuessingGame = function() {
             secretNumber = Math.floor(Math.random() * 100) + 1;
             guessesLeft = maxGuesses;
-            gameStatus = 'playing';
+            guessingGameStatus = 'playing';
 
             document.getElementById('guess-result').textContent = translations[currentLang]['guessing_prompt'];
             document.getElementById('guess-result').className = '';
@@ -862,7 +892,7 @@
         }
 
         window.checkGuess = function() {
-            if (gameStatus !== 'playing') return;
+            if (guessingGameStatus !== 'playing') return;
 
             const inputElement = document.getElementById('guess-input');
             const guess = parseInt(inputElement.value);
@@ -881,7 +911,7 @@
                 resultElement.textContent = translations[currentLang]['guess_win'].replace('%s', secretNumber).replace('%t', maxGuesses - guessesLeft);
                 resultElement.className = 'win';
                 logElement.innerHTML = `✅ ${guess} | ${logElement.innerHTML}`;
-                gameStatus = 'win';
+                guessingGameStatus = 'win';
                 inputElement.disabled = true;
                 document.getElementById('guess-button').disabled = true;
 
@@ -895,7 +925,7 @@
 
                 if (guessesLeft === 0) {
                     resultElement.textContent = translations[currentLang]['guess_lose'].replace('%s', secretNumber);
-                    gameStatus = 'lose';
+                    guessingGameStatus = 'lose';
                     inputElement.disabled = true;
                     document.getElementById('guess-button').disabled = true;
                 } else {
@@ -904,6 +934,99 @@
             }
             inputElement.value = '';
             inputElement.focus();
+        }
+
+        // --- LOGIC GAME GHÉP CẶP (MEMORY MATCH) MỚI ---
+        const MEMORY_ICONS = [
+            '<i class="fas fa-apple-alt"></i>', '<i class="fas fa-bell"></i>', '<i class="fas fa-birthday-cake"></i>', '<i class="fas fa-cat"></i>', 
+            '<i class="fas fa-camera"></i>', '<i class="fas fa-cookie"></i>', '<i class="fas fa-dog"></i>', '<i class="fas fa-feather"></i>'
+        ];
+        let cards = [];
+        let flippedCards = [];
+        let matchesFound = 0;
+        let canFlip = true;
+        let totalTurns = 0;
+        const memoryStatus = document.getElementById('memory-status');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        window.startMemoryGame = function(resetOnly = false) {
+            if (resetOnly) {
+                memoryStatus.textContent = translations[currentLang]['memory_status_start'];
+                document.getElementById('memory-game-board').innerHTML = '';
+                return;
+            }
+
+            totalTurns = 0;
+            matchesFound = 0;
+            canFlip = true;
+            flippedCards = [];
+            memoryStatus.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
+
+            const doubledIcons = [...MEMORY_ICONS, ...MEMORY_ICONS];
+            cards = shuffleArray(doubledIcons);
+
+            const board = document.getElementById('memory-game-board');
+            board.innerHTML = '';
+
+            cards.forEach((icon, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('memory-card');
+                cardElement.dataset.icon = icon;
+                cardElement.dataset.index = index;
+                cardElement.innerHTML = `
+                    <div class="card-face back-face"><i class="fas fa-question"></i></div>
+                    <div class="card-face front-face">${icon}</div>
+                `;
+                cardElement.addEventListener('click', handleCardClick);
+                board.appendChild(cardElement);
+            });
+        }
+
+        function handleCardClick(event) {
+            const clickedCard = event.currentTarget;
+
+            if (!canFlip || flippedCards.includes(clickedCard) || clickedCard.classList.contains('match')) return;
+            
+            clickedCard.classList.add('flip');
+            flippedCards.push(clickedCard);
+
+            if (flippedCards.length === 2) {
+                canFlip = false;
+                totalTurns++;
+                memoryStatus.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
+
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.icon === card2.dataset.icon) {
+                    // Match Found!
+                    matchesFound++;
+                    setTimeout(() => {
+                        card1.classList.add('match');
+                        card2.classList.add('match');
+                        flippedCards = [];
+                        canFlip = true;
+                        
+                        if (matchesFound === MEMORY_ICONS.length) {
+                            memoryStatus.textContent = translations[currentLang]['memory_status_win'];
+                        }
+                    }, 500);
+
+                } else {
+                    // No Match
+                    setTimeout(() => {
+                        card1.classList.remove('flip');
+                        card2.classList.remove('flip');
+                        flippedCards = [];
+                        canFlip = true;
+                    }, 1000);
+                }
+            }
         }
 
 
@@ -930,8 +1053,14 @@
             document.getElementById('done-count').innerText = questionsAttempted;
             document.getElementById('quiz-content').style.display = 'block';
             document.getElementById('quiz-complete').style.display = 'none';
-            document.getElementById('q-text').innerText = currentLang === 'vi' ? "Đang tải câu hỏi từ cộng đồng..." : "Loading questions from community..."; 
             
+            // Hiển thị skeleton loading
+            document.getElementById('q-text').innerHTML = '<div class="skeleton skeleton-text-lg"></div>';
+            document.getElementById('options').innerHTML = '<div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div><div class="skeleton skeleton-button"></div>';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('q-category').innerText = translations[currentLang]['topic'];
+
+
             if (fullQuestionBank.length === 0) {
                 try {
                     const querySnapshot = await getDocs(quizRef);
@@ -943,6 +1072,7 @@
                     }
                 } catch (e) {
                     document.getElementById('q-text').innerText = currentLang === 'vi' ? "Lỗi kết nối hoặc chưa có câu hỏi. Vui lòng kiểm tra Rules Firestore." : "Connection error or no questions. Check Firestore Rules.";
+                    document.getElementById('options').innerHTML = '';
                     return;
                 }
             }
@@ -1087,7 +1217,6 @@
 
 
             try {
-                // LƯU THẲNG VÀO collection quiz_questions
                 await addDoc(quizRef, { 
                     q: qText, 
                     a: [ans0, ans1, ans2, ans3], 
@@ -1097,13 +1226,11 @@
                     createdAt: serverTimestamp(),
                 });
 
-                alert(currentLang === 'vi' ? "Câu hỏi đã được thêm vào Quiz ngay lập tức! Cảm ơn bạn đã đóng góp." : "Question has been added to the Quiz immediately! Thank you for contributing.");
+                alert(currentLang === 'vi' ? "Câu hỏi đã được thêm vào Quiz ngay lập tức! Cảm ơn bạn đã đóng góp." : "Question has been added to the Quiz immediately! Thank ơn bạn đã đóng góp.");
                 
-                // Cập nhật lại bộ câu hỏi trong bộ nhớ
                 fullQuestionBank = []; 
                 await initQuiz(); 
 
-                // Reset form
                 document.getElementById('q-text-input').value = '';
                 document.getElementById('q-ans-0').value = '';
                 document.getElementById('q-ans-1').value = '';
