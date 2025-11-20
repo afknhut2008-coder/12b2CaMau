@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>12B2 - Cộng Đồng & Tuổi Thơ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght+400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V2 - High-End UX) */
+        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
         :root { 
             /* MÀU SẮC MỚI: Tông xanh tím sang trọng */
             --primary-color: #4a00e0;
             --secondary-color: #8e2de2;
             --primary-gradient: linear-gradient(135deg, #7474bf, #348ac7); /* Blue-Purple Fade */
             --button-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            --ai-chat-gradient: linear-gradient(135deg, #00c6ff, #0072ff); /* Blue AI Theme */
             --bg-color: #f8f9fa; /* Nền trắng xám nhẹ */
             --card-bg: rgba(255, 255, 255, 0.8); /* Thẻ nền hơi mờ */
             --text-color: #212529; /* Đen sâu */
@@ -153,8 +154,10 @@
             border-radius: 50px; 
             box-shadow: var(--shadow-soft);
             backdrop-filter: blur(10px);
+            overflow-x: auto;
         }
         .tab-btn {
+            white-space: nowrap; /* Ngăn chặn wrap */
             background: transparent;
             border: none;
             padding: 10px 20px;
@@ -245,14 +248,14 @@
             transform: scale(1.2);
         }
         
-        /* AI CHAT SPECIFIC */
+        /* AI CHAT SPECIFIC - Cải tiến giao diện AI Chat */
         #ai-chat-output {
-            max-height: 350px; /* Điều chỉnh chiều cao */
+            max-height: 500px; /* Chiều cao lớn hơn */
             overflow-y: auto;
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column; /* Đổi thành column để tin nhắn mới nằm ở dưới */
             padding: 10px;
-            background-color: #ffffff; /* Nền trắng cho chat box */
+            background-color: #f0f3f8; /* Nền xám xanh nhẹ cho chat box */
             border: 1px solid var(--border-color);
             border-radius: var(--radius-medium);
         }
@@ -260,26 +263,22 @@
             margin-bottom: 15px;
             padding: 12px;
             border-radius: var(--radius-medium);
-            max-width: 90%; /* Giới hạn chiều rộng tin nhắn */
+            max-width: 90%; 
+            align-self: flex-start;
         }
         /* Tin nhắn của người dùng */
         .ai-post-container.user-message {
-            background-color: #e6f0ff; /* Light blue */
-            align-self: flex-end; /* Căn phải */
+            background-color: #cfe2ff; /* Light blue */
+            align-self: flex-end; 
             margin-left: auto;
         }
         /* Tin nhắn của AI */
         .ai-post-container.ai-message {
-            background-color: #f4f6f9; /* Light grey */
-            align-self: flex-start; /* Căn trái */
+            background-color: #ffffff; 
+            align-self: flex-start; 
             margin-right: auto;
-            border-left: 3px solid var(--primary-color);
-        }
-        .ai-message-content {
-            font-size: 1rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-break: break-word;
+            border: 1px solid #cce5ff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         .ai-author {
             font-size: 0.85rem;
@@ -290,7 +289,21 @@
         .user-message .ai-author {
             color: var(--secondary-color);
         }
-
+        .ai-message-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        /* Style cho code/math trong chat */
+        .ai-message-content pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: var(--radius-small);
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
         /* TIC TAC TOE STYLES (CỜ CARO) */
         #tictactoe-board {
             display: grid;
@@ -404,22 +417,24 @@
 
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="social" onclick="showTab('social')" data-i18n="social_tab">Social & Quiz</button>
+            <button class="tab-btn" data-tab="ai-chat" onclick="showTab('ai-chat')" data-i18n="ai_chat_tab">AI Chatbot</button>
             <button class="tab-btn" data-tab="games" onclick="showTab('games')" data-i18n="game_tab">Games (Tuổi Thơ)</button>
         </div>
 
-        <div id="social" class="tab-content">
-
-            <h3><i class="fas fa-robot"></i> <span data-i18n="ai_chat_title">AI Hỗ Trợ (Model 12B2)</span></h3>
-            <div class="card">
+        <div id="ai-chat" class="tab-content" style="display: none;">
+            <h3><i class="fas fa-robot" style="color: #0072ff;"></i> <span data-i18n="ai_chat_title">AI Hỗ Trợ (Model 12B2)</span></h3>
+            <div class="card" style="padding: 15px 15px 25px 15px;">
                 <div id="ai-chat-output">
                     </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <input type="text" id="ai-chat-input" data-i18n-placeholder="ai_chat_placeholder" placeholder="Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)" style="flex-grow: 1; margin-bottom: 0;">
                     <button id="btn-send-ai" class="btn-send" onclick="sendMessageToAI()" data-i18n="ai_send_msg" style="width: 100px;">Gửi</button>
                 </div>
+                <p style="font-size: 0.8rem; color: var(--light-text-color); margin-top: 10px;" data-i18n="ai_disclaimer">Lưu ý: Đây là AI mô phỏng (client-side). Phản hồi chỉ mang tính chất tham khảo.</p>
             </div>
-            <hr>
-
+        </div>
+        <div id="social" class="tab-content">
+            
             <h3><i class="fas fa-comments"></i> <span data-i18n="chat_title">Góc Chat Ẩn Danh</span></h3>
             <div class="create-message card">
                 <textarea id="message-text" rows="3" data-i18n-placeholder="chat_placeholder" placeholder="Gửi tin nhắn ẩn danh cho cả lớp..."></textarea>
@@ -581,36 +596,40 @@
         // --- DỮ LIỆU ĐA NGÔN NGỮ (ĐÃ CẬP NHẬT) ---
         const translations = {
             'vi': {
-                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Tuổi Thơ)', 
+                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Tuổi Thơ)', 
                 'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn', 'loading_msg': 'Đang tải tin nhắn...', 'load_more_msg': 'Xem thêm tin nhắn', 
                 
-                'ai_chat_title': 'AI Hỗ Trợ (Model 12B2)', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Model 12B2',
-                // Các phản hồi mô phỏng của AI
-                'ai_response_default_vi_1': 'Chào bạn, tôi là AI của lớp 12B2! Bạn muốn tôi giúp gì về kiến thức hay tin tức lớp học?',
-                'ai_response_default_vi_2': 'Câu hỏi này hay đấy! Theo tôi, điều quan trọng nhất là phải ôn lại kiến thức cơ bản.',
-                'ai_response_default_vi_3': 'Để giải bài này, bạn nên áp dụng công thức: $A=B^2 - 4C$. Hãy cho tôi biết kết quả của bạn!',
-                'ai_response_default_vi_4': 'Trong lớp chúng ta, mọi người đang bàn tán về sự kiện sắp tới. Bạn đã đăng ký tham gia chưa?',
-                'ai_response_default_vi_5': 'Ah, tôi hiểu rồi. Hãy thử cách tiếp cận sau: Phân tích đề bài thành các bước nhỏ hơn.',
+                'ai_chat_title': 'AI Hỗ Trợ (Model 12B2)', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Model 12B2', 'ai_disclaimer': 'Lưu ý: Đây là AI mô phỏng (client-side). Phản hồi chỉ mang tính chất tham khảo.',
+                // Các phản hồi mô phỏng của AI được cập nhật và làm phong phú hơn
+                'ai_response_vi_math': 'Đây là công thức chính: $\\int_{a}^{b} f(x) dx = F(b) - F(a)$. Nếu gặp bài khó, hãy thử phương pháp đổi biến hoặc tích phân từng phần nhé!',
+                'ai_response_vi_news': 'Gần đây, sự kiện "Văn nghệ cuối năm" đang được bàn tán sôi nổi nhất. Lớp ta đã lên ý tưởng cho tiết mục chưa? Tôi nghĩ một vở kịch hài sẽ rất tuyệt!',
+                'ai_response_vi_schedule': 'Lịch thi sắp tới bao gồm: Toán (20/12), Lý (22/12), Hóa (25/12). Hãy phân bổ thời gian hợp lý và tránh học dồn nhé!',
+                'ai_response_vi_study': 'Để học thuộc nhanh, bạn nên áp dụng phương pháp Lặp lại ngắt quãng (Spaced Repetition) và cố gắng liên hệ kiến thức với các ví dụ thực tế.',
+                'ai_response_vi_random': 'Được rồi, tôi đã nhận thông tin. Dù tôi chỉ là mô hình mô phỏng, tôi vẫn luôn ở đây để hỗ trợ tinh thần học tập của cả lớp. Bạn có câu hỏi nào khác không?',
+                'ai_response_vi_default': 'Câu hỏi của bạn rất thú vị! Hãy thử nhìn vấn đề từ một góc độ khác, có lẽ câu trả lời nằm ở phần kiến thức nền tảng mà bạn đã học.',
+                'ai_response_vi_code': 'Được, đây là một đoạn code JavaScript đơn giản để tính tổng: <pre>function calculateSum(a, b) {\n  return a + b;\n}\nconsole.log(calculateSum(5, 10));</pre>',
                 
-                'quiz_title': 'Thử Thách Đố Vui', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 'welcome': 'Chào mừng', 'completed': 'Đã hoàn thành', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'sending_rank': 'Đang gửi kết quả lên BXH...', 'play_again': 'Làm lại', 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 'leaderboard_title': 'Bảng Xếp Hạng (Top 10)', 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi', 'loading_rank': 'Đang tải bảng xếp hạng...', 
+                'quiz_title': 'Thử Thách Đố Vui', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên (để lên BXH):', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 'welcome': 'Chào mừng', 'completed': 'Đã hoàn thành', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'sending_rank': 'Đang gửi kết quả lên BXH...','play_again': 'Làm lại', 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 'leaderboard_title': 'Bảng Xếp Hạng (Top 10)', 'rank': 'Hạng', 'name': 'Tên', 'date': 'Ngày chơi', 'loading_rank': 'Đang tải bảng xếp hạng...', 
                 
                 'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng! 🥳', 'tictactoe_win_o': 'O thắng! 🥳', 'tictactoe_draw': 'Hòa! 🤝', 'tictactoe_reset': 'Chơi lại', 'guessing_title': 'Game Đoán Số (1-100)', 'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!', 'guess_ph': 'Nhập số', 'guess_btn': 'Đoán', 'new_game_btn': 'Chơi mới', 'guess_too_low': 'Quá thấp! 🤏', 'guess_too_high': 'Quá cao! 👆', 'guess_win': '🎉 CHÚC MỪNG! Bạn đoán đúng số %s chỉ trong %t lần!', 'guess_lose': 'GAME OVER! Bạn đã hết lần đoán. Số bí mật là %s.', 'guess_try_left': 'Bạn còn %t lần đoán.', 'guess_input_invalid': 'Vui lòng nhập số hợp lệ từ 1 đến 100.', 'anonymous': 'Ẩn danh', 
                 
                 'memory_title': 'Game Ghép Cặp (Memory Match)', 'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!', 'memory_status_win': '🎉 CHIẾN THẮNG! Bạn đã ghép đúng tất cả các cặp!', 'memory_status_turn': 'Lượt đi: %t', 'memory_new_game': 'Chơi mới', 
             },
             'en': {
-                'community': 'Community', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Childhood)', 
+                'community': 'Community', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Childhood)', 
                 'chat_title': 'Anonymous Chat Corner', 'chat_placeholder': 'Send an anonymous message to the class...', 'send_msg': 'Send Message', 'loading_msg': 'Loading messages...', 'load_more_msg': 'Load more messages',
                 
-                'ai_chat_title': 'AI Assistant (Model 12B2)', 'ai_chat_placeholder': 'Ask AI anything (Example: Quick formula for derivative?)', 'ai_send_msg': 'Send', 'ai_system_msg': 'AI Model 12B2',
-                // Các phản hồi mô phỏng của AI
-                'ai_response_default_en_1': 'Hello, I am the 12B2 class AI! What can I help you with regarding knowledge or class news?',
-                'ai_response_default_en_2': 'That\'s a great question! In my opinion, the most important thing is to review the basic knowledge.',
-                'ai_response_default_en_3': 'To solve this problem, you should apply the formula: $A=B^2 - 4C$. Let me know your result!',
-                'ai_response_default_en_4': 'In our class, everyone is talking about the upcoming event. Have you signed up?',
-                'ai_response_default_en_5': 'Ah, I see. Try this approach: Break down the problem into smaller steps.',
+                'ai_chat_title': 'AI Assistant (Model 12B2)', 'ai_chat_placeholder': 'Ask AI anything (Example: Quick formula for derivative?)', 'ai_send_msg': 'Send', 'ai_system_msg': 'AI Model 12B2', 'ai_disclaimer': 'Note: This is a simulated AI (client-side). Responses are for reference only.',
+                // Các phản hồi mô phỏng của AI được cập nhật và làm phong phú hơn
+                'ai_response_en_math': 'Here is the main formula: $\\int_{a}^{b} f(x) dx = F(b) - F(a)$. If you find it hard, try the substitution method or integration by parts!',
+                'ai_response_en_news': 'Recently, the "Year-end Arts Performance" event is the most talked-about. Has our class finalized the idea for the performance? I think a comedy sketch would be great!',
+                'ai_response_en_schedule': 'The upcoming exam schedule includes: Math (20/12), Physics (22/12), Chemistry (25/12). Allocate your time wisely and avoid cramming!',
+                'ai_response_en_study': 'To memorize fast, you should apply the Spaced Repetition method and try to connect the knowledge with real-world examples.',
+                'ai_response_en_random': 'Alright, I received the information. Although I am just a simulated model, I am always here to support the class\'s learning spirit. Do you have any other questions?',
+                'ai_response_en_default': 'Your question is very interesting! Try looking at the problem from a different angle; perhaps the answer lies in the fundamental knowledge you have learned.',
+                'ai_response_en_code': 'Sure, here is a simple JavaScript code snippet to calculate the sum: <pre>function calculateSum(a, b) {\n  return a + b;\n}\nconsole.log(calculateSum(5, 10));</pre>',
                 
-                'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again', 'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer B is correct', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer B is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 
+                'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again', 'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 
                 
                 'game_h3': 'Childhood Games Zone', 'tictactoe_title': 'Play Tic-Tac-Toe', 'tictactoe_status_x': 'X\'s turn', 'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X wins! 🥳', 'tictactoe_win_o': 'O wins! 🥳', 'tictactoe_draw': 'Draw! 🤝', 'tictactoe_reset': 'Play Again', 'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have picked a number between 1 and 100. You have 10 tries!', 'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'new_game_btn': 'New Game', 'guess_too_low': 'Too low! 🤏', 'guess_too_high': 'Too high! 👆', 'guess_win': '🎉 CONGRATS! You guessed %s in %t tries!', 'guess_lose': 'GAME OVER! You ran out of tries. The secret number was %s.', 'guess_try_left': 'You have %t tries left.', 'guess_input_invalid': 'Please enter a valid number between 1 and 100.', 'anonymous': 'Anonymous', 
                 
@@ -628,6 +647,8 @@
             startNewGuessingGame(); 
             startMemoryGame(true); 
             loadInitialMessages(); 
+            // Khởi tạo lại AI Chat để cập nhật ngôn ngữ cho tin nhắn đầu tiên
+            initAIChat(true);
         }
 
         function applyLanguage(lang) {
@@ -701,7 +722,7 @@
             applyLanguage(currentLang);
             loadLeaderboard();
             loadInitialMessages(); 
-            initAIChat(); // Khởi tạo AI Chat
+            initAIChat(); 
             if (currentUserName) {
                 document.getElementById('current-user-display').innerText = currentUserName;
                 document.getElementById('name-input-section').style.display = 'none';
@@ -711,6 +732,8 @@
                 document.getElementById('name-input-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
             }
+            // Mở tab Social & Quiz mặc định
+            showTab('social'); 
         }
 
         // --- LOGIC AI CHAT MỚI ---
@@ -719,10 +742,15 @@
         const aiSendBtn = document.getElementById('btn-send-ai');
         let aiChatHistory = []; // Lưu trữ lịch sử chat
 
-        function initAIChat() {
-            // Hiển thị tin nhắn mặc định của AI khi khởi tạo
+        function initAIChat(isLangToggle = false) {
+            // Nếu là chuyển đổi ngôn ngữ, chỉ render lại tin nhắn hiện tại
+            if (isLangToggle) {
+                renderAIChat();
+                return;
+            }
+            // Hiển thị tin nhắn mặc định của AI khi khởi tạo lần đầu
             if (aiChatHistory.length === 0) {
-                const initialMsgKey = currentLang === 'vi' ? 'ai_response_default_vi_1' : 'ai_response_default_en_1';
+                const initialMsgKey = currentLang === 'vi' ? 'ai_response_vi_random' : 'ai_response_en_random';
                 const initialMsgText = translations[currentLang][initialMsgKey];
                 
                 aiChatHistory.push({ type: 'ai', text: initialMsgText });
@@ -739,8 +767,8 @@
         function renderAIChat() {
             aiChatOutput.innerHTML = '';
             
-            // Render ngược từ tin nhắn cũ nhất đến mới nhất
-            [...aiChatHistory].reverse().forEach(msg => { 
+            // Render từ tin nhắn cũ nhất đến mới nhất
+            aiChatHistory.forEach(msg => { 
                 const msgElement = document.createElement('div');
                 msgElement.classList.add('ai-post-container');
                 msgElement.classList.add(msg.type === 'user' ? 'user-message' : 'ai-message');
@@ -750,6 +778,7 @@
                     : translations[currentLang]['ai_system_msg'];
                 const authorClass = msg.type === 'user' ? 'fas fa-user-circle' : 'fas fa-robot';
                 
+                // Sử dụng innerHTML để parse HTML/LaTeX
                 msgElement.innerHTML = `
                     <div class="ai-author">
                         <i class="${authorClass}"></i> ${author}
@@ -784,29 +813,33 @@
                 aiSendBtn.textContent = translations[currentLang]['ai_send_msg'];
             }, 1000 + Math.random() * 1000); // Trả lời sau 1-2 giây
         }
-
+        
+        // --- LOGIC CẢI THIỆN PHẢN HỒI AI ---
         function generateAIResponse(input) {
             const lowerInput = input.toLowerCase();
             const lang = currentLang;
             const res = translations[lang];
 
-            if (lowerInput.includes('công thức') || lowerInput.includes('giải bài') || lowerInput.includes('toán') || lowerInput.includes('lý')) {
-                return res[lang === 'vi' ? 'ai_response_default_vi_3' : 'ai_response_default_en_3'];
+            if (lowerInput.includes('công thức') || lowerInput.includes('giải bài') || lowerInput.includes('tính') || lowerInput.includes('đạo hàm') || lowerInput.includes('tích phân')) {
+                return res[lang === 'vi' ? 'ai_response_vi_math' : 'ai_response_en_math'];
             }
-            if (lowerInput.includes('tin tức') || lowerInput.includes('sự kiện') || lowerInput.includes('lớp')) {
-                return res[lang === 'vi' ? 'ai_response_default_vi_4' : 'ai_response_default_en_4'];
+            if (lowerInput.includes('tin tức') || lowerInput.includes('sự kiện') || lowerInput.includes('lớp') || lowerInput.includes('văn nghệ')) {
+                return res[lang === 'vi' ? 'ai_response_vi_news' : 'ai_response_en_news'];
             }
-            if (lowerInput.includes('cách làm') || lowerInput.includes('giúp tôi') || lowerInput.includes('cần làm gì')) {
-                return res[lang === 'vi' ? 'ai_response_default_vi_5' : 'ai_response_default_en_5'];
+            if (lowerInput.includes('lịch thi') || lowerInput.includes('thời gian biểu') || lowerInput.includes('kiểm tra')) {
+                return res[lang === 'vi' ? 'ai_response_vi_schedule' : 'ai_response_en_schedule'];
             }
-            if (lowerInput.includes('cơ bản') || lowerInput.includes('ôn tập') || lowerInput.includes('học')) {
-                return res[lang === 'vi' ? 'ai_response_default_vi_2' : 'ai_response_default_en_2'];
+            if (lowerInput.includes('học thuộc') || lowerInput.includes('ôn tập') || lowerInput.includes('phương pháp học')) {
+                return res[lang === 'vi' ? 'ai_response_vi_study' : 'ai_response_en_study'];
+            }
+             if (lowerInput.includes('code') || lowerInput.includes('lập trình') || lowerInput.includes('javascript') || lowerInput.includes('html')) {
+                return res[lang === 'vi' ? 'ai_response_vi_code' : 'ai_response_en_code'];
             }
             
             // Phản hồi mặc định nếu không khớp
             const defaultResponses = [
-                res[lang === 'vi' ? 'ai_response_default_vi_2' : 'ai_response_default_en_2'],
-                res[lang === 'vi' ? 'ai_response_default_vi_5' : 'ai_response_default_en_5'],
+                res[lang === 'vi' ? 'ai_response_vi_default' : 'ai_response_en_default'],
+                res[lang === 'vi' ? 'ai_response_vi_random' : 'ai_response_en_random'],
             ];
             
             return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
@@ -817,7 +850,7 @@
         window.sendMessage = async function() {
             const messageText = document.getElementById('message-text').value.trim();
             if (messageText.length === 0) {
-                alert("Vui lòng nhập nội dung tin nhắn!");
+                alert(currentLang === 'vi' ? "Vui lòng nhập nội dung tin nhắn!" : "Please enter message content!");
                 return;
             }
 
@@ -838,7 +871,7 @@
 
             } catch (e) {
                 console.error("Error adding document: ", e);
-                alert("Đã xảy ra lỗi khi gửi tin nhắn.");
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi tin nhắn." : "An error occurred while sending the message.");
             } finally {
                 sendBtn.disabled = false;
             }
