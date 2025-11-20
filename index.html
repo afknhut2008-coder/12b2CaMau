@@ -587,7 +587,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, setDoc, getDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- DỮ LIỆU ĐA NGÔN NGỮ (GIỮ NGUYÊN) ---
+        // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
             'vi': {
                 'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Tuổi Thơ)', 
@@ -633,7 +633,7 @@
                 
                 'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name (for Leaderboard):', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 
                 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'sending_rank': 'Submitting score to Leaderboard...', 'play_again': 'Play Again',
-                'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer A', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 
+                'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 
                 'leaderboard_title': 'Leaderboard (Top 10)', 'rank': 'Rank', 'name': 'Name', 'date': 'Play Date', 'loading_rank': 'Loading leaderboard...', 
                 
                 'game_h3': 'Childhood Games Area', 
@@ -649,7 +649,7 @@
             }
         };
 
-        // --- INIT & LANGUAGE LOGIC (GIỮ NGUYÊN) ---
+        // --- INIT & LANGUAGE LOGIC ---
         let currentLang = localStorage.getItem('appLang') || 'vi';
         window.toggleLanguage = function() {
             currentLang = currentLang === 'vi' ? 'en' : 'vi';
@@ -678,7 +678,7 @@
             loadLeaderboard();
         }
 
-        // --- LOGIC TAB CON (GIỮ NGUYÊN) ---
+        // --- LOGIC TAB CON ---
         window.showTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
             document.getElementById(tabId).style.display = 'block';
@@ -710,7 +710,7 @@
         const quizRef = collection(db, "quiz_questions");
         const leaderboardRef = collection(db, "leaderboard");
 
-        // --- LOGIC CHAT ẨN DANH (GIỮ NGUYÊN) ---
+        // --- LOGIC CHAT ẨN DANH ---
         const MESSAGE_LIMIT = 5;
         let lastVisible = null;
         let likedMessages = JSON.parse(localStorage.getItem('likedMessages')) || {};
@@ -842,7 +842,7 @@
             }
         }
 
-        // --- LOGIC QUIZ (ĐÃ SỬA LỖI & THÊM GIỚI HẠN) ---
+        // --- LOGIC QUIZ (GIỚI HẠN 10 CÂU & NGẪU NHIÊN) ---
         const MAX_QUIZ_QUESTIONS = 10; // Giới hạn 10 câu hỏi
 
         let currentUserName = localStorage.getItem('quizUserName');
@@ -1074,12 +1074,12 @@
             }
         }
 
-        // TẢI BẢNG XẾP HẠNG (ĐÃ SỬA LỖI THỜI GIAN)
+        // TẢI BẢNG XẾP HẠNG (ĐÃ SỬA LỖI XỬ LÝ THỜI GIAN VÀ HIỂN THỊ LỖI)
         async function loadLeaderboard() {
             const leaderboardBody = document.getElementById('leaderboard-body');
             leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${translations[currentLang]['loading_rank']}</td></tr>`;
             try {
-                // Sắp xếp: Điểm cao nhất, sau đó là thời gian sớm nhất (người chơi nhanh hơn)
+                // Sắp xếp: Điểm cao nhất, sau đó là thời gian sớm nhất
                 const q = query(leaderboardRef, orderBy("score", "desc"), orderBy("timestamp"), limit(10));
                 const snapshot = await getDocs(q);
                 
@@ -1091,8 +1091,19 @@
                 leaderboardBody.innerHTML = '';
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
-                    // Đảm bảo lấy được timestamp và chuyển sang chuỗi ngày tháng địa phương
-                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString(currentLang) : translations[currentLang]['date_not_found'];
+                    
+                    let date = translations[currentLang]['date_not_found'];
+                    
+                    // Xử lý an toàn timestamp
+                    if (data.timestamp && typeof data.timestamp.toDate === 'function') {
+                        try {
+                            // Chuyển đổi Firestore Timestamp sang đối tượng Date và định dạng chuỗi
+                            date = new Date(data.timestamp.toDate()).toLocaleDateString(currentLang);
+                        } catch (e) {
+                            console.warn("Error parsing timestamp:", e);
+                        }
+                    }
+                    
                     const row = `
                         <tr>
                             <td style="padding: 10px; font-weight: bold;">${index + 1}</td>
@@ -1106,11 +1117,12 @@
 
             } catch (e) {
                 console.error("Error loading leaderboard: ", e);
-                leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px;">${currentLang === 'vi' ? 'Lỗi tải BXH. Vui lòng kiểm tra kết nối.' : 'Error loading Leaderboard. Check connection.'}</td></tr>`;
+                // Hiển thị lỗi rõ ràng hơn để người dùng kiểm tra Security Rules
+                leaderboardBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px; color: #dc3545;">${currentLang === 'vi' ? 'LỖI: Không thể tải BXH. Vui lòng kiểm tra Firebase Security Rules cho collection "leaderboard".' : 'ERROR: Cannot load Leaderboard. Check Firebase Security Rules for "leaderboard" collection.'}</td></tr>`;
             }
         }
 
-        // --- LOGIC TRÒ CHƠI KHÁC (GIỮ NGUYÊN) ---
+        // --- LOGIC TRÒ CHƠI KHÁC ---
         
         // Tic-Tac-Toe
         let board = ["", "", "", "", "", "", "", "", ""];
