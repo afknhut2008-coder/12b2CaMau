@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>12B2 - Cộng Đồng & Tuổi Thơ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght=400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
         :root { 
@@ -416,14 +416,19 @@
 
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="social" onclick="showTab('social')" data-i18n="social_tab">Social & Quiz</button>
-            <button class="tab-btn" data-tab="ai-chat" onclick="showTab('ai-chat')" data-i18n="ai_chat_tab">AI Chatbot (Đã Tắt)</button> 
+            <button class="tab-btn" data-tab="ai-chat" onclick="showTab('ai-chat')" data-i18n="ai_chat_tab">Trợ Lý AI Gemini</button> 
             <button class="tab-btn" data-tab="games" onclick="showTab('games')" data-i18n="game_tab">Games (Tuổi Thơ)</button>
         </div>
 
         <div id="ai-chat" class="tab-content" style="display: none;">
-            <h3><i class="fas fa-robot" style="color: #dc3545;"></i> <span data-i18n="ai_chat_title">AI Hỗ Trợ (Đã Tắt)</span></h3>
-            <div class="card" style="padding: 30px; text-align: center;">
-                <p style="font-weight: bold; color: #dc3545;"><span data-i18n="ai_disclaimer">Tính năng Chat AI đã bị loại bỏ hoàn toàn theo yêu cầu của bạn.</span></p>
+            <h3><i class="fas fa-robot" style="color: var(--primary-color);"></i> <span data-i18n="ai_chat_title">Trợ Lý AI Gemini</span></h3>
+            <div class="card" style="padding: 15px;">
+                <div id="ai-chat-output" style="height: 300px; max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; padding: 10px; background-color: #f0f3f8; border: 1px solid var(--border-color); border-radius: var(--radius-medium); margin-bottom: 15px;">
+                    </div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="ai-chat-input" data-i18n-placeholder="ai_chat_placeholder" placeholder="Hỏi AI bất kỳ điều gì..." style="flex-grow: 1; margin-bottom: 0;" onkeypress="if(event.keyCode==13) sendAiMessage()">
+                    <button id="btn-send-ai-msg" class="btn-send" onclick="sendAiMessage()" data-i18n="ai_send_msg" style="width: 100px;">Gửi</button>
+                </div>
             </div>
         </div>
         
@@ -567,21 +572,15 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { GoogleGenAI } from "https://esm.run/@google/genai"; // Thêm thư viện Gemini SDK
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
             'vi': {
-                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Tuổi Thơ)', 
+                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'Trợ Lý AI Gemini', 'game_tab': 'Games (Tuổi Thơ)', 
                 'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn', 'loading_msg': 'Đang tải tin nhắn...', 'load_more_msg': 'Xem thêm tin nhắn', 
                 
-                'ai_chat_title': 'AI Hỗ Trợ (Đã Tắt)', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Model 12B2', 'ai_disclaimer': 'Tính năng Chat AI đã bị loại bỏ hoàn toàn theo yêu cầu của bạn.',
-                'ai_response_vi_math': 'Đây là công thức chính: $\\int_{a}^{b} f(x) dx = F(b) - F(a)$. Nếu gặp bài khó, hãy thử phương pháp đổi biến hoặc tích phân từng phần nhé!',
-                'ai_response_vi_news': 'Gần đây, sự kiện "Văn nghệ cuối năm" đang được bàn tán sôi nổi nhất. Lớp ta đã lên ý tưởng cho tiết mục chưa? Tôi nghĩ một vở kịch hài sẽ rất tuyệt!',
-                'ai_response_vi_schedule': 'Lịch thi sắp tới bao gồm: Toán (20/12), Lý (22/12), Hóa (25/12). Hãy phân bổ thời gian hợp lý và tránh học dồn nhé!', 
-                'ai_response_vi_study': 'Để học thuộc nhanh, bạn nên áp dụng phương pháp Lặp lại ngắt quãng (Spaced Repetition) và cố gắng liên hệ kiến thức với các ví dụ thực tế.', 
-                'ai_response_vi_random': 'Được rồi, tôi đã nhận thông tin. Dù tôi chỉ là mô hình mô phỏng, tôi vẫn luôn ở đây để hỗ trợ tinh thần học tập của cả lớp. Bạn có câu hỏi nào khác không?', 
-                'ai_response_vi_default': 'Câu hỏi của bạn rất thú vị! Hãy thử nhìn vấn đề từ một góc độ khác, có lẽ câu trả lời nằm ở phần kiến thức nền tảng mà bạn đã học.', 
-                'ai_response_vi_code': 'Được, đây là một đoạn code JavaScript đơn giản để tính tổng: <pre>function calculateSum(a, b) {\n return a + b;\n}\nconsole.log(calculateSum(5, 10));</pre>', 
+                'ai_chat_title': 'Trợ Lý AI Gemini', 'ai_chat_placeholder': 'Hỏi AI bất kỳ điều gì (Ví dụ: Công thức tính nhanh đạo hàm?)', 'ai_send_msg': 'Gửi', 'ai_system_msg': 'AI Gemini 12B2',
                 
                 'quiz_title': 'Thử Thách Đố Vui (10 Câu)', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên:', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 
                 'welcome': 'Chào mừng', 'completed': 'Đã xong', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'play_again': 'Làm lại',
@@ -599,17 +598,10 @@
                 'date_not_found': 'Không rõ',
             },
             'en': {
-                'community': 'Community', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Chatbot', 'game_tab': 'Games (Childhood)',
+                'community': 'Community', 'social_tab': 'Social & Quiz', 'ai_chat_tab': 'AI Gemini Assistant', 'game_tab': 'Games (Childhood)',
                 'chat_title': 'Anonymous Chat Corner', 'chat_placeholder': 'Send an anonymous message to the class...', 'send_msg': 'Send Message', 'loading_msg': 'Loading messages...', 'load_more_msg': 'Load More Messages',
                 
-                'ai_chat_title': 'AI Assistant (Disabled)', 'ai_chat_placeholder': 'Ask the AI anything (e.g., Quick formula for derivatives?)', 'ai_send_msg': 'Send', 'ai_system_msg': 'AI Model 12B2', 'ai_disclaimer': 'Note: AI feature has been removed as requested.',
-                'ai_response_en_math': 'Here is the main formula: $\\int_{a}^{b} f(x) dx = F(b) - F(a)$. If you encounter a difficult problem, try substitution or integration by parts!',
-                'ai_response_en_news': 'Recently, the "Year-End Talent Show" is the most discussed event. Has our class come up with an idea for a performance yet? I think a comedy skit would be great!',
-                'ai_response_en_schedule': 'Upcoming exams include: Math (20/12), Physics (22/12), Chemistry (25/12). Allocate your time wisely and avoid cramming!', 
-                'ai_response_en_study': 'To memorize fast, you should apply the Spaced Repetition method and try to connect the knowledge with real-world examples.', 
-                'ai_response_en_random': 'Alright, I received the information. Although I am just a simulated model, I am always here to support the class\'s learning spirit. Do you have any other questions?', 
-                'ai_response_en_default': 'Your question is very interesting! Try looking at the problem from a different angle; perhaps the answer lies in the fundamental knowledge you have learned.', 
-                'ai_response_en_code': 'Sure, here is a simple JavaScript code snippet to calculate the sum: <pre>function calculateSum(a, b) {\n return a + b;\n}\nconsole.log(calculateSum(5, 10));</pre>', 
+                'ai_chat_title': 'AI Gemini Assistant', 'ai_chat_placeholder': 'Ask the AI anything (e.g., Quick formula for derivatives?)', 'ai_send_msg': 'Send', 'ai_system_msg': 'AI Gemini 12B2',
                 
                 'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name:', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 
                 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'play_again': 'Play Again',
@@ -672,9 +664,10 @@
         
         // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (BẮT BUỘC)
         const firebaseConfig = {
-            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // <-- Thay thế bằng API Key của bạn
+            // DÒNG 1: THAY FIREBASE API KEY CỦA BẠN VÀO ĐÂY
+            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
-            projectId: "b2-6431c", // <-- Thay thế bằng Project ID của bạn
+            projectId: "b2-6431c", 
             storageBucket: "b2-6431c.appspot.com",
             messagingSenderId: "164059778488",
             appId: "1:164059778488:web:9eca97e23ab644df48534d",
@@ -683,10 +676,105 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // --- CẤU HÌNH GEMINI (THAY KEY CỦA BẠN VÀO ĐÂY) ---
+        // DÒNG 2: DÁN GEMINI API KEY CỦA BẠN VÀO DÒNG NÀY!
+        const GEMINI_API_KEY = "AIzaSyAepQavF9cT4_TjrZiws1Ci4viZGCzZZIk"; 
+        
+        let ai = null;
+        let chatSession = null;
+        const GEMINI_MODEL = "gemini-2.5-flash"; // Mô hình nhanh và hiệu quả
+
+        if (GEMINI_API_KEY && GEMINI_API_KEY !== "AIzaSyAepQavF9cT4_TjrZiws1Ci4viZGCzZZIk") {
+            try {
+                ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+                
+                // Cấu hình Chat Session (Quan trọng cho đối thoại)
+                chatSession = ai.chats.create({
+                    model: GEMINI_MODEL,
+                    config: {
+                        systemInstruction: "Bạn là trợ lý AI thân thiện, thông minh dành cho học sinh lớp 12B2 tại Việt Nam. Trả lời bằng tiếng Việt, cung cấp kiến thức học đường, lời khuyên và các thông tin thú vị. Hạn chế trả lời các câu hỏi ngoài lề hoặc nhạy cảm. Thường xuyên sử dụng emoji.",
+                    },
+                });
+                console.log("Gemini Chat Session created.");
+
+            } catch (error) {
+                console.error("Gemini SDK initialization failed:", error);
+            }
+        } else {
+            console.warn("GEMINI_API_KEY not set. AI Chat feature will be disabled.");
+        }
+
         // CÁC COLLECTIONS SỬ DỤNG
         const chatRef = collection(db, "anonymous_messages");
         const quizRef = collection(db, "quiz_questions");
-        // const leaderboardRef = collection(db, "leaderboard"); // ĐÃ XÓA THEO YÊU CẦU
+
+        // --- HÀM GỌI GEMINI API ---
+        const aiChatOutput = document.getElementById('ai-chat-output');
+        
+        window.sendAiMessage = async function() {
+            if (!chatSession) {
+                alert(currentLang === 'vi' ? "AI chưa được cấu hình (Thiếu API Key)." : "AI is not configured (Missing API Key).");
+                return;
+            }
+
+            const messageText = document.getElementById('ai-chat-input').value.trim();
+            if (!messageText) return;
+
+            // Thêm tin nhắn người dùng vào giao diện
+            addAiMessage(messageText, 'user');
+            document.getElementById('ai-chat-input').value = '';
+            
+            const sendBtn = document.getElementById('btn-send-ai-msg');
+            sendBtn.disabled = true;
+            
+            // Thêm placeholder "AI đang gõ..."
+            const aiThinkingId = addAiMessage(currentLang === 'vi' ? "AI đang gõ..." : "AI is typing...", 'ai', true);
+
+            try {
+                // Gửi tin nhắn đến Gemini
+                const response = await chatSession.sendMessage({ message: messageText });
+                
+                // Xóa placeholder và hiển thị kết quả
+                const thinkingElement = document.getElementById(aiThinkingId);
+                if (thinkingElement) {
+                    thinkingElement.remove();
+                }
+
+                addAiMessage(response.text, 'ai');
+
+            } catch (e) {
+                console.error("Error calling Gemini API:", e);
+                const thinkingElement = document.getElementById(aiThinkingId);
+                if (thinkingElement) {
+                    thinkingElement.textContent = currentLang === 'vi' ? "Lỗi: Không thể kết nối đến Gemini. Vui lòng kiểm tra API Key." : "Error: Could not connect to Gemini. Check API Key.";
+                    thinkingElement.style.color = 'red';
+                }
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+        
+        function addAiMessage(text, sender, isThinking = false) {
+            const outputDiv = document.getElementById('ai-chat-output');
+            const messageContainer = document.createElement('div');
+            const messageId = `ai-msg-${Date.now()}`;
+
+            messageContainer.classList.add('ai-post-container', sender === 'user' ? 'user-message' : 'ai-message');
+            messageContainer.id = messageId;
+            
+            let authorText = sender === 'user' ? (currentUserName || translations[currentLang]['anonymous']) : translations[currentLang]['ai_system_msg'];
+            
+            messageContainer.innerHTML = `
+                <div class="ai-author">${authorText}</div>
+                <div class="ai-message-content" style="${isThinking ? 'font-style: italic; opacity: 0.7;' : ''}">${text}</div>
+            `;
+
+            outputDiv.appendChild(messageContainer);
+            // Cuộn xuống dưới cùng
+            outputDiv.scrollTop = outputDiv.scrollHeight; 
+            
+            return messageId;
+        }
 
         // --- LOGIC CHAT ẨN DANH ---
         const MESSAGE_LIMIT = 5;
