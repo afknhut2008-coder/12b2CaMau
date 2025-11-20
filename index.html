@@ -666,7 +666,7 @@
         
         // ⚠️ THAY THÔNG TIN CỦA BẠN VÀO ĐÂY (BẮT BUỘC)
         const firebaseConfig = {
-            // DÒNG 1: THAY FIREBASE API KEY CỦA BẠN VÀO ĐÂY
+            // DÒNG 1: ĐÃ THAY KHÓA FIREBASE API KEY CỦA BẠN VÀO ĐÂY
             apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", 
             authDomain: "b2-6431c.firebaseapp.com",
             projectId: "b2-6431c", 
@@ -678,9 +678,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- CẤU HÌNH GEMINI (THAY KEY CỦA BẠN VÀO ĐÂY) ---
-        // DÒNG 2: DÁN GEMINI API KEY CỦA BẠN VÀO DÒNG NÀY!
-        // **Đã thay key của bạn vào đây**
+        // --- CẤU HÌNH GEMINI (KHÓA NÀY ĐÃ ĐƯỢC THAY THẾ Ở BƯỚC TRƯỚC) ---
+        // DÒNG 2: GEMINI API KEY CỦA BẠN!
         const GEMINI_API_KEY = "AIzaSyAepQavF9cT4_TjrZiws1Ci4viZGCzZZIk"; 
         
         let ai = null;
