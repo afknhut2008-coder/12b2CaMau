@@ -550,7 +550,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7z9/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8f/cK4D1z9+h/J+K5o1hA8N7z9/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8f/cK4D1z9+h/J+K5o1hA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
@@ -780,8 +780,8 @@
                 startMemoryGame(true);
                 window.gamesInitialized = true;
             } else if (tabId === 'formulas' && !window.formulasInitialized) {
+                // Bắt đầu quá trình render công thức
                 renderFormulaList();
-                window.formulasInitialized = true;
             }
         }
 
@@ -1263,14 +1263,22 @@
             }
         ];
 
-        function renderFormulaList() {
+        function renderFormulaList(retryCount = 0) {
             const listElement = document.getElementById('formula-list');
             
-            // 💡 SỬA LỖI KA-TEX: Không còn cơ chế polling hay check lỗi nặng. Tin tưởng vào cách tải script truyền thống.
-            
+            // 💡 FIX MỚI: Sử dụng polling/setTimeout để đảm bảo thư viện KaTeX đã tải và sẵn sàng
             if (!window.renderMathInElement) {
-                // Nếu sau khi initApp() chạy mà KaTeX vẫn chưa sẵn sàng (rất hiếm, do lỗi CDN), thì chỉ hiện thông báo chờ
-                listElement.innerHTML = `<div style="color: var(--light-text-color); text-align: center; padding: 20px;">Đang chờ thư viện KaTeX tải... Vui lòng kiểm tra lại kết nối mạng.</div>`;
+                
+                if (retryCount >= 30) { // Giới hạn 30 lần thử (3 giây)
+                    listElement.innerHTML = `<div style="color: red; text-align: center; padding: 20px;">LỖI NẶNG: Không thể tải thư viện KaTeX sau nhiều lần thử. Vui lòng kiểm tra kết nối mạng hoặc CDN.</div>`;
+                    return;
+                }
+                
+                // Hiển thị thông báo chờ 
+                listElement.innerHTML = `<div style="color: var(--light-text-color); text-align: center; padding: 20px;">${currentLang === 'vi' ? 'Đang chờ thư viện KaTeX tải... Đang thử lại (%t/30)...' : 'Awaiting KaTeX library download... Retrying (%t/30)...'}`.replace('%t', retryCount + 1);
+                
+                // Thử lại sau 100ms
+                setTimeout(() => renderFormulaList(retryCount + 1), 100);
                 return;
             }
             
@@ -1602,8 +1610,8 @@
                 startNewGuessingGame();
                 startMemoryGame(true); 
                 
-                // Load Formulas ngay khi init
-                renderFormulaList(); 
+                // Load Formulas: Chỉ đặt flag chờ, sẽ được gọi khi chuyển tab
+                window.formulasInitialized = false; 
 
                 // Mặc định hiển thị tab 'social'
                 showTab('social'); 
