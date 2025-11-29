@@ -1497,10 +1497,10 @@
             if (!window.renderMathInElement) {
                 listElement.innerHTML = `<div style="color: orange; text-align: center; padding: 20px;">
                     <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i>
-                    Đang chờ tải thư viện KaTeX... (Kiểm tra lại sau 500ms).
+                    Đang chờ tải thư viện KaTeX... (Kiểm tra lại sau 100ms).
                 </div>`;
-                // Tự gọi lại hàm sau 500ms
-                setTimeout(renderFormulaList, 500); 
+                // Đã giảm thời gian chờ xuống 100ms
+                setTimeout(renderFormulaList, 100); 
                 return;
             }
             
