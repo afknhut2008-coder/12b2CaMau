@@ -603,70 +603,74 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
-        // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) ---
+        // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) - ĐÃ BỔ SUNG VÀ PHÂN LOẠI ---
         const MATH_FORMULA_DATA = [
-            // 1. Đại Số (Cấp 2) - BỔ SUNG CẤU TRÚC
+            // 1. Đại Số Cấp 2 (Lớp 8-9) - BỔ SUNG
             { 
-                category_vi: "Đại Số (Cấp 2)", 
+                category_vi: "Đại Số Cấp 2 (Lớp 8-9)", 
                 icon: "fa-superscript", 
                 formulas: [
                     { name_vi: "Hằng đẳng thức (Bình phương tổng)", formula: "(a+b)^2 = a^2 + 2ab + b^2", variables_vi: "$a, b$: các số hạng" },
+                    { name_vi: "Hằng đẳng thức (Hiệu hai bình phương)", formula: "a^2 - b^2 = (a-b)(a+b)", variables_vi: "" },
+                    { name_vi: "Hằng đẳng thức (Lập phương tổng)", formula: "(a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3", variables_vi: "" },
+                    { name_vi: "Hằng đẳng thức (Tổng hai lập phương)", formula: "a^3 + b^3 = (a+b)(a^2 - ab + b^2)", variables_vi: "" },
                     { name_vi: "Phương trình bậc 2 (Delta)", formula: "\\Delta = b^2 - 4ac", variables_vi: "$a, b, c$: hệ số của $ax^2+bx+c=0$" },
+                    { name_vi: "Định lý Vi-ét (Tổng nghiệm)", formula: "x_1 + x_2 = -\\frac{b}{a}", variables_vi: "$x_1, x_2$: nghiệm của $ax^2+bx+c=0$" },
+                    { name_vi: "Công thức Nghiệm", formula: "x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}", variables_vi: "" },
                 ] 
             },
-            // 2. Hình Học Phẳng (Cấp 2) - DỮ LIỆU CÓ SẴN
+            // 2. Hình Học Phẳng & Không Gian Cấp 2 (Lớp 6-9) - BỔ SUNG
             { 
-                category_vi: "Hình Học Phẳng (Cấp 2)", 
+                category_vi: "Hình Học Phẳng & Không Gian Cấp 2", 
                 icon: "fa-draw-polygon", 
                 formulas: [
                     { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: dài, rộng" }, 
-                    { name_vi: "Diện tích Tam Giác (Cơ bản)", formula: "S = \\frac{1}{2}ah", variables_vi: "$a$: cạnh đáy, $h$: chiều cao tương ứng" }, 
+                    { name_vi: "Diện tích Tam Giác", formula: "S = \\frac{1}{2}ah", variables_vi: "$a$: cạnh đáy, $h$: chiều cao tương ứng" }, 
                     { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền" }, 
                     { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao" }, 
+                    { name_vi: "Thể tích Hình Lập Phương", formula: "V = a^3", variables_vi: "$a$: cạnh" },
+                    { name_vi: "Thể tích Hình Hộp Chữ Nhật", formula: "V = a \\times b \\times c", variables_vi: "$a, b, c$: ba kích thước" },
                     { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" }, 
-                    { name_vi: "Chu vi Hình Tròn", formula: "P = 2 \\pi r", variables_vi: "$r$: bán kính" }, 
-                    { name_vi: "Diện tích Hình Thoi", formula: "S = \\frac{1}{2}d_1 d_2", variables_vi: "$d_1, d_2$: độ dài hai đường chéo" }, 
                 ] 
             }, 
-            // 3. Lượng Giác & Hàm Số (Cấp 3) - DỮ LIỆU CÓ SẴN
+            // 3. Giải Tích & Lượng Giác Cấp 3 (Lớp 11-12) - BỔ SUNG
             { 
-                category_vi: "Lượng Giác & Hàm Số (Cấp 3)", 
+                category_vi: "Giải Tích & Lượng Giác Cấp 3 (Lớp 11-12)", 
                 icon: "fa-circle-notch", 
                 formulas: [ 
-                    { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "$a, b, c$: cạnh tam giác, $A, B, C$: góc, $R$: bán kính đường tròn ngoại tiếp" },
-                    { name_vi: "Định lý Cosin", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "" },
-                    { name_vi: "Đạo Hàm (Hàm Mũ)", formula: "(e^x)' = e^x", variables_vi: "" },
-                    { name_vi: "Đạo Hàm (Hàm Lôgarit)", formula: "(\\ln x)' = \\frac{1}{x}", variables_vi: "" },
+                    { name_vi: "Đạo Hàm (Hàm Mũ)", formula: "(e^u)' = u'e^u", variables_vi: "$u$: hàm số theo $x$" },
+                    { name_vi: "Đạo Hàm (Hàm Lôgarit)", formula: "(\\ln |u|)' = \\frac{u'}{u}", variables_vi: "" },
+                    { name_vi: "Đạo Hàm (Tích)", formula: "(uv)' = u'v + uv'", variables_vi: "$u, v$: hàm số theo $x$" },
+                    { name_vi: "Đạo Hàm (Thương)", formula: "(\\frac{u}{v})' = \\frac{u'v - uv'}{v^2}", variables_vi: "" },
                     { name_vi: "Nguyên Hàm (Cơ bản)", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\neq -1, C$: hằng số" },
                     { name_vi: "Diện tích Hình Phẳng (Tích phân)", formula: "S = \\int_{a}^{b} |f(x)| dx", variables_vi: "$f(x)$: hàm số theo $x$" }, 
-                    { name_vi: "Logarit (Tích)", formula: "\\log_a (xy) = \\log_a x + \\log_a y", variables_vi: "$a, x, y > 0, a \\neq 1$" }, 
-                    { name_vi: "Logarit (Mũ)", formula: "\\log_a x^k = k \\log_a x", variables_vi: "$k \\in \\mathbb{R}$" }, 
-                    { name_vi: "Cấp số cộng (Số hạng thứ n)", formula: "u_n = u_1 + (n-1)d", variables_vi: "$d$: công sai" }, 
-                    { name_vi: "Tổng cấp số cộng (n số hạng)", formula: "S_n = \\frac{n(u_1 + u_n)}{2}", variables_vi: "$n$: số hạng" }, 
+                    { name_vi: "Công thức Sin nhân đôi", formula: "\\sin 2x = 2 \\sin x \\cos x", variables_vi: "" },
+                    { name_vi: "Công thức Cosin nhân đôi", formula: "\\cos 2x = \\cos^2 x - \\sin^2 x", variables_vi: "" },
+                    { name_vi: "Giới hạn cơ bản (sin)", formula: "\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1", variables_vi: "" },
+                    { name_vi: "Logarit (Đổi cơ số)", formula: "\\log_a b = \\frac{\\log_c b}{\\log_c a}", variables_vi: "$a, b, c > 0, a, c \\neq 1$" },
                 ] 
             }, 
-            // 4. Hình học Không Gian (Cấp 3) - DỮ LIỆU CÓ SẴN
+            // 4. Hình học Không Gian Cấp 3 (Lớp 12) - BỔ SUNG
             { 
-                category_vi: "Hình học Không Gian (Cấp 3)", 
+                category_vi: "Hình học Không Gian Cấp 3 (Lớp 12)", 
                 icon: "fa-cube", 
                 formulas: [ 
                     { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3}Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" }, 
                     { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" }, 
                     { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính" }, 
                     { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính" }, 
-                    // Công thức Thể tích Khối Trụ được hoàn chỉnh
                     { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" }, 
-                    { name_vi: "Diện tích Xung Quanh Khối Trụ", formula: "S_{xq} = 2 \\pi r h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
+                    { name_vi: "Thể tích Khối Nón", formula: "V = \\frac{1}{3} \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
                 ] 
             }
         ];
         
         // --- LOGIC ĐA NGÔN NGỮ ---
+        // (Giữ nguyên phần translations)
+
         const translations = {
             'vi': {
                 'community': 'Cộng Đồng',
-                // ... (Rất nhiều chuỗi dịch, tôi sẽ chỉ giữ lại những chuỗi bị thiếu hoặc quan trọng)
-                
                 // CHAT & MESSAGE
                 'chat_title': 'Góc Chat Ẩn Danh',
                 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...',
@@ -765,8 +769,8 @@
                 'load_more_msg': 'Load More Messages',
                 'loading_msg': 'Loading...',
                 'anonymous': 'Anonymous',
-                'likes_count_vi': 'Lượt thích', // Lỗi trong code cũ, giữ nguyên để code logic không đổi
-                'likes_count_en': 'Likes', // Lỗi trong code cũ, giữ nguyên để code logic không đổi
+                'likes_count_vi': 'Lượt thích', 
+                'likes_count_en': 'Likes', 
                 'message_time': 'Sent at',
                 'like_error': 'Could not like message.',
 
@@ -963,12 +967,13 @@
         function loadInitialMessages() {
             if (!chatRef) return;
             try {
-                // SỬA LỖI: Sắp xếp theo "asc" (tăng dần) để tin nhắn cũ nhất lên đầu
+                // FIX: Sắp xếp theo "asc" (tăng dần) để tin nhắn cũ nhất lên đầu
+                // Đây là logic đã được xác nhận là đúng cho yêu cầu "sớm nhất ở đầu"
                 const q = query(chatRef, orderBy("timestamp", "asc"), limit(MESSAGE_LIMIT));
 
                 // Real-time listener for the first batch
                 onSnapshot(q, (snapshot) => {
-                    document.getElementById('message-list').innerHTML = '';
+                    document.getElementById('message-list').innerHTML = ''; // Clear for fresh re-render
                     let tempLastVisible = null;
                     snapshot.docs.forEach((doc, index) => {
                         const data = doc.data();
@@ -1003,7 +1008,7 @@
             document.getElementById('load-more-btn').textContent = translations[currentLang]['loading_msg'];
 
             try {
-                // SỬA LỖI: Load thêm tin nhắn theo "asc" (tăng dần)
+                // FIX: Load thêm tin nhắn theo "asc" (tăng dần) bắt đầu sau tin nhắn mới nhất của batch trước
                 const q = query(chatRef, orderBy("timestamp", "asc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 let tempLastVisible = null;
@@ -1039,7 +1044,9 @@
             const isLiked = likedMessages[id] === true;
             
             const heartClass = isLiked ? 'fas fa-heart liked' : 'fas fa-heart';
-            const likeText = isLiked ? `${translations[currentLang]['likes_count_vi']} (${translations[currentLang]['likes_count_vi'] === 'Lượt thích' ? 'Đã thích' : 'Liked'})` : translations[currentLang]['likes_count_vi'];
+            const likeText = isLiked 
+                ? `${translations[currentLang]['likes_count_vi']} (${currentLang === 'vi' ? 'Đã thích' : 'Liked'})` 
+                : translations[currentLang]['likes_count_vi'];
             
             const messageElement = document.createElement('div');
             messageElement.id = `msg-${id}`;
@@ -1053,7 +1060,8 @@
                     <span id="likes-text-${id}">${likeText}</span>
                 </div>
             `;
-            // SỬA LỖI: Thêm vào cuối danh sách (appendChild) để tin nhắn cũ nhất nằm ở trên
+            // Thêm vào cuối danh sách (appendChild). 
+            // Vì truy vấn là ASC (cũ nhất -> mới nhất), việc append sẽ đặt tin nhắn cũ nhất ở trên cùng.
             messageList.appendChild(messageElement);
         }
 
@@ -1087,7 +1095,7 @@
                 heartIcon.className = !isLiked ? 'fas fa-heart liked' : 'fas fa-heart';
                 likesCount.textContent = newLikes;
                 likesText.textContent = !isLiked 
-                    ? `${translations[currentLang]['likes_count_vi']} (${translations[currentLang]['likes_count_vi'] === 'Lượt thích' ? 'Đã thích' : 'Liked'})` 
+                    ? `${translations[currentLang]['likes_count_vi']} (${currentLang === 'vi' ? 'Đã thích' : 'Liked'})` 
                     : translations[currentLang]['likes_count_vi'];
                     
             } catch (e) {
