@@ -12,7 +12,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
     <style>
-        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
+        /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V4 - Formula Filtered) */
         :root { 
             /* MÀU SẮC MỚI: Tông xanh tím sang trọng */
             --primary-color: #4a00e0;
@@ -176,6 +176,31 @@
             color: white;
             box-shadow: 0 3px 10px rgba(74, 0, 224, 0.4);
         }
+        
+        /* NEW: FORMULA CATEGORY FILTER BUTTONS */
+        .formula-filter-btn {
+            white-space: nowrap;
+            background: #e9ecef; /* Light gray background */
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 500;
+            border-radius: var(--radius-medium);
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .formula-filter-btn:hover {
+            background: #dee2e6;
+        }
+        .formula-filter-btn.active-filter {
+            background: var(--secondary-color);
+            color: white;
+            font-weight: 700;
+            border-color: var(--secondary-color);
+            box-shadow: 0 2px 5px rgba(142, 45, 226, 0.3);
+        }
+
 
         /* NEW: CÔNG THỨC TOÁN HỌC STYLES */
         .formula-card {
@@ -184,7 +209,7 @@
             border-left: 5px solid var(--secondary-color); 
             border-radius: var(--radius-medium);
             box-shadow: var(--shadow-soft);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             transition: transform 0.2s;
         }
         .formula-card:hover {
@@ -205,12 +230,21 @@
             margin: 10px 0;
             overflow-x: auto; /* Xử lý công thức dài */
             padding: 10px 0;
+            background-color: #f7f9fc;
+            border-radius: var(--radius-small);
         }
         .formula-variables {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .formula-variables span {
+            display: block;
+            margin-top: 5px;
             color: var(--light-text-color);
             font-style: italic;
-            margin-top: 10px;
         }
 
 
@@ -413,6 +447,7 @@
             .card-face { font-size: 1.5rem; }
             #tictactoe-board { width: 180px; height: 180px; }
             .formula-katex-display { font-size: 1.3rem; }
+            .formula-filter-btn { padding: 6px 10px; font-size: 0.85rem; }
         }
         
         /* New Styles for Toggle Button */
@@ -447,7 +482,13 @@
         <div id="formulas" class="tab-content" style="display: none;">
             <h3><i class="fas fa-calculator"></i> <span data-i18n="formulas_title">Công Thức Toán Học (Lớp 1-12)</span></h3>
             <div class="card">
-                <p style="font-size: 0.95rem; color: var(--light-text-color); margin-bottom: 15px;"><span data-i18n="formulas_tip">Các công thức được hiển thị bằng KaTeX. Ký hiệu: $S=$ Diện tích, $V=$ Thể tích.</span></p>
+                <input type="text" id="formula-search" data-i18n-placeholder="formula_search_ph" placeholder="Tìm kiếm công thức (ví dụ: Heron, sin2x, Thể tích chóp)..." oninput="filterFormulas()" style="margin-bottom: 15px;">
+                
+                <div id="formula-category-filter" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                    </div>
+
+                <p style="font-size: 0.95rem; color: var(--light-text-color); margin-bottom: 15px;"><span data-i18n="formulas_tip">Các công thức được hiển thị bằng KaTeX. Ký hiệu: $S$=Diện tích, $V$=Thể tích.</span></p>
+                
                 <div id="formula-list">
                     <p style="text-align: center;">Đang tải công thức...</p>
                 </div>
@@ -616,36 +657,36 @@
         // SỬ DỤNG getDocs thay cho onSnapshot cho Initial Load
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
-        // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) - ĐÃ PHÂN LOẠI CHI TIẾT THEO YÊU CẦU ---
+        // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) - ĐÃ CẬP NHẬT CONCEPT VÀ PHÂN LOẠI ---
         const MATH_FORMULA_DATA = [
             // 1. ĐẠI SỐ CƠ BẢN (HẰNG ĐẲNG THỨC, PT BẬC 2)
             { 
                 category_vi: "1. Đại Số Cơ Bản (Hằng đẳng thức & PT Bậc 2)", 
                 icon: "fa-superscript", 
                 formulas: [
-                    { name_vi: "Bình phương tổng", formula: "(a+b)^2 = a^2 + 2ab + b^2", variables_vi: "$a, b$: các số hạng" },
-                    { name_vi: "Hiệu hai bình phương", formula: "a^2 - b^2 = (a-b)(a+b)", variables_vi: "" },
-                    { name_vi: "Lập phương tổng", formula: "(a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3", variables_vi: "" },
-                    { name_vi: "Tổng hai lập phương", formula: "a^3 + b^3 = (a+b)(a^2 - ab + b^2)", variables_vi: "" },
-                    { name_vi: "Delta (Phương trình bậc 2)", formula: "\\Delta = b^2 - 4ac", variables_vi: "$a, b, c$: hệ số của $ax^2+bx+c=0$" },
-                    { name_vi: "Định lý Vi-ét (Tổng & Tích nghiệm)", formula: "x_1 + x_2 = -\\frac{b}{a} \\quad ; \\quad x_1 x_2 = \\frac{c}{a}", variables_vi: "$x_1, x_2$: nghiệm của $ax^2+bx+c=0$" },
-                    { name_vi: "Công thức Nghiệm", formula: "x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}", variables_vi: "" },
+                    { name_vi: "Bình phương tổng", formula: "(a+b)^2 = a^2 + 2ab + b^2", variables_vi: "$a, b$: các số hạng", concept_vi: "Khai triển nhanh biểu thức bình phương của tổng hai số." },
+                    { name_vi: "Hiệu hai bình phương", formula: "a^2 - b^2 = (a-b)(a+b)", variables_vi: "", concept_vi: "Phân tích đa thức thành nhân tử hoặc tính nhẩm." },
+                    { name_vi: "Lập phương tổng", formula: "(a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3", variables_vi: "", concept_vi: "Khai triển biểu thức lập phương của tổng hai số hạng." },
+                    { name_vi: "Tổng hai lập phương", formula: "a^3 + b^3 = (a+b)(a^2 - ab + b^2)", variables_vi: "", concept_vi: "Phân tích đa thức thành nhân tử." },
+                    { name_vi: "Delta (Phương trình bậc 2)", formula: "\\Delta = b^2 - 4ac", variables_vi: "$a, b, c$: hệ số của $ax^2+bx+c=0$", concept_vi: "Điều kiện cần để tìm nghiệm của phương trình bậc hai." },
+                    { name_vi: "Định lý Vi-ét (Tổng & Tích nghiệm)", formula: "x_1 + x_2 = -\\frac{b}{a} \\quad ; \\quad x_1 x_2 = \\frac{c}{a}", variables_vi: "$x_1, x_2$: nghiệm của $ax^2+bx+c=0$", concept_vi: "Tìm mối quan hệ giữa nghiệm và hệ số của phương trình bậc hai." },
+                    { name_vi: "Công thức Nghiệm", formula: "x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}", variables_vi: "", concept_vi: "Tính trực tiếp nghiệm của phương trình bậc hai $ax^2+bx+c=0$." },
                 ] 
             },
             
             // 2. CÔNG THỨC DIỆN TÍCH TAM GIÁC (TOÀN DIỆN)
             { 
-                category_vi: "2. Hình Học Phẳng: Công Thức Diện Tích Tam Giác (Toàn diện)", 
+                category_vi: "2. Hình Học Phẳng: Diện Tích Tam Giác", 
                 icon: "fa-draw-polygon", 
                 formulas: [
-                    { name_vi: "Công thức cơ bản", formula: "S = \\frac{1}{2} a \\cdot h_a", variables_vi: "$a$: cạnh đáy, $h_a$: chiều cao tương ứng" }, 
-                    { name_vi: "Công thức Lượng giác", formula: "S = \\frac{1}{2}ab \\sin C", variables_vi: "$a, b$: hai cạnh, $C$: góc xen giữa" }, 
-                    { name_vi: "Công thức Heron (Dùng nửa chu vi $p$)", formula: "S = \\sqrt{p(p-a)(p-b)(p-c)} \\quad \\text{với } p = \\frac{a+b+c}{2}", variables_vi: "$a, b, c$: độ dài 3 cạnh, $p$: nửa chu vi" }, 
-                    { name_vi: "Dùng bán kính đường tròn ngoại tiếp $R$", formula: "S = \\frac{abc}{4R}", variables_vi: "$a, b, c$: 3 cạnh, $R$: bán kính ngoại tiếp" }, 
-                    { name_vi: "Dùng bán kính đường tròn nội tiếp $r$", formula: "S = p \\cdot r", variables_vi: "$p$: nửa chu vi, $r$: bán kính nội tiếp" }, 
-                    { name_vi: "Tam giác Vuông", formula: "S = \\frac{1}{2} \\cdot a \\cdot b", variables_vi: "$a, b$: hai cạnh góc vuông" },
-                    { name_vi: "Tam giác đều cạnh $a$", formula: "S = \\frac{a^2\\sqrt{3}}{4}", variables_vi: "$a$: độ dài cạnh tam giác đều" },
-                    { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền (áp dụng cho tam giác vuông)" }, 
+                    { name_vi: "Công thức cơ bản", formula: "S = \\frac{1}{2} a \\cdot h_a", variables_vi: "$a$: cạnh đáy, $h_a$: chiều cao tương ứng", concept_vi: "Áp dụng khi biết độ dài một cạnh và chiều cao kẻ từ đỉnh đối diện." }, 
+                    { name_vi: "Công thức Lượng giác", formula: "S = \\frac{1}{2}ab \\sin C", variables_vi: "$a, b$: hai cạnh, $C$: góc xen giữa", concept_vi: "Áp dụng khi biết độ dài hai cạnh và góc tạo bởi hai cạnh đó." }, 
+                    { name_vi: "Công thức Heron (Dùng nửa chu vi $p$)", formula: "S = \\sqrt{p(p-a)(p-b)(p-c)} \\quad \\text{với } p = \\frac{a+b+c}{2}", variables_vi: "$a, b, c$: độ dài 3 cạnh, $p$: nửa chu vi", concept_vi: "Tính diện tích tam giác chỉ khi biết độ dài ba cạnh." }, 
+                    { name_vi: "Dùng bán kính đường tròn ngoại tiếp $R$", formula: "S = \\frac{abc}{4R}", variables_vi: "$a, b, c$: 3 cạnh, $R$: bán kính ngoại tiếp", concept_vi: "Tính diện tích thông qua các cạnh và bán kính đường tròn ngoại tiếp." }, 
+                    { name_vi: "Dùng bán kính đường tròn nội tiếp $r$", formula: "S = p \\cdot r", variables_vi: "$p$: nửa chu vi, $r$: bán kính nội tiếp", concept_vi: "Tính diện tích thông qua nửa chu vi và bán kính đường tròn nội tiếp." }, 
+                    { name_vi: "Tam giác Vuông", formula: "S = \\frac{1}{2} \\cdot a \\cdot b", variables_vi: "$a, b$: hai cạnh góc vuông", concept_vi: "Bằng nửa tích hai cạnh góc vuông." },
+                    { name_vi: "Tam giác đều cạnh $a$", formula: "S = \\frac{a^2\\sqrt{3}}{4}", variables_vi: "$a$: độ dài cạnh tam giác đều", concept_vi: "Công thức nhanh cho tam giác đều." },
+                    { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền (áp dụng cho tam giác vuông)", concept_vi: "Tìm độ dài một cạnh khi biết hai cạnh còn lại trong tam giác vuông." }, 
                 ] 
             }, 
 
@@ -654,13 +695,13 @@
                 category_vi: "3. Hình Học Phẳng: Tứ Giác và Hình Tròn", 
                 icon: "fa-circle", 
                 formulas: [
-                    { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: chiều dài, chiều rộng" }, 
-                    { name_vi: "Diện tích Hình Vuông", formula: "S = a^2", variables_vi: "$a$: cạnh hình vuông" }, 
-                    { name_vi: "Diện tích Hình Bình Hành", formula: "S = a \\cdot h", variables_vi: "$a$: cạnh đáy, $h$: chiều cao" }, 
-                    { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao" }, 
-                    { name_vi: "Diện tích Hình Thoi", formula: "S = \\frac{1}{2} d_1 d_2", variables_vi: "$d_1, d_2$: hai đường chéo" }, 
-                    { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" }, 
-                    { name_vi: "Chu vi Hình Tròn", formula: "C = 2 \\pi r", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: chiều dài, chiều rộng", concept_vi: "Áp dụng khi biết chiều dài và chiều rộng." }, 
+                    { name_vi: "Diện tích Hình Vuông", formula: "S = a^2", variables_vi: "$a$: cạnh hình vuông", concept_vi: "Áp dụng khi biết độ dài cạnh." }, 
+                    { name_vi: "Diện tích Hình Bình Hành", formula: "S = a \\cdot h", variables_vi: "$a$: cạnh đáy, $h$: chiều cao", concept_vi: "Áp dụng khi biết độ dài cạnh đáy và chiều cao tương ứng." }, 
+                    { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao", concept_vi: "Bằng tích của chiều cao với trung bình cộng hai đáy." }, 
+                    { name_vi: "Diện tích Hình Thoi", formula: "S = \\frac{1}{2} d_1 d_2", variables_vi: "$d_1, d_2$: hai đường chéo", concept_vi: "Bằng nửa tích độ dài hai đường chéo." }, 
+                    { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính", concept_vi: "Áp dụng khi biết bán kính vòng tròn." }, 
+                    { name_vi: "Chu vi Hình Tròn", formula: "C = 2 \\pi r", variables_vi: "$r$: bán kính", concept_vi: "Bằng hai lần tích số $\\pi$ và bán kính." },
                 ] 
             }, 
             
@@ -669,11 +710,11 @@
                 category_vi: "4. Lượng Giác & Hệ Thức trong Tam Giác", 
                 icon: "fa-wave-square", 
                 formulas: [ 
-                    { name_vi: "Hệ thức cơ bản", formula: "\\sin^2 x + \\cos^2 x = 1", variables_vi: "" },
-                    { name_vi: "Công thức Sin nhân đôi", formula: "\\sin 2x = 2 \\sin x \\cos x", variables_vi: "" },
-                    { name_vi: "Công thức Cosin nhân đôi", formula: "\\cos 2x = \\cos^2 x - \\sin^2 x = 2\\cos^2 x - 1 = 1 - 2\\sin^2 x", variables_vi: "" },
-                    { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "$a, b, c$: cạnh, $A, B, C$: góc đối diện, $R$: bán kính ngoại tiếp" },
-                    { name_vi: "Định lý Cosin", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "" },
+                    { name_vi: "Hệ thức cơ bản", formula: "\\sin^2 x + \\cos^2 x = 1", variables_vi: "", concept_vi: "Quan hệ cơ bản giữa sin và cos của cùng một góc." },
+                    { name_vi: "Công thức Sin nhân đôi", formula: "\\sin 2x = 2 \\sin x \\cos x", variables_vi: "", concept_vi: "Biến đổi Sin của góc gấp đôi sang góc đơn." },
+                    { name_vi: "Công thức Cosin nhân đôi", formula: "\\cos 2x = \\cos^2 x - \\sin^2 x = 2\\cos^2 x - 1 = 1 - 2\\sin^2 x", variables_vi: "", concept_vi: "Biến đổi Cos của góc gấp đôi sang góc đơn (có 3 dạng)." },
+                    { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "$a, b, c$: cạnh, $A, B, C$: góc đối diện, $R$: bán kính ngoại tiếp", concept_vi: "Tìm cạnh hoặc góc khi biết các yếu tố còn lại, hoặc tìm bán kính đường tròn ngoại tiếp." },
+                    { name_vi: "Định lý Cosin", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "", concept_vi: "Tìm cạnh thứ ba khi biết hai cạnh và góc xen giữa, hoặc tìm góc khi biết ba cạnh." },
                 ] 
             },
             
@@ -682,13 +723,13 @@
                 category_vi: "5. Giải Tích (Đạo Hàm)", 
                 icon: "fa-arrow-up-right-dots", 
                 formulas: [ 
-                    { name_vi: "Đạo Hàm (Hàm Mũ)", formula: "(e^u)' = u'e^u", variables_vi: "$u$: hàm số theo $x$" },
-                    { name_vi: "Đạo Hàm (Hàm Lôgarit)", formula: "(\\ln |u|)' = \\frac{u'}{u}", variables_vi: "" },
-                    { name_vi: "Đạo Hàm (Hàm Lũy Thừa)", formula: "((u^n))' = n \\cdot u^{n-1} \\cdot u'", variables_vi: "" },
-                    { name_vi: "Đạo Hàm (Tích)", formula: "(uv)' = u'v + uv'", variables_vi: "$u, v$: hàm số theo $x$" },
-                    { name_vi: "Đạo Hàm (Thương)", formula: "(\\frac{u}{v})' = \\frac{u'v - uv'}{v^2}", variables_vi: "" },
-                    { name_vi: "Đạo Hàm của Sin", formula: "(\\sin u)' = u' \\cos u", variables_vi: "" },
-                    { name_vi: "Đạo Hàm của Cos", formula: "(\\cos u)' = -u' \\sin u", variables_vi: "" },
+                    { name_vi: "Đạo Hàm (Hàm Mũ $e^u$)", formula: "(e^u)' = u'e^u", variables_vi: "$u$: hàm số theo $x$", concept_vi: "Tính đạo hàm của hàm số mũ cơ số tự nhiên." },
+                    { name_vi: "Đạo Hàm (Hàm Lôgarit $\ln |u|$)", formula: "(\\ln |u|)' = \\frac{u'}{u}", variables_vi: "", concept_vi: "Tính đạo hàm của hàm số lôgarit cơ số tự nhiên." },
+                    { name_vi: "Đạo Hàm (Hàm Lũy Thừa $(u^n)'$)", formula: "((u^n))' = n \\cdot u^{n-1} \\cdot u'", variables_vi: "", concept_vi: "Tính đạo hàm của hàm hợp có dạng lũy thừa." },
+                    { name_vi: "Đạo Hàm (Tích $(uv)'$)", formula: "(uv)' = u'v + uv'", variables_vi: "$u, v$: hàm số theo $x$", concept_vi: "Tính đạo hàm khi hàm số là tích của hai hàm số khác." },
+                    { name_vi: "Đạo Hàm (Thương $(\\frac{u}{v})'$)", formula: "(\\frac{u}{v})' = \\frac{u'v - uv'}{v^2}", variables_vi: "", concept_vi: "Tính đạo hàm khi hàm số là thương của hai hàm số khác." },
+                    { name_vi: "Đạo Hàm của Sin", formula: "(\\sin u)' = u' \\cos u", variables_vi: "", concept_vi: "Công thức đạo hàm hàm Sin hợp." },
+                    { name_vi: "Đạo Hàm của Cos", formula: "(\\cos u)' = -u' \\sin u", variables_vi: "", concept_vi: "Công thức đạo hàm hàm Cos hợp." },
                 ] 
             },
             
@@ -697,11 +738,11 @@
                 category_vi: "6. Giải Tích (Nguyên Hàm & Tích Phân)", 
                 icon: "fa-infinity", 
                 formulas: [ 
-                    { name_vi: "Nguyên Hàm (Hàm Lũy Thừa)", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\neq -1, C$: hằng số" },
-                    { name_vi: "Nguyên Hàm (Hàm $1/x$)", formula: "\\int \\frac{1}{x} dx = \\ln |x| + C", variables_vi: "" },
-                    { name_vi: "Nguyên Hàm (Hàm $e^x$)", formula: "\\int e^x dx = e^x + C", variables_vi: "" },
-                    { name_vi: "Tích phân xác định (Công thức Newton-Leibniz)", formula: "\\int_{a}^{b} f(x) dx = F(b) - F(a)", variables_vi: "$F(x)$: nguyên hàm của $f(x)$" },
-                    { name_vi: "Diện tích Hình Phẳng", formula: "S = \\int_{a}^{b} |f(x)| dx", variables_vi: "$f(x)$: hàm số theo $x$" }, 
+                    { name_vi: "Nguyên Hàm (Hàm Lũy Thừa)", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\neq -1, C$: hằng số", concept_vi: "Công thức cơ bản để tìm nguyên hàm của hàm lũy thừa." },
+                    { name_vi: "Nguyên Hàm (Hàm $1/x$)", formula: "\\int \\frac{1}{x} dx = \\ln |x| + C", variables_vi: "", concept_vi: "Nguyên hàm của $\\frac{1}{x}$." },
+                    { name_vi: "Nguyên Hàm (Hàm $e^x$)", formula: "\\int e^x dx = e^x + C", variables_vi: "", concept_vi: "Nguyên hàm của hàm số mũ cơ số tự nhiên." },
+                    { name_vi: "Tích phân xác định (Newton-Leibniz)", formula: "\\int_{a}^{b} f(x) dx = F(b) - F(a)", variables_vi: "$F(x)$: nguyên hàm của $f(x)$", concept_vi: "Tính giá trị của tích phân xác định." },
+                    { name_vi: "Diện tích Hình Phẳng", formula: "S = \\int_{a}^{b} |f(x)| dx", variables_vi: "$f(x)$: hàm số theo $x$", concept_vi: "Tính diện tích hình phẳng giới hạn bởi đồ thị hàm số $f(x)$ và trục $Ox$." }, 
                 ] 
             },
 
@@ -710,14 +751,14 @@
                 category_vi: "7. Thể Tích & Diện Tích Bề Mặt Hình Học Không Gian", 
                 icon: "fa-cube", 
                 formulas: [ 
-                    { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3}Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" }, 
-                    { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" }, 
-                    { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính" }, 
-                    { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính" }, 
-                    { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" }, 
-                    { name_vi: "Diện tích Toàn phần Khối Trụ", formula: "S_{tp} = 2\\pi r^2 + 2\\pi r h", variables_vi: "" },
-                    { name_vi: "Thể tích Khối Nón", formula: "V = \\frac{1}{3} \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
-                    { name_vi: "Diện tích Toàn phần Khối Nón", formula: "S_{tp} = \\pi r^2 + \\pi r l", variables_vi: "$l$: đường sinh" },
+                    { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3}Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao", concept_vi: "Bằng một phần ba diện tích đáy nhân với chiều cao. Áp dụng cho khối chóp." }, 
+                    { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao", concept_vi: "Bằng diện tích đáy nhân với chiều cao. Áp dụng cho khối lăng trụ." }, 
+                    { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính", concept_vi: "Tính thể tích của hình cầu." }, 
+                    { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính", concept_vi: "Tính diện tích bề mặt của hình cầu." }, 
+                    { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao", concept_vi: "Bằng diện tích đáy nhân chiều cao. Áp dụng cho khối trụ." }, 
+                    { name_vi: "Diện tích Toàn phần Khối Trụ", formula: "S_{tp} = 2\\pi r^2 + 2\\pi r h", variables_vi: "", concept_vi: "Diện tích hai đáy cộng diện tích xung quanh." },
+                    { name_vi: "Thể tích Khối Nón", formula: "V = \\frac{1}{3} \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao", concept_vi: "Bằng một phần ba diện tích đáy nhân với chiều cao. Áp dụng cho khối nón." },
+                    { name_vi: "Diện tích Toàn phần Khối Nón", formula: "S_{tp} = \\pi r^2 + \\pi r l", variables_vi: "$l$: đường sinh", concept_vi: "Diện tích đáy cộng diện tích xung quanh." },
                 ] 
             },
             
@@ -726,11 +767,11 @@
                 category_vi: "8. Tổ Hợp - Xác Suất",
                 icon: "fa-percent",
                 formulas: [
-                    { name_vi: "Hoán vị", formula: "P_n = n!", variables_vi: "$n$: số phần tử" },
-                    { name_vi: "Chỉnh hợp chập $k$ của $n$", formula: "A_n^k = \\frac{n!}{(n-k)!}", variables_vi: "$0 \\le k \\le n$" },
-                    { name_vi: "Tổ hợp chập $k$ của $n$", formula: "C_n^k = \\frac{n!}{k!(n-k)!}", variables_vi: "$0 \\le k \\le n$" },
-                    { name_vi: "Công thức Nhị thức Newton", formula: "(a+b)^n = \\sum_{k=0}^{n} C_n^k a^{n-k} b^k", variables_vi: "" },
-                    { name_vi: "Công thức Xác suất cơ bản", formula: "P(A) = \\frac{|\\Omega_A|}{|\\Omega|}", variables_vi: "$|\\Omega|$: số kết quả có thể, $|\\Omega_A|$: số kết quả thuận lợi cho $A$" },
+                    { name_vi: "Hoán vị ($P_n$)", formula: "P_n = n!", variables_vi: "$n$: số phần tử", concept_vi: "Là số cách sắp xếp thứ tự **TẤT CẢ** $n$ phần tử khác nhau. Dùng khi **THỨ TỰ** quan trọng." },
+                    { name_vi: "Chỉnh hợp ($A_n^k$)", formula: "A_n^k = \\frac{n!}{(n-k)!}", variables_vi: "$0 \\le k \\le n$", concept_vi: "Số cách chọn $k$ phần tử từ $n$ phần tử, trong đó **THỨ TỰ** của $k$ phần tử được chọn là quan trọng (vd: xếp giải, bầu chức danh)." },
+                    { name_vi: "Tổ hợp ($C_n^k$)", formula: "C_n^k = \\frac{n!}{k!(n-k)!}", variables_vi: "$0 \\le k \\le n$", concept_vi: "Số cách chọn $k$ phần tử từ $n$ phần tử, trong đó **THỨ TỰ** của $k$ phần tử được chọn **KHÔNG** quan trọng (vd: chọn người vào đội, chọn món ăn)." },
+                    { name_vi: "Công thức Nhị thức Newton", formula: "(a+b)^n = \\sum_{k=0}^{n} C_n^k a^{n-k} b^k", variables_vi: "", concept_vi: "Khai triển lũy thừa bậc $n$ của một tổng hai số hạng. Thường dùng để tìm hệ số hoặc số hạng tổng quát." },
+                    { name_vi: "Công thức Xác suất cơ bản", formula: "P(A) = \\frac{|\\Omega_A|}{|\\Omega|}", variables_vi: "$|\\Omega|$: số kết quả có thể, $|\\Omega_A|$: số kết quả thuận lợi cho $A$", concept_vi: "Xác suất của biến cố $A$ bằng tỉ lệ giữa số trường hợp thuận lợi và tổng số trường hợp có thể xảy ra (không gian mẫu)." },
                 ]
             }
         ];
@@ -786,6 +827,8 @@
                 // FORMULAS
                 'formulas_title': 'Công Thức Toán Học (Lớp 1-12)',
                 'formulas_tip': 'Các công thức được hiển thị bằng KaTeX. Ký hiệu: $S$=Diện tích, $V$=Thể tích.',
+                'formula_search_ph': 'Tìm kiếm công thức (ví dụ: Heron, sin2x, Thể tích chóp)...',
+                'concept_method_vi': 'Khái niệm/Cách làm',
 
                 // SONG BOX
                 'song_box_title': 'Hộp Nhạc Kỷ Niệm (Playlist Lớp)',
@@ -879,6 +922,8 @@
                 // FORMULAS
                 'formulas_title': 'Math Formulas (Grade 1-12)',
                 'formulas_tip': 'Formulas are rendered using KaTeX. Notation: S=Area, V=Volume.',
+                'formula_search_ph': 'Search formula (e.g., Heron, sin2x, Cone volume)...',
+                'concept_method_en': 'Concept/Method',
 
                 // SONG BOX
                 'song_box_title': 'Class Song Playlist Box',
@@ -928,8 +973,8 @@
         let currentLang = localStorage.getItem('appLang') || 'vi';
         let messageSortOrder = localStorage.getItem('messageSortOrder') || 'asc';
         
-        // FIX LỖI: Thêm biến global để quản lý việc hủy Real-time Listener.
         let unsubscribeChat = null;
+        let currentCategoryFilter = 'all'; // 'all' or category_vi string
 
 
         window.toggleLanguage = function() {
@@ -942,6 +987,10 @@
             }
             loadClassSongs(); 
             updateSortButtonText();
+            if (document.getElementById('formulas').style.display !== 'none') {
+                // Tải lại công thức để cập nhật KaTeX (nếu có biến)
+                renderFormulaList(); 
+            }
         }
 
         function applyLanguage(lang) {
@@ -968,12 +1017,11 @@
             }
         }
         
-        // FIX LỖI: Chức năng chuyển đổi sắp xếp
         window.toggleMessageSortOrder = function() {
             messageSortOrder = messageSortOrder === 'asc' ? 'desc' : 'asc';
             localStorage.setItem('messageSortOrder', messageSortOrder);
             updateSortButtonText();
-            loadInitialMessages(); // Tải lại danh sách với thứ tự mới
+            loadInitialMessages(); 
         }
 
 
@@ -991,9 +1039,15 @@
                 startMemoryGame(true); 
                 window.gamesInitialized = true;
             } else if (tabId === 'formulas' && !window.formulasInitialized) {
-                renderFormulaList();
+                initFormulasTab(); // Khởi tạo bộ lọc và render lần đầu
                 window.formulasInitialized = true;
             }
+        }
+        
+        // Khởi tạo tab Formulas (chỉ chạy 1 lần)
+        function initFormulasTab() {
+             renderCategoryFilters(); // Renders the category buttons
+             renderFormulaList();     // Renders the formulas (initially 'all')
         }
 
         // ⚠️ CẤU HÌNH FIREBASE
@@ -1022,7 +1076,9 @@
             console.log("Firebase initialized successfully.");
         } catch (e) {
             console.error("Lỗi FATAL: Firebase KHÔNG THỂ khởi tạo. Vui lòng kiểm tra API Key!", e);
+            // Cập nhật lại HTML nếu có lỗi Firebase
             document.getElementById('social').innerHTML = `<div class="card"><h3 style="color: red;">LỖI KẾT NỐI:</h3><p>Không thể kết nối với hệ thống Chat/Quiz/Song. Vui lòng kiểm tra lại <b>Firebase API Key</b> và cấu hình trong mã nguồn.</p></div>`;
+            document.getElementById('formulas').innerHTML = `<div class="card"><h3 style="color: red;">LỖI KẾT NỐI:</h3><p>Không thể tải công thức.</p></div>`;
         }
 
         // --- LOGIC GÓC CHAT ẨN DANH ---
@@ -1048,14 +1104,7 @@
                 });
                 document.getElementById('message-text').value = '';
                 
-                // Cập nhật tin nhắn mới nhất vào danh sách nếu đang ở chế độ Mới nhất trên cùng
-                // Bổ sung logic cập nhật tin nhắn mới nhất
                 if (messageSortOrder === 'desc') {
-                    // Cố gắng fetch và prepend tin nhắn mới ngay sau khi gửi
-                    // Mặc dù ta dùng getDocs cho initial load, nhưng ta vẫn có thể dùng onSnapshot
-                    // cho 1 tin nhắn duy nhất, hoặc đơn giản hơn là gọi lại loadInitialMessages() để làm mới
-                    // Tuy nhiên, loadInitialMessages quá nặng. Tạm thời chỉ làm mới UI sau khi gửi.
-                    // Tốt nhất là load lại list để người dùng thấy tin nhắn của mình.
                     loadInitialMessages(); 
                 }
 
@@ -1067,7 +1116,6 @@
             }
         }
 
-        // SỬA LỖI: Chuyển từ onSnapshot sang getDocs để đảm bảo thứ tự chính xác khi thay đổi sort
         async function loadInitialMessages() {
             if (!chatRef) return;
 
@@ -1075,25 +1123,20 @@
             const direction = order === 'asc' ? 'asc' : 'desc';
             const messageList = document.getElementById('message-list');
             
-            // FIX: Dùng innerHTML để xóa list
             messageList.innerHTML = ''; 
             
-            // Hiển thị skeleton/loading
             messageList.innerHTML = `<div class="card" style="padding: 15px; text-align: center;">${translations[currentLang]['loading_msg']}</div>`;
 
 
             try {
-                // SỬ DỤNG getDocs cho initial load và khi chuyển sort order
                 const q = query(chatRef, orderBy("timestamp", direction), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 
-                // Xóa loading placeholder
                 messageList.innerHTML = ''; 
 
                 let tempLastVisible = null;
                 const fragment = document.createDocumentFragment();
 
-                // Thu thập tin nhắn
                 snapshot.docs.forEach((doc, index) => {
                     const messageElement = createMessageElement(doc.id, doc.data());
                     fragment.appendChild(messageElement);
@@ -1103,10 +1146,8 @@
                     }
                 });
                 
-                // Thêm fragment vào DOM. Luôn dùng appendChild vì query đã sắp xếp đúng
                 messageList.appendChild(fragment); 
                 
-                // Cập nhật lastVisible
                 if (snapshot.docs.length >= MESSAGE_LIMIT) {
                     lastVisible = tempLastVisible;
                     document.getElementById('load-more-btn').style.display = 'block';
@@ -1123,7 +1164,6 @@
             }
         }
         
-        // Logic loadMoreMessages
         window.loadMoreMessages = async function() {
             if (!lastVisible || !chatRef) {
                 document.getElementById('load-more-btn').style.display = 'none';
@@ -1136,28 +1176,23 @@
             const direction = order === 'asc' ? 'asc' : 'desc';
 
             try {
-                // startAfter(lastVisible) sẽ lấy các tin nhắn *tiếp theo* theo direction (Tức là mới hơn nếu asc, hoặc cũ hơn nếu desc)
                 const q = query(chatRef, orderBy("timestamp", direction), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 let tempLastVisible = null;
                 const messageList = document.getElementById('message-list');
                 const fragment = document.createDocumentFragment();
                 
-                const newMessages = [];
-
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
                     const messageElement = createMessageElement(doc.id, data);
-                    fragment.appendChild(messageElement); // Thêm vào fragment theo thứ tự query
+                    fragment.appendChild(messageElement); 
                     
                     if (index === snapshot.docs.length - 1) {
                         tempLastVisible = doc;
                     }
                 });
                 
-                // Logic chèn vào DOM cho loadMore: Luôn là appendChild để thêm vào cuối list
                 messageList.appendChild(fragment);
-
 
                 if (snapshot.docs.length < MESSAGE_LIMIT) {
                     lastVisible = null;
@@ -1176,7 +1211,6 @@
             }
         }
         
-        // Hàm phụ trợ để loại bỏ các tin nhắn trùng lặp (chỉ giữ lại ID đầu tiên)
         function removeDuplicateMessages(container) {
             const children = Array.from(container.children);
             const seenIds = new Set();
@@ -1193,7 +1227,6 @@
             }
         }
         
-        // Tách logic tạo element ra khỏi render
         function createMessageElement(id, data) {
             const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(currentLang) : translations[currentLang]['message_time'];
             const likedMessages = JSON.parse(localStorage.getItem('likedMessages')) || {};
@@ -1241,7 +1274,6 @@
                 }
                 localStorage.setItem('likedMessages', JSON.stringify(likedMessages));
                 
-                // Cập nhật UI ngay lập tức
                 const heartIcon = document.getElementById(`heart-icon-${id}`);
                 const likesCount = document.getElementById(`likes-count-${id}`);
                 const likesText = document.getElementById(`likes-text-${id}`);
@@ -1306,13 +1338,11 @@
         window.initQuiz = function() {
              currentUserName = localStorage.getItem('quizUserName');
              if (currentUserName) {
-                 // Nếu đã có tên, ẩn input và hiển thị quiz
                  document.getElementById('name-input-section').style.display = 'none';
                  document.getElementById('quiz-section').style.display = 'block';
                  initQuizState(false);
                  loadQuizQuestions();
              } else {
-                 // Nếu chưa có tên, hiển thị input tên
                  document.getElementById('name-input-section').style.display = 'block';
                  document.getElementById('quiz-section').style.display = 'none';
              }
@@ -1320,7 +1350,6 @@
 
         async function loadQuizQuestions() {
             if (!quizRef || allQuestions.length > 0) {
-                 // Đã tải hoặc Firebase lỗi
                  if (allQuestions.length > 0) {
                     const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
                     availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
@@ -1334,7 +1363,6 @@
                 const snapshot = await getDocs(q);
                 allQuestions = snapshot.docs.map(doc => {
                     const data = doc.data();
-                    // Chuẩn hóa data
                     return {
                         id: doc.id,
                         text: data.q,
@@ -1342,7 +1370,7 @@
                         correctAnswer: parseInt(data.c),
                         category: data.cat
                     }
-                }).filter(q => q.answers && q.answers.length === 4 && q.correctAnswer >= 0 && q.correctAnswer <= 3); // Lọc câu hỏi hợp lệ
+                }).filter(q => q.answers && q.answers.length === 4 && q.correctAnswer >= 0 && q.correctAnswer <= 3); 
 
                 const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
                 availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
@@ -1358,7 +1386,6 @@
             document.getElementById('next-btn').style.display = 'none';
             const optionsDiv = document.getElementById('options');
             
-            // Hiện skeleton loading
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
 
             if (questionsAttempted >= MAX_QUIZ_QUESTIONS || availableQuestions.length === 0) {
@@ -1372,7 +1399,6 @@
             document.getElementById('q-category').textContent = currentQ.category;
             document.getElementById('q-text').textContent = currentQ.text;
             
-            // Xáo trộn thứ tự hiển thị đáp án
             let options = currentQ.answers.map((ans, index) => ({ text: ans, index: index }));
             options = options.sort(() => 0.5 - Math.random());
             
@@ -1381,7 +1407,6 @@
                 const btn = document.createElement('button');
                 btn.classList.add('opt-btn');
                 btn.textContent = option.text;
-                // Gán index gốc của đáp án để kiểm tra
                 btn.onclick = () => checkAnswer(option.index);
                 btn.setAttribute('data-index', option.index); 
                 optionsDiv.appendChild(btn);
@@ -1397,13 +1422,11 @@
                 currentScore++;
             }
             
-            // Lưu trạng thái
             localStorage.setItem('quizScore', currentScore);
             localStorage.setItem('questionsAttempted', questionsAttempted);
             
             updateQuizStats();
             
-            // Hiển thị kết quả và khóa nút
             document.querySelectorAll('.opt-btn').forEach(btn => {
                 const answerIndex = parseInt(btn.getAttribute('data-index'));
                 btn.disabled = true;
@@ -1415,11 +1438,9 @@
                 }
             });
 
-            // Nếu chưa đủ 10 câu, hiển thị nút Next
             if (questionsAttempted < MAX_QUIZ_QUESTIONS) {
                 document.getElementById('next-btn').style.display = 'block';
             } else {
-                 // Nếu đủ 10 câu, hoàn thành quiz
                 handleQuizComplete();
             }
         }
@@ -1433,7 +1454,6 @@
         window.resetQuiz = function() {
             initQuizState(true);
             loadQuizQuestions();
-            // Đảm bảo quay lại màn hình quiz nếu đã nhập tên
             if (currentUserName) {
                  document.getElementById('name-input-section').style.display = 'none';
                  document.getElementById('quiz-section').style.display = 'block';
@@ -1443,7 +1463,6 @@
             }
         }
         
-        // GỬI CÂU HỎI ĐÓNG GÓP
         window.submitUserQuestion = async function() {
              if (!quizRef) {
                  alert(currentLang === 'vi' ? "Lỗi: Hệ thống quiz chưa được khởi tạo (Lỗi Firebase)." : "Error: Quiz system not initialized (Lỗi Firebase).");
@@ -1474,7 +1493,6 @@
              try {
                  await addDoc(quizRef, newQuestion);
                  alert(currentLang === 'vi' ? "Đóng góp thành công! Câu hỏi của bạn đã được thêm vào ngân hàng câu hỏi!" : "Contribution successful! Your question has been added to the question bank!");
-                 // Clear form
                  document.getElementById('q-text-input').value = '';
                  document.getElementById('q-ans-0').value = '';
                  document.getElementById('q-ans-1').value = '';
@@ -1482,7 +1500,6 @@
                  document.getElementById('q-ans-3').value = '';
                  document.getElementById('q-correct-select').value = -1;
                  document.getElementById('q-cat-input').value = '';
-                 // Force reload questions if the user is playing quiz
                  allQuestions = []; 
                  if (document.getElementById('quiz-section').style.display !== 'none') {
                     loadQuizQuestions();
@@ -1507,7 +1524,6 @@
             const sender = document.getElementById('song-sender-input').value.trim() || translations[currentLang]['anonymous'];
             const submitBtn = document.querySelector('#create-song-section .btn-send');
 
-            // Kiểm tra link cơ bản (Chỉ cần có 5 ký tự để tránh lỗi quá ngắn)
             if (title.length < 2 || url.length < 5) {
                 alert(translations[currentLang]['song_error_required']);
                 return;
@@ -1526,7 +1542,6 @@
                 });
                 alert(currentLang === 'vi' ? "Đề xuất bài hát thành công!" : "Song suggestion submitted successfully!");
 
-                // Clear form
                 document.getElementById('song-title-input').value = '';
                 document.getElementById('song-url-input').value = '';
                 document.getElementById('song-memory-input').value = '';
@@ -1543,10 +1558,8 @@
         window.loadClassSongs = function() {
             if (!classSongsRef) return;
             try {
-                // Tải tối đa 50 bài hát, sắp xếp theo số lượng votes giảm dần
                 const q = query(classSongsRef, orderBy("votes", "desc"), limit(50));
 
-                // Real-time listener
                 onSnapshot(q, (snapshot) => {
                     const songList = document.getElementById('song-list');
                     songList.innerHTML = '';
@@ -1558,7 +1571,7 @@
 
                     snapshot.docs.forEach((doc, index) => {
                         const data = doc.data();
-                        renderSong(doc.id, data, index === 0); // isTopSong là true cho bài hát đầu tiên (có nhiều vote nhất)
+                        renderSong(doc.id, data, index === 0); 
                     });
 
                 }, (error) => {
@@ -1591,8 +1604,9 @@
                 votedSongs[songId] = true;
                 localStorage.setItem('votedSongs', JSON.stringify(votedSongs));
                 
-                // Cập nhật UI
-                document.getElementById(`votes-count-${songId}`).textContent = newVotes;
+                const votesCountElement = document.getElementById(`votes-count-${songId}`);
+                if (votesCountElement) votesCountElement.textContent = newVotes;
+                
                 if(voteBtn) {
                      voteBtn.textContent = translations[currentLang]['song_voted'];
                      voteBtn.classList.add('voted');
@@ -1646,17 +1660,108 @@
             songList.appendChild(songElement);
         }
 
-        // --- LOGIC CÔNG THỨC TOÁN HỌC ---
+        // --- LOGIC CÔNG THỨC TOÁN HỌC (LỌC & TÌM KIẾM) ---
+
+        // Hàm để tạo các nút lọc danh mục
+        function renderCategoryFilters() {
+            const filterContainer = document.getElementById('formula-category-filter');
+            if (!filterContainer) return;
+
+            filterContainer.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.classList.add('formula-filter-btn');
+            allBtn.textContent = 'Tất Cả';
+            allBtn.setAttribute('data-category', 'all');
+            allBtn.onclick = () => setCategoryFilter('all');
+            filterContainer.appendChild(allBtn);
+
+            MATH_FORMULA_DATA.forEach(category => {
+                const btn = document.createElement('button');
+                btn.classList.add('formula-filter-btn');
+                btn.textContent = category.category_vi.replace(/ \(.+\)/g, ''); // Bỏ phần chi tiết trong tên danh mục
+                btn.setAttribute('data-category', category.category_vi);
+                btn.onclick = () => setCategoryFilter(category.category_vi);
+                filterContainer.appendChild(btn);
+            });
+            
+            setCategoryFilter(currentCategoryFilter, false); 
+        }
+
+        window.setCategoryFilter = function(category, shouldRender = true) {
+            currentCategoryFilter = category;
+            
+            document.querySelectorAll('.formula-filter-btn').forEach(btn => {
+                btn.classList.remove('active-filter');
+                if (btn.getAttribute('data-category') === category) {
+                    btn.classList.add('active-filter');
+                }
+            });
+            
+            if (shouldRender) {
+                // Xóa tìm kiếm khi chuyển danh mục
+                document.getElementById('formula-search').value = '';
+                renderFormulaList(); 
+            }
+        }
+        
+        // Hàm tìm kiếm và render công thức
+        window.filterFormulas = function() {
+            // Đặt lại bộ lọc danh mục thành 'all' khi bắt đầu tìm kiếm
+            setCategoryFilter('all', false); // false để không render lại ngay
+            renderFormulaList(); 
+        }
+
         function renderFormulaList() {
             const listElement = document.getElementById('formula-list');
+            if (!listElement) return;
+
             listElement.innerHTML = '';
             
-            if (!MATH_FORMULA_DATA || MATH_FORMULA_DATA.length === 0) {
-                 listElement.innerHTML = `<p style="color: red; text-align: center;">Lỗi: Không có dữ liệu công thức.</p>`;
+            const searchTerm = document.getElementById('formula-search').value.toLowerCase().trim();
+            
+            let filteredCategories = [];
+
+            // 1. Lọc theo Danh mục
+            if (currentCategoryFilter === 'all') {
+                filteredCategories = MATH_FORMULA_DATA;
+            } else {
+                filteredCategories = MATH_FORMULA_DATA.filter(c => c.category_vi === currentCategoryFilter);
+            }
+            
+            let allFormulasFound = [];
+            
+            // 2. Lọc theo Từ khóa tìm kiếm
+            filteredCategories.forEach(category => {
+                let categoryFormulasFound = [];
+                category.formulas.forEach(item => {
+                    const formulaWithoutBackslash = item.formula.toLowerCase().replace(/\\/g, ''); // Loại bỏ \ cho dễ tìm kiếm KaTeX
+                    
+                    const matchesSearch = searchTerm === '' || 
+                                          item.name_vi.toLowerCase().includes(searchTerm) ||
+                                          formulaWithoutBackslash.includes(searchTerm) || 
+                                          (item.concept_vi && item.concept_vi.toLowerCase().includes(searchTerm));
+
+                    if (matchesSearch) {
+                        categoryFormulasFound.push(item);
+                    }
+                });
+                
+                if (categoryFormulasFound.length > 0) {
+                    allFormulasFound.push({
+                        category_vi: category.category_vi,
+                        icon: category.icon,
+                        formulas: categoryFormulasFound
+                    });
+                }
+            });
+            
+            if (allFormulasFound.length === 0) {
+                 listElement.innerHTML = `<p style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${currentLang === 'vi' ? 'Không tìm thấy công thức nào phù hợp.' : 'No matching formulas found.'}</p>`;
                  return;
             }
 
-            MATH_FORMULA_DATA.forEach(category => {
+            allFormulasFound.forEach(category => {
                 // Category Header
                 const categoryHeader = document.createElement('h4');
                 categoryHeader.innerHTML = `<i class="fas ${category.icon}"></i> ${category.category_vi}`;
@@ -1672,15 +1777,17 @@
                         <div class="formula-katex-display">
                             \\(${item.formula}\\) 
                         </div>
-                        <div class="formula-variables">${currentLang === 'vi' ? 'Giải thích' : 'Variables'}: ${item.variables_vi}</div>
+                        <div class="formula-variables">
+                            <strong style="color: var(--primary-color);">${translations[currentLang]['concept_method_vi']}</strong>: ${item.concept_vi || 'N/A'}
+                            <span>${currentLang === 'vi' ? 'Ký hiệu' : 'Notation'}: ${item.variables_vi}</span>
+                        </div>
                     `;
                     listElement.appendChild(formulaCard);
                 });
             });
 
-            // Call KaTeX auto-render after mounting all elements
+            // Gọi KaTeX auto-render
             if (window.renderMathInElement) {
-                // Sử dụng auto-render để tìm và render các ký hiệu \(formula\)
                 window.renderMathInElement(listElement, {
                     delimiters: [
                         {left: "$$", right: "$$", display: true},
@@ -1690,8 +1797,6 @@
                     ],
                     throwOnError : false
                 });
-            } else {
-                 listElement.innerHTML = `<p style="color: red; text-align: center;">Lỗi: Không thể tải thư viện KaTeX để hiển thị công thức.</p>`
             }
         }
 
@@ -1710,8 +1815,15 @@
         const statusDisplay = document.getElementById('tictactoe-status');
 
         function initTicTacToe() {
+            if (cells.length === 0) return;
             cells.forEach(cell => {
                 cell.textContent = "";
+                // Remove existing listener before adding a new one for reset
+                const newCell = cell.cloneNode(true);
+                cell.parentNode.replaceChild(newCell, cell);
+            });
+            const newCells = document.querySelectorAll('#tictactoe-board .cell');
+            newCells.forEach(cell => {
                 cell.addEventListener('click', handleCellClick, { once: true });
             });
             updateStatus(currentPlayer === 'X' ? translations[currentLang]['tictactoe_status_x'] : translations[currentLang]['tictactoe_status_o']);
@@ -1766,7 +1878,7 @@
         }
 
         function updateStatus(message) {
-            statusDisplay.textContent = message;
+            if (statusDisplay) statusDisplay.textContent = message;
         }
 
         window.resetGame = function() {
@@ -1787,14 +1899,20 @@
             guessesLeft = 10;
             guessLog = [];
             gameGuActive = true;
-            document.getElementById('guess-input').value = '';
-            document.getElementById('guess-button').disabled = false;
-            document.getElementById('guess-result').textContent = '';
-            document.getElementById('guess-log').textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
+            const guessInput = document.getElementById('guess-input');
+            const guessButton = document.getElementById('guess-button');
+            const resultDisplay = document.getElementById('guess-result');
+            const logDisplay = document.getElementById('guess-log');
+
+            if (guessInput) guessInput.value = '';
+            if (guessButton) guessButton.disabled = false;
+            if (resultDisplay) resultDisplay.textContent = '';
+            if (logDisplay) logDisplay.textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
         }
 
         window.checkGuess = function() {
-            if (!gameGuActive) {
+            const guessButton = document.getElementById('guess-button');
+            if (!gameGuActive || guessButton.disabled) {
                 alert(currentLang === 'vi' ? 'Vui lòng bấm "Chơi mới" để bắt đầu.' : 'Please click "New Game" to start.');
                 return;
             }
@@ -1813,11 +1931,11 @@
             
             if (guess === secretNumber) {
                 resultDisplay.textContent = translations[currentLang]['guess_correct'].replace('%g', guess);
-                document.getElementById('guess-button').disabled = true;
+                guessButton.disabled = true;
                 gameGuActive = false;
             } else if (guessesLeft === 0) {
                 resultDisplay.textContent = translations[currentLang]['guess_lose'].replace('%s', secretNumber);
-                document.getElementById('guess-button').disabled = true;
+                guessButton.disabled = true;
                 gameGuActive = false;
             } else {
                 if (guess < secretNumber) {
@@ -1828,7 +1946,7 @@
             }
 
             logDisplay.textContent = `${translations[currentLang]['guess_try_left'].replace('%t', guessesLeft)} | Lịch sử: ${guessLog.join(', ')}`;
-            guessInput.value = ''; // Clear input after guess
+            guessInput.value = ''; 
             guessInput.focus();
         }
         
@@ -1842,8 +1960,7 @@
         const memoryStatus = document.getElementById('memory-status');
         const memoryGameBoard = document.getElementById('memory-game-board');
 
-        // Thêm một số biểu tượng đa dạng hơn
-        const cardSymbols = ['🧠', '📚', '🧪', '🧬', '⚛️', '📝', '📐', '👑']; // 8 cặp
+        const cardSymbols = ['🧠', '📚', '🧪', '🧬', '⚛️', '📝', '📐', '👑']; 
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -1854,6 +1971,8 @@
         
         function updateMemoryStatus(isLangToggle = false) {
              const pairsLeft = cardSymbols.length - matchedPairs;
+             if (!memoryStatus) return;
+
              if (pairsLeft === 0) {
                  memoryStatus.textContent = translations[currentLang]['memory_status_win'].replace('%t', totalTurns);
                  return;
@@ -1866,13 +1985,13 @@
         }
 
         window.startMemoryGame = function(isLangToggle = false) {
-            // Chỉ cần khởi tạo layout nếu chưa có hoặc yêu cầu chơi mới
+            if (!memoryGameBoard) return;
+
             if (memoryCards.length > 0 && isLangToggle) {
                  updateMemoryStatus(isLangToggle);
                  return;
             }
             
-            // Logic chơi mới
             memoryGameBoard.innerHTML = '';
             memoryCards = [];
             matchedPairs = 0;
@@ -1911,13 +2030,11 @@
             this.classList.add('flipped');
 
             if (!hasFlippedCard) {
-                // Lượt lật thẻ đầu tiên
                 hasFlippedCard = true;
                 firstCard = this;
                 return;
             }
             
-            // Lượt lật thẻ thứ hai
             secondCard = this;
             totalTurns++;
             updateMemoryStatus();
@@ -1935,7 +2052,6 @@
             firstCard.removeEventListener('click', flipCard);
             secondCard.removeEventListener('click', flipCard);
             
-            // Đánh dấu đã match
             firstCard.classList.add('matched');
             secondCard.classList.add('matched');
             
@@ -1966,21 +2082,18 @@
         window.initApp = function() {
              try {
                 applyLanguage(currentLang);
-                updateSortButtonText(); // Cập nhật text nút sắp xếp khi khởi tạo
+                updateSortButtonText(); 
                 
-                // Tải dữ liệu chính (Chat, Quiz, Songs)
                 if (db) { 
-                    loadInitialMessages(); // Tải tin nhắn với order từ localStorage
+                    loadInitialMessages(); 
                     initQuiz();
                     loadClassSongs(); 
                 } else {
                      console.warn("Bỏ qua tải Chat/Quiz vì Firebase initialization lỗi.");
                 }
                 
-                // Khởi tạo trạng thái Quiz (Dù không bắt đầu, nhưng cần load state)
                 initQuizState(false); 
 
-                // Mở tab mặc định. Hàm showTab sẽ tự động lazy-load Games và Formulas
                 showTab('social'); 
             } catch (e) {
                 console.error("Lỗi KHỞI TẠO ỨNG DỤNG (FATAL ERROR):", e);
