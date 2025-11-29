@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wnsB0M4k7z/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD8O5tV/QdO6v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
     <style>
         /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
@@ -604,7 +604,6 @@
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) ---
-        // ⚠️ ĐÃ KHÔI PHỤC KHAI BÁO BIẾN BỊ THIẾU
         const MATH_FORMULA_DATA = [
             // 1. Đại Số (Cấp 2) - BỔ SUNG CẤU TRÚC
             { 
@@ -964,7 +963,8 @@
         function loadInitialMessages() {
             if (!chatRef) return;
             try {
-                const q = query(chatRef, orderBy("timestamp", "desc"), limit(MESSAGE_LIMIT));
+                // SỬA LỖI: Sắp xếp theo "asc" (tăng dần) để tin nhắn cũ nhất lên đầu
+                const q = query(chatRef, orderBy("timestamp", "asc"), limit(MESSAGE_LIMIT));
 
                 // Real-time listener for the first batch
                 onSnapshot(q, (snapshot) => {
@@ -1003,7 +1003,8 @@
             document.getElementById('load-more-btn').textContent = translations[currentLang]['loading_msg'];
 
             try {
-                const q = query(chatRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+                // SỬA LỖI: Load thêm tin nhắn theo "asc" (tăng dần)
+                const q = query(chatRef, orderBy("timestamp", "asc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 let tempLastVisible = null;
 
@@ -1052,8 +1053,8 @@
                     <span id="likes-text-${id}">${likeText}</span>
                 </div>
             `;
-            // Thêm vào đầu danh sách (mới nhất ở trên)
-            messageList.prepend(messageElement);
+            // SỬA LỖI: Thêm vào cuối danh sách (appendChild) để tin nhắn cũ nhất nằm ở trên
+            messageList.appendChild(messageElement);
         }
 
         window.toggleLike = async function(id, currentLikes) {
@@ -1283,7 +1284,7 @@
         // GỬI CÂU HỎI ĐÓNG GÓP
         window.submitUserQuestion = async function() {
              if (!quizRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống quiz chưa được khởi tạo (Lỗi Firebase)." : "Error: Quiz system not initialized (Firebase Error).");
+                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống quiz chưa được khởi tạo (Lỗi Firebase)." : "Error: Quiz system not initialized (Lỗi Firebase).");
                  return;
              }
              const qText = document.getElementById('q-text-input').value.trim();
