@@ -6,6 +6,11 @@
     <title>12B2 - Cộng Đồng & Tuổi Thơ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wnsB0M4k7z/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD8O5tV/QdO6v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
+
     <style>
         /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
         :root { 
@@ -172,6 +177,43 @@
             box-shadow: 0 3px 10px rgba(74, 0, 224, 0.4);
         }
 
+        /* NEW: CÔNG THỨC TOÁN HỌC STYLES */
+        .formula-card {
+            background: #ffffff; 
+            padding: 15px; 
+            border-left: 5px solid var(--secondary-color); 
+            border-radius: var(--radius-medium);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .formula-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .formula-name-display {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .formula-katex-display {
+            font-size: 1.5rem; /* Tăng kích thước KaTeX */
+            text-align: center;
+            margin: 10px 0;
+            overflow-x: auto; /* Xử lý công thức dài */
+            padding: 10px 0;
+        }
+        .formula-variables {
+            font-size: 0.9rem;
+            color: var(--light-text-color);
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+
         /* QUIZ */
         .options-grid {
             display: grid;
@@ -245,6 +287,33 @@
         .post-likes:hover i {
             color: #dc3545;
             transform: scale(1.2);
+        }
+        
+        /* SONG BOX STYLES */
+        .song-card {
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius-medium);
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        .song-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .song-card a {
+            transition: color 0.3s;
+            word-wrap: break-word; /* Xử lý link dài */
+            display: block;
+        }
+        .song-card a:hover {
+            color: var(--secondary-color);
+        }
+        .game-button.voted {
+            background: var(--light-text-color) !important;
+            cursor: not-allowed;
         }
         
         /* TIC TAC TOE STYLES (CỜ CARO) */
@@ -343,6 +412,7 @@
             .memory-card { height: 70px; }
             .card-face { font-size: 1.5rem; }
             #tictactoe-board { width: 180px; height: 180px; }
+            .formula-katex-display { font-size: 1.3rem; }
         }
     </style>
 </head>
@@ -361,6 +431,17 @@
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="social" onclick="showTab('social')" data-i18n="social_tab">Social & Quiz</button>
             <button class="tab-btn" data-tab="games" onclick="showTab('games')" data-i18n="game_tab">Games (Tuổi Thơ)</button>
+            <button class="tab-btn" data-tab="formulas" onclick="showTab('formulas')">Công thức Toán</button>
+        </div>
+        
+        <div id="formulas" class="tab-content" style="display: none;">
+            <h3><i class="fas fa-calculator"></i> <span data-i18n="formulas_title">Công Thức Toán Học (Lớp 1-12)</span></h3>
+            <div class="card">
+                <p style="font-size: 0.95rem; color: var(--light-text-color); margin-bottom: 15px;"><span data-i18n="formulas_tip">Các công thức được hiển thị bằng KaTeX. Ký hiệu: $S=$ Diện tích, $V=$ Thể tích.</span></p>
+                <div id="formula-list">
+                    <p style="text-align: center;">Đang tải công thức...</p>
+                </div>
+            </div>
         </div>
         
         <div id="social" class="tab-content">
@@ -448,6 +529,23 @@
                 <button class="btn-send" style="width: 100%; margin-top: 10px;" onclick="submitUserQuestion()" data-i18n="submit_q">Gửi đóng góp</button>
             </div>
             
+            <hr>
+
+            <h3><i class="fas fa-music"></i> <span data-i18n="song_box_title">Hộp Nhạc Kỷ Niệm (Playlist Lớp)</span></h3>
+            
+            <div id="create-song-section" class="card">
+                <h4 style="font-size: 1rem; color: var(--light-text-color); margin-bottom: 15px;">Đề xuất bài hát gắn liền với kỷ niệm của lớp:</h4>
+                <input type="text" id="song-title-input" data-i18n-placeholder="song_input_title_ph" placeholder="Tên bài hát và ca sĩ" required>
+                <input type="text" id="song-url-input" data-i18n-placeholder="song_input_url_ph" placeholder="Link YouTube/Spotify của bài hát" required>
+                <textarea id="song-memory-input" rows="2" data-i18n-placeholder="song_input_memory_ph" placeholder="Kỷ niệm/Lý do đề xuất (tùy chọn)"></textarea>
+                <input type="text" id="song-sender-input" data-i18n-placeholder="song_input_sender_ph" placeholder="Tên người đề xuất (tùy chọn)">
+                <button class="btn-send" style="width: 100%; margin-top: 10px;" onclick="submitNewSong()" data-i18n="song_submit_btn">Đề Xuất Bài Hát</button>
+            </div>
+
+            <div id="song-list" style="margin-top: 20px;">
+                <p style="text-align: center;">Đang tải danh sách nhạc...</p>
+            </div>
+            
         </div> 
 
         <div id="games" class="tab-content" style="display: none;">
@@ -505,6 +603,63 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
+        // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) ---
+        const MATH_FORMULA_CATEGORIES = [
+            {
+                category_vi: "Hình học Phẳng (Cấp 1-2)",
+                icon: "fa-square",
+                formulas: [
+                    { name_vi: "Diện tích Hình Vuông", formula: "S = a^2", variables_vi: "$a$: độ dài cạnh" },
+                    { name_vi: "Chu vi Hình Chữ Nhật", formula: "P = 2(a + b)", variables_vi: "$a, b$: dài, rộng" },
+                    { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: dài, rộng" },
+                    { name_vi: "Diện tích Tam Giác (Cơ bản)", formula: "S = \\frac{1}{2}ah", variables_vi: "$a$: cạnh đáy, $h$: chiều cao tương ứng" },
+                    { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền" },
+                    { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao" },
+                    { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Chu vi Hình Tròn", formula: "P = 2 \\pi r", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Diện tích Hình Thoi", formula: "S = \\frac{1}{2}d_1 d_2", variables_vi: "$d_1, d_2$: độ dài hai đường chéo" },
+                ]
+            },
+            {
+                category_vi: "Lượng Giác (Cấp 3)",
+                icon: "fa-circle-notch",
+                formulas: [
+                    { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "$R$: bán kính đường tròn ngoại tiếp" },
+                    { name_vi: "Định lý Cos", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "$a, b, c$: độ dài 3 cạnh" },
+                    { name_vi: "Công thức cơ bản", formula: "\\sin^2 x + \\cos^2 x = 1", variables_vi: "" },
+                    { name_vi: "Công thức nhân đôi (sin)", formula: "\\sin(2x) = 2 \\sin x \\cos x", variables_vi: "" },
+                    { name_vi: "Công thức nhân đôi (cos)", formula: "\\cos(2x) = \\cos^2 x - \\sin^2 x", variables_vi: "" },
+                ]
+            },
+            {
+                category_vi: "Đại số & Giải tích (Lớp 10-12)",
+                icon: "fa-infinity",
+                formulas: [
+                    { name_vi: "Nghiệm Phương trình Bậc 2", formula: "x_{1,2} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}", variables_vi: "Với $\\Delta = b^2 - 4ac$" },
+                    { name_vi: "Công thức Đạo Hàm (x^n)", formula: "(x^n)' = nx^{n-1}", variables_vi: "$n$: hằng số" },
+                    { name_vi: "Công thức Đạo Hàm (sin x)", formula: "(\\sin x)' = \\cos x", variables_vi: "" },
+                    { name_vi: "Nguyên hàm (x^n)", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C, \\text{ với } n \\neq -1", variables_vi: "$C$: hằng số tích phân" },
+                    { name_vi: "Tích phân từng phần", formula: "\\int u dv = uv - \\int v du", variables_vi: "$u, v$: hàm số theo $x$" },
+                    { name_vi: "Logarit (Tích)", formula: "\\log_a (xy) = \\log_a x + \\log_a y", variables_vi: "$a, x, y > 0, a \\neq 1$" },
+                    { name_vi: "Logarit (Mũ)", formula: "\\log_a x^k = k \\log_a x", variables_vi: "$k \\in \\mathbb{R}$" },
+                    { name_vi: "Cấp số cộng (Số hạng thứ n)", formula: "u_n = u_1 + (n-1)d", variables_vi: "$d$: công sai" },
+                    { name_vi: "Tổng cấp số cộng (n số hạng)", formula: "S_n = \\frac{n(u_1 + u_n)}{2}", variables_vi: "$n$: số hạng" },
+                ]
+            },
+            {
+                category_vi: "Hình học Không Gian (Cấp 3)",
+                icon: "fa-cube",
+                formulas: [
+                    { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3}Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" },
+                    { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" },
+                    { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
+                    { name_vi: "Diện tích Xung Quanh Trụ", formula: "S_{xq} = 2 \\pi r h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
+                ]
+            },
+        ];
+
 
         // --- DỮ LIỆU ĐA NGÔN NGỮ ---
         const translations = {
@@ -515,6 +670,25 @@
                 'quiz_title': 'Thử Thách Đố Vui (10 Câu)', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên:', 'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz', 
                 'welcome': 'Chào mừng', 'completed': 'Đã xong', 'score': 'Điểm', 'topic': 'Chủ đề', 'next_q': 'Câu tiếp theo', 'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'play_again': 'Làm lại',
                 'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):', 'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B', 'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng', 'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng', 'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 
+                
+                // NEW FORMULAS
+                'formulas_title': 'Công Thức Toán Học (Lớp 1-12)',
+                'formulas_tip': 'Các công thức được hiển thị bằng KaTeX. Ký hiệu: S=Diện tích, V=Thể tích.',
+
+                // SONG BOX
+                'song_box_title': 'Hộp Nhạc Kỷ Niệm (Playlist Lớp)',
+                'song_input_title_ph': 'Tên bài hát và ca sĩ',
+                'song_input_url_ph': 'Link YouTube/Spotify của bài hát',
+                'song_input_memory_ph': 'Kỷ niệm/Lý do đề xuất (tùy chọn)',
+                'song_input_sender_ph': 'Tên người đề xuất (tùy chọn)',
+                'song_submit_btn': 'Đề Xuất Bài Hát',
+                'song_vote_btn': 'Bình Chọn',
+                'song_voted': 'Đã Bình Chọn',
+                'song_list_sender': 'Đề xuất bởi',
+                'song_list_votes': 'Bình chọn',
+                'song_list_no_songs': 'Chưa có bài hát nào được đề xuất. Hãy là người đầu tiên!',
+                'song_error_required': 'Vui lòng nhập Tên bài hát và Link hợp lệ.',
+                'song_voted_error': 'Bạn chỉ có thể bình chọn cho mỗi bài hát một lần.',
                 
                 'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 
                 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng! 🥳', 'tictactoe_win_o': 'O thắng! 🥳', 'tictactoe_draw': 'Hòa! 🤝', 'tictactoe_reset': 'Chơi lại', 
@@ -533,11 +707,30 @@
                 
                 'quiz_title': 'Quiz Challenge', 'name_prompt': 'Start Quiz! Please enter your name:', 'name_placeholder': 'Your name (e.g., John Doe)', 'start_quiz': 'Start Quiz', 
                 'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'topic': 'Topic', 'next_q': 'Next Question', 'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'play_again': 'Play Again',
-                'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer B is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 
+                'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):', 'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B', 'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer', 'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct', 'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution', 
+                
+                // NEW FORMULAS
+                'formulas_title': 'Math Formulas (Grade 1-12)',
+                'formulas_tip': 'Formulas are rendered using KaTeX. Notation: S=Area, V=Volume.',
+
+                // SONG BOX
+                'song_box_title': 'Class Song Playlist Box',
+                'song_input_title_ph': 'Song title and artist',
+                'song_input_url_ph': 'YouTube/Spotify Link to the song',
+                'song_input_memory_ph': 'Related memory/Reason (optional)',
+                'song_input_sender_ph': 'Suggester\'s name (optional)',
+                'song_submit_btn': 'Suggest Song',
+                'song_vote_btn': 'Vote',
+                'song_voted': 'Voted',
+                'song_list_sender': 'Suggested by',
+                'song_list_votes': 'Votes',
+                'song_list_no_songs': 'No songs suggested yet. Be the first!',
+                'song_error_required': 'Please enter a Song Title and a valid Link.',
+                'song_voted_error': 'You can only vote for each song once.',
                 
                 'game_h3': 'Childhood Games Area', 
                 'tictactoe_title': 'Tic-Tac-Toe Game', 'tictactoe_status_x': 'X\'s turn', 'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X wins! 🥳', 'tictactoe_win_o': 'O wins! 🥳', 'tictactoe_draw': 'Draw! 🤝', 'tictactoe_reset': 'Play Again', 
-                'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have chosen a number from 1 to 100. You have 10 guesses!', 'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'new_game_btn': 'New Game', 'guess_too_low': 'Too low! 🤏', 'guess_too_high': 'Too high! 👆', 'guess_win': '🎉 CONGRATULATIONS! You guessed the number %s in only %t tries!', 'guess_lose': 'GAME OVER! You ran out of guesses. The secret number was %s.', 'guess_try_left': 'You have %t guesses left.', 'guess_input_invalid': 'Please enter a valid number between 1 and 100.', 
+                'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have chosen a number from 1 to 100. You have 10 guesses!', 'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'new_game_btn': 'New Game', 'guess_too_low': 'Too low! 🤏', 'guess_too_high': 'Too high!👆', 'guess_win': '🎉 CONGRATULATIONS! You guessed the number %s in only %t tries!', 'guess_lose': 'GAME OVER! You ran out of guesses. The secret number was %s.', 'guess_try_left': 'You have %t guesses left.', 'guess_input_invalid': 'Please enter a valid number between 1 and 100.', 
                 
                 'anonymous': 'Anonymous',
                 'memory_title': 'Memory Match Game',
@@ -557,6 +750,8 @@
             updateGameStatusDisplay();
             startMemoryGame(true);
             loadInitialMessages(); 
+            loadClassSongs(); // Reload songs for language
+            renderFormulaList(); // Reload formulas for language
         }
         function applyLanguage(lang) {
             const elements = document.querySelectorAll('[data-i18n]');
@@ -581,11 +776,15 @@
             document.getElementById(tabId).style.display = 'block';
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+            
             if (tabId === 'games' && !window.gamesInitialized) {
                 initTicTacToe();
                 startNewGuessingGame();
                 startMemoryGame(true);
                 window.gamesInitialized = true;
+            } else if (tabId === 'formulas' && !window.formulasInitialized) {
+                 renderFormulaList();
+                 window.formulasInitialized = true;
             }
         }
         
@@ -604,12 +803,14 @@
         let db = null;
         let chatRef = null;
         let quizRef = null;
+        let classSongsRef = null; 
         
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             chatRef = collection(db, "anonymous_messages");
             quizRef = collection(db, "quiz_questions");
+            classSongsRef = collection(db, "class_songs"); 
             console.log("Firebase initialized successfully.");
         } catch (e) {
             console.error("Lỗi FATAL: Firebase KHÔNG THỂ KHỞI TẠO. (Kiểm tra apiKey/projectId trong firebaseConfig)", e);
@@ -941,7 +1142,7 @@
 
         window.submitUserQuestion = async function() {
             if (!quizRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống quiz chưa được khởi tạo (Lỗi Firebase)." : "Error: Quiz system not initialized (Firebase error).");
+                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống quiz chưa được khởi tạo (Lỗi Firebase)." : "Error: Quiz system not initialized (Lỗi Firebase).");
                  return;
             }
 
@@ -982,6 +1183,201 @@
             } catch (e) {
                 console.error("Error submitting question: ", e);
                 alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi. Kiểm tra Rules Firebase!" : "An error occurred while submitting the question. Check Firebase Rules!");
+            }
+        }
+        
+        // --- LOGIC HỘP NHẠC KỶ NIỆM ---
+        let votedSongs = JSON.parse(localStorage.getItem('votedSongs')) || {}; 
+
+        window.submitNewSong = async function() {
+            if (!classSongsRef) {
+                 alert(currentLang === 'vi' ? "Lỗi: Hệ thống nhạc chưa được khởi tạo (Lỗi Firebase)." : "Error: Song system not initialized (Lỗi Firebase).");
+                 return;
+            }
+            
+            const title = document.getElementById('song-title-input').value.trim();
+            const url = document.getElementById('song-url-input').value.trim();
+            const memory = document.getElementById('song-memory-input').value.trim();
+            const sender = document.getElementById('song-sender-input').value.trim() || translations[currentLang]['anonymous'];
+            const submitBtn = document.querySelector('#create-song-section .btn-send');
+
+            if (title.length < 2 || url.length < 5) {
+                alert(translations[currentLang]['song_error_required']);
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            
+            try {
+                const newSongRef = await addDoc(classSongsRef, { 
+                    title: title, 
+                    url: url, 
+                    memory: memory, 
+                    sender: sender, 
+                    votes: 1, 
+                    timestamp: serverTimestamp() 
+                });
+                
+                votedSongs[newSongRef.id] = true;
+                localStorage.setItem('votedSongs', JSON.stringify(votedSongs));
+                
+                document.getElementById('song-title-input').value = '';
+                document.getElementById('song-url-input').value = '';
+                document.getElementById('song-memory-input').value = '';
+                document.getElementById('song-sender-input').value = '';
+                
+                alert(currentLang === 'vi' ? "Đề xuất bài hát thành công!" : "Song suggestion submitted successfully!");
+                loadClassSongs(); 
+
+            } catch (e) {
+                console.error("Error submitting song: ", e);
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi đề xuất bài hát. Kiểm tra Rules Firebase!" : "An error occurred while submitting the song. Check Firebase Rules!");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        window.addSongVote = async function(songId, currentVotes) {
+            if (!classSongsRef) return; 
+
+            if (votedSongs[songId] === true) {
+                 alert(translations[currentLang]['song_voted_error']);
+                 return;
+            }
+            
+            const newVotes = currentVotes + 1;
+            const docRef = doc(db, "class_songs", songId);
+            const voteBtn = document.getElementById(`vote-btn-${songId}`);
+
+            try {
+                voteBtn.disabled = true;
+                
+                await updateDoc(docRef, { votes: newVotes });
+                
+                votedSongs[songId] = true;
+                localStorage.setItem('votedSongs', JSON.stringify(votedSongs));
+
+                document.getElementById(`votes-count-${songId}`).textContent = newVotes;
+                voteBtn.textContent = translations[currentLang]['song_voted'];
+                voteBtn.classList.add('voted');
+                voteBtn.disabled = false; 
+
+            } catch (e) {
+                console.error("Error updating vote: ", e);
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi bình chọn. Kiểm tra Rules Firebase!" : "An error occurred while voting. Check Firebase Rules!");
+                voteBtn.disabled = false;
+            }
+        }
+
+        function renderSong(id, data, isTopSong) {
+            const songList = document.getElementById('song-list');
+            
+            const isVoted = votedSongs[id] === true;
+            const votes = data.votes || 0;
+            
+            const songElement = document.createElement('div');
+            songElement.id = `song-${id}`;
+            songElement.classList.add('song-card');
+            
+            let badgeHtml = isTopSong ? `<span style="background: gold; color: var(--text-color); padding: 3px 8px; border-radius: 5px; font-weight: 700; margin-right: 10px;"><i class="fas fa-crown"></i> TOP</span>` : '';
+
+            songElement.innerHTML = `
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 10px;">
+                    <h4 style="color: var(--primary-color); font-size: 1.1rem; display: flex; align-items: center;">
+                        ${badgeHtml}
+                        <a href="${data.url}" target="_blank" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-play-circle" style="margin-right: 8px;"></i> ${data.title}
+                        </a>
+                    </h4>
+                    <p style="font-size: 0.9rem; color: var(--light-text-color); margin-top: 5px;">
+                        <span data-i18n="song_list_sender">${translations[currentLang]['song_list_sender']}</span>: ${data.sender}
+                    </p>
+                </div>
+                ${data.memory ? `<p style="margin-bottom: 10px; font-style: italic; font-size: 0.95rem;">"${data.memory}"</p>` : ''}
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button id="vote-btn-${id}" class="game-button" onclick="addSongVote('${id}', ${votes})" 
+                        style="padding: 8px 15px; font-size: 0.9rem; background: ${isVoted ? 'var(--light-text-color)' : 'var(--secondary-color)'};" ${isVoted ? 'disabled' : ''}>
+                        <i class="fas fa-thumbs-up"></i> ${isVoted ? translations[currentLang]['song_voted'] : translations[currentLang]['song_vote_btn']}
+                    </button>
+                    <span style="font-weight: 700; color: var(--secondary-color);">
+                        <i class="fas fa-heart"></i> <span id="votes-count-${id}">${votes}</span> <span data-i18n="song_list_votes">${translations[currentLang]['song_list_votes']}</span>
+                    </span>
+                </div>
+            `;
+            songList.appendChild(songElement);
+        }
+
+        window.loadClassSongs = function() {
+            if (!classSongsRef) return;
+
+            const songList = document.getElementById('song-list');
+            songList.innerHTML = `<p style="text-align: center;">${translations[currentLang]['loading_msg']}</p>`;
+
+            const q = query(classSongsRef, orderBy("votes", "desc"), orderBy("timestamp", "desc"), limit(15));
+            
+            try {
+                onSnapshot(q, (snapshot) => {
+                    songList.innerHTML = ''; 
+                    if (snapshot.empty) {
+                        songList.innerHTML = `<div class="card" style="text-align: center; color: var(--light-text-color);">${translations[currentLang]['song_list_no_songs']}</div>`;
+                        return;
+                    }
+                    
+                    snapshot.docs.forEach((doc, index) => {
+                        const data = doc.data();
+                        renderSong(doc.id, data, index === 0);
+                    });
+                }, (error) => {
+                     console.error("Lỗi Real-time Snapshot (Song Rules?): ", error);
+                     songList.innerHTML = '<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể tải danh sách nhạc. (Kiểm tra Firebase Rules).</div>';
+                });
+            } catch (e) {
+                 console.error("Lỗi tạo query song: ", e);
+            }
+        }
+
+        // --- NEW: LOGIC CÔNG THỨC TOÁN HỌC (KA-TEX) ---
+        
+        window.renderFormulaList = function() {
+            const listElement = document.getElementById('formula-list');
+            listElement.innerHTML = ''; // Clear previous content
+
+            MATH_FORMULA_CATEGORIES.forEach(category => {
+                // Category Header
+                const categoryHeader = document.createElement('h4');
+                categoryHeader.innerHTML = `<i class="fas ${category.icon}"></i> ${category.category_vi}`;
+                categoryHeader.style.cssText = 'color: var(--secondary-color); margin-top: 25px; margin-bottom: 15px; font-weight: 700; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;';
+                listElement.appendChild(categoryHeader);
+
+                // Formulas
+                category.formulas.forEach(item => {
+                    const formulaCard = document.createElement('div');
+                    formulaCard.classList.add('formula-card');
+                    formulaCard.innerHTML = `
+                        <div class="formula-name-display">${item.name_vi}</div>
+                        <div class="formula-katex-display">
+                            \\(${item.formula}\\) 
+                        </div>
+                        <div class="formula-variables">${currentLang === 'vi' ? 'Giải thích' : 'Variables'}: ${item.variables_vi}</div>
+                    `;
+                    listElement.appendChild(formulaCard);
+                });
+            });
+            
+            // Call KaTeX auto-render after mounting all elements
+            if (window.renderMathInElement) {
+                // Sử dụng auto-render để tìm và render các ký hiệu \\(formula\\)
+                window.renderMathInElement(listElement, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "\\[", right: "\\]", display: true},
+                        {left: "$", right: "$", display: false},
+                        {left: "\\(", right: "\\)", display: false}
+                    ],
+                    throwOnError : false
+                });
+            } else {
+                 listElement.innerHTML = `<p style="color: red; text-align: center;">Lỗi: Không thể tải thư viện KaTeX để hiển thị công thức.</p>`
             }
         }
 
@@ -1251,13 +1647,18 @@
                 if (db) { 
                     loadInitialMessages();
                     initQuiz();
+                    loadClassSongs(); 
                 } else {
                      console.warn("Bỏ qua tải Chat/Quiz vì Firebase initialization lỗi.");
                 }
                 
+                // Khởi tạo Games
                 initTicTacToe();
                 startNewGuessingGame();
                 startMemoryGame(true); 
+                
+                // Load Formulas ngay khi init (KaTeX cần được render)
+                renderFormulaList(); 
 
                 showTab('social'); 
             } catch (e) {
