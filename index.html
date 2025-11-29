@@ -287,28 +287,7 @@
             transform: scale(1.2);
         }
         
-        /* SONG BOX STYLES */
-        .song-card {
-            background: white;
-            padding: 15px;
-            border-radius: var(--radius-medium);
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            transition: transform 0.2s;
-        }
-        .song-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .song-card a {
-            transition: color 0.3s;
-            word-wrap: break-word; /* Xử lý link dài */
-            display: block;
-        }
-        .song-card a:hover {
-            color: var(--secondary-color);
-        }
+        /* SONG BOX STYLES - REMOVED */
         .game-button.voted {
             background: var(--light-text-color) !important;
             cursor: not-allowed;
@@ -527,23 +506,6 @@
                 <button class="btn-send" style="width: 100%; margin-top: 10px;" onclick="submitUserQuestion()" data-i18n="submit_q">Gửi đóng góp</button>
             </div>
             
-            <hr>
-
-            <h3><i class="fas fa-music"></i> <span data-i18n="song_box_title">Hộp Nhạc Kỷ Niệm (Playlist Lớp)</span></h3>
-            
-            <div id="create-song-section" class="card">
-                <h4 style="font-size: 1rem; color: var(--light-text-color); margin-bottom: 15px;">Đề xuất bài hát gắn liền với kỷ niệm của lớp:</h4>
-                <input type="text" id="song-title-input" data-i18n-placeholder="song_input_title_ph" placeholder="Tên bài hát và ca sĩ" required>
-                <input type="text" id="song-url-input" data-i18n-placeholder="song_input_url_ph" placeholder="Link YouTube/Spotify của bài hát" required>
-                <textarea id="song-memory-input" rows="2" data-i18n-placeholder="song_input_memory_ph" placeholder="Kỷ niệm/Lý do đề xuất (tùy chọn)"></textarea>
-                <input type="text" id="song-sender-input" data-i18n-placeholder="song_input_sender_ph" placeholder="Tên người đề xuất (tùy chọn)">
-                <button class="btn-send" style="width: 100%; margin-top: 10px;" onclick="submitNewSong()" data-i18n="song_submit_btn">Đề Xuất Bài Hát</button>
-            </div>
-
-            <div id="song-list" style="margin-top: 20px;">
-                <p style="text-align: center;">Đang tải danh sách nhạc...</p>
-            </div>
-            
         </div> 
 
         <div id="games" class="tab-content" style="display: none;">
@@ -593,8 +555,8 @@
         </div> 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8O5tV/QdO5v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7z9/w8Qe/wV+2qg3n" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8O5tV/QdO5v25/jY5V5r3q2kQ8V/2Q6g3n" crossorigin="anonymous"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
@@ -605,7 +567,6 @@
         import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         // ⚠️ CẤU HÌNH FIREBASE
-        // Dòng 1: Khóa Firebase API KEY (PHẢI THAY THẾ BẰNG KEY CỦA BẠN!)
         const firebaseConfig = {
             apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // 👈 THAY THẾ KEY NÀY!
             authDomain: "b2-6431c.firebaseapp.com",
@@ -619,14 +580,14 @@
         let db = null;
         let chatRef = null;
         let quizRef = null;
-        let classSongsRef = null;
+        // let classSongsRef = null; // Đã loại bỏ
 
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             chatRef = collection(db, "anonymous_messages");
             quizRef = collection(db, "quiz_questions");
-            classSongsRef = collection(db, "class_songs");
+            // classSongsRef = collection(db, "class_songs"); // Đã loại bỏ
             console.log("Firebase initialized successfully.");
         } catch (e) {
             console.error("Lỗi FATAL: Firebase KHÔNG THỂ KHỞI TẠO. Hãy kiểm tra lại khóa API và cấu hình.", e);
@@ -681,20 +642,6 @@
                 // NEW FORMULAS
                 'formulas_title': 'Công Thức Toán Học (Lớp 1-12)',
                 'formulas_tip': 'Các công thức được hiển thị bằng KaTeX. Ký hiệu: $S=$ Diện tích, $V=$ Thể tích.',
-                // SONG BOX
-                'song_box_title': 'Hộp Nhạc Kỷ Niệm (Playlist Lớp)',
-                'song_input_title_ph': 'Tên bài hát và ca sĩ',
-                'song_input_url_ph': 'Link YouTube/Spotify của bài hát',
-                'song_input_memory_ph': 'Kỷ niệm/Lý do đề xuất (tùy chọn)',
-                'song_input_sender_ph': 'Tên người đề xuất (tùy chọn)',
-                'song_submit_btn': 'Đề Xuất Bài Hát',
-                'song_vote_btn': 'Bình Chọn',
-                'song_voted': 'Đã Bình Chọn',
-                'song_list_sender': 'Đề xuất bởi',
-                'song_list_votes': 'Bình chọn',
-                'song_list_no_songs': 'Chưa có bài hát nào được đề xuất. Hãy là người đầu tiên!',
-                'song_error_required': 'Vui lòng nhập Tên bài hát và Link hợp lệ.',
-                'song_voted_error': 'Bạn chỉ có thể bình chọn cho mỗi bài hát một lần.',
                 // GAMES
                 'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ',
                 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)',
@@ -766,20 +713,6 @@
                 // NEW FORMULAS
                 'formulas_title': 'Math Formulas (Grade 1-12)',
                 'formulas_tip': 'Formulas are rendered using KaTeX. Notation: S=Area, V=Volume.',
-                // SONG BOX
-                'song_box_title': 'Class Song Playlist Box',
-                'song_input_title_ph': 'Song title and artist',
-                'song_input_url_ph': 'YouTube/Spotify Link to the song',
-                'song_input_memory_ph': 'Related memory/Reason (optional)',
-                'song_input_sender_ph': 'Suggester\'s name (optional)',
-                'song_submit_btn': 'Suggest Song',
-                'song_vote_btn': 'Vote',
-                'song_voted': 'Voted',
-                'song_list_sender': 'Suggested by',
-                'song_list_votes': 'Votes',
-                'song_list_no_songs': 'No songs suggested yet. Be the first!',
-                'song_error_required': 'Please enter a Song Title and a valid Link.',
-                'song_voted_error': 'You can only vote for each song once.',
                 // GAMES
                 'game_h3': 'Childhood Games Area',
                 'tictactoe_title': 'Tic-Tac-Toe Game',
@@ -821,9 +754,8 @@
             updateStatus(board[0] === "" && gameActive ? (currentPlayer === 'X' ? translations[currentLang]['tictactoe_status_x'] : translations[currentLang]['tictactoe_status_o']) : statusDisplay.textContent);
             document.getElementById('guess-log').textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
 
-             // Cập nhật lại list bài hát và công thức
+             // Cập nhật lại list công thức
              if (window.formulasInitialized) renderFormulaList();
-             if (window.songsInitialized) loadClassSongs(true);
         }
 
         function applyLanguage(lang) {
@@ -1276,158 +1208,6 @@
         }
 
 
-        // --- LOGIC HỘP NHẠC KỶ NIỆM ---
-        let votedSongs = JSON.parse(localStorage.getItem('votedSongs')) || {};
-        window.songsInitialized = false;
-
-        window.submitNewSong = async function() {
-            if (!classSongsRef) {
-                alert(currentLang === 'vi' ? "Lỗi: Hệ thống nhạc chưa được khởi tạo (Lỗi Firebase)." : "Error: Song system not initialized (Firebase Error).");
-                return;
-            }
-            
-            const title = document.getElementById('song-title-input').value.trim();
-            const url = document.getElementById('song-url-input').value.trim();
-            const memory = document.getElementById('song-memory-input').value.trim();
-            const sender = document.getElementById('song-sender-input').value.trim() || translations[currentLang]['anonymous'];
-            const submitBtn = document.querySelector('#create-song-section .btn-send');
-
-            if (title.length < 2 || url.length < 5) {
-                alert(translations[currentLang]['song_error_required']);
-                return;
-            }
-
-            submitBtn.disabled = true;
-            try {
-                const newSongRef = await addDoc(classSongsRef, {
-                    title: title,
-                    url: url,
-                    memory: memory,
-                    sender: sender,
-                    votes: 0,
-                    created_at: serverTimestamp()
-                });
-                
-                alert(currentLang === 'vi' ? "Đề xuất bài hát thành công!" : "Song suggestion successful!");
-                
-                // Reset form
-                document.getElementById('song-title-input').value = '';
-                document.getElementById('song-url-input').value = '';
-                document.getElementById('song-memory-input').value = '';
-                document.getElementById('song-sender-input').value = ''; 
-                
-            } catch (e) {
-                console.error("Error submitting song: ", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi đề xuất. Kiểm tra Rules Firebase!" : "An error occurred while submitting the suggestion. Check Firebase Rules!");
-            } finally {
-                submitBtn.disabled = false;
-            }
-        }
-        
-        function renderSong(id, data, isTopSong) {
-            const songList = document.getElementById('song-list');
-            const isVoted = votedSongs[id] === true;
-            const votes = data.votes || 0;
-
-            const songElement = document.createElement('div');
-            songElement.id = `song-${id}`;
-            songElement.classList.add('song-card');
-            
-            let badgeHtml = isTopSong ? `<span style="background: gold; color: var(--text-color); padding: 3px 8px; border-radius: 5px; font-weight: 700; margin-right: 10px;"><i class="fas fa-crown"></i> TOP</span>` : '';
-            
-            songElement.innerHTML = `
-                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 10px;">
-                    <h4 style="color: var(--primary-color); font-size: 1.1rem; display: flex; align-items: center;">
-                        ${badgeHtml}
-                        <a href="${data.url}" target="_blank" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-play-circle" style="margin-right: 8px;"></i> ${data.title}
-                        </a>
-                    </h4>
-                    <p style="font-size: 0.9rem; color: var(--light-text-color); margin-top: 5px;">
-                        <span data-i18n="song_list_sender">${translations[currentLang]['song_list_sender']}</span>: ${data.sender}
-                    </p>
-                </div>
-                ${data.memory ? `<p style="margin-bottom: 10px; font-style: italic; font-size: 0.95rem;">"${data.memory}"</p>` : ''}
-                <button class="game-button ${isVoted ? 'voted' : ''}" id="vote-btn-${id}" 
-                        onclick="voteForSong('${id}', ${votes})" 
-                        ${isVoted ? 'disabled' : ''} style="width: auto; padding: 8px 15px; margin-right: 15px; font-size: 0.9rem; background: ${isVoted ? 'var(--light-text-color)' : 'var(--secondary-color)'};">
-                    ${translations[currentLang][isVoted ? 'song_voted' : 'song_vote_btn']}
-                </button>
-                <span style="font-weight: 700; color: var(--text-color); font-size: 1rem;"><i class="fas fa-thumbs-up"></i> <span id="votes-count-${id}">${votes}</span> ${translations[currentLang]['song_list_votes']}</span>
-            `;
-
-            songList.appendChild(songElement);
-        }
-
-        // Tải danh sách bài hát và nghe cập nhật thời gian thực
-        function loadClassSongs(isLangToggle = false) {
-            if (!classSongsRef) return;
-            
-            if (!isLangToggle) {
-                 // Sắp xếp theo votes giảm dần, nếu votes bằng nhau thì sắp xếp theo thời gian mới nhất
-                const q = query(classSongsRef, orderBy("votes", "desc"), orderBy("created_at", "desc"), limit(20));
-                
-                onSnapshot(q, (snapshot) => {
-                    const songList = document.getElementById('song-list');
-                    songList.innerHTML = '';
-                    
-                    if (snapshot.empty) {
-                        songList.innerHTML = `<p style="text-align: center; color: var(--light-text-color); padding: 20px;">${translations[currentLang]['song_list_no_songs']}</p>`;
-                        return;
-                    }
-
-                    snapshot.docs.forEach((doc, index) => {
-                        const data = doc.data();
-                        renderSong(doc.id, data, index === 0); // Đánh dấu bài đầu tiên là TOP
-                    });
-                    window.songsInitialized = true;
-                }, (error) => {
-                    console.error("Lỗi Real-time Snapshot Song: ", error);
-                    document.getElementById('song-list').innerHTML = '<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể tải danh sách nhạc. (Kiểm tra Firebase Rules).</div>';
-                });
-            } else {
-                // Chỉ cập nhật văn bản khi chuyển ngôn ngữ (đã có dữ liệu)
-                loadClassSongs(false); 
-            }
-        }
-
-        window.voteForSong = async function(songId, currentVotes) {
-            if (!classSongsRef) return;
-            if (votedSongs[songId] === true) {
-                alert(translations[currentLang]['song_voted_error']);
-                return;
-            }
-            
-            const docRef = doc(db, "class_songs", songId);
-            const newVotes = currentVotes + 1;
-            const voteBtn = document.getElementById(`vote-btn-${songId}`);
-            
-            voteBtn.disabled = true;
-            voteBtn.textContent = translations[currentLang]['loading_msg'];
-
-            try {
-                // Cập nhật lên Firebase
-                await updateDoc(docRef, { votes: newVotes });
-                
-                // Lưu trạng thái vote vào Local Storage
-                votedSongs[songId] = true;
-                localStorage.setItem('votedSongs', JSON.stringify(votedSongs));
-                
-                // Cập nhật giao diện (Firebase snapshot sẽ tự cập nhật nhưng làm thủ công cho nhanh)
-                document.getElementById(`votes-count-${songId}`).textContent = newVotes;
-                voteBtn.textContent = translations[currentLang]['song_voted'];
-                voteBtn.classList.add('voted');
-                voteBtn.disabled = true; // Disabled vĩnh viễn
-            } catch (e) {
-                console.error("Error updating vote: ", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi bình chọn. Kiểm tra Rules Firebase!" : "An error occurred while voting. Check Firebase Rules!");
-                voteBtn.disabled = false;
-                voteBtn.textContent = translations[currentLang]['song_vote_btn']; // Trả lại text ban đầu
-                voteBtn.classList.remove('voted');
-            }
-        }
-
-
         // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) ---
         const MATH_FORMULA_CATEGORIES = [
             {
@@ -1493,14 +1273,13 @@
         function renderFormulaList() {
             const listElement = document.getElementById('formula-list');
             
-            // 💡 FIX LỖI KA-TEX: Polling (Tự kiểm tra và chờ)
+            // 💡 FIX LỖI KA-TEX: Bỏ Polling, dựa vào DEFER ở thẻ script HTML
             if (!window.renderMathInElement) {
-                listElement.innerHTML = `<div style="color: orange; text-align: center; padding: 20px;">
-                    <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i>
-                    Đang chờ tải thư viện KaTeX... (Kiểm tra lại sau 100ms).
+                // Nếu sau khi defer mà vẫn không có (rất hiếm), hiển thị lỗi rõ ràng hơn
+                listElement.innerHTML = `<div style="color: red; text-align: center; padding: 20px;">
+                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
+                    LỖI NẶNG: Thư viện KaTeX không tải được. Vui lòng kiểm tra kết nối mạng hoặc CDN.
                 </div>`;
-                // Đã giảm thời gian chờ xuống 100ms
-                setTimeout(renderFormulaList, 100); 
                 return;
             }
             
@@ -1539,6 +1318,7 @@
                 ],
                 throwOnError : false
             });
+            window.formulasInitialized = true;
         }
 
 
@@ -1822,7 +1602,6 @@
                 if (db) { 
                     loadInitialMessages(); // Tải Chat
                     initQuiz(); // Khởi tạo Quiz
-                    loadClassSongs(); // Tải Nhạc
                 } else {
                      console.warn("Bỏ qua tải Chat/Quiz/Song vì Firebase initialization lỗi.");
                 }
@@ -1832,7 +1611,7 @@
                 startNewGuessingGame();
                 startMemoryGame(true); // Gửi true để không hiển thị status start bằng tiếng Anh nếu default là Việt
                 
-                // Load Formulas ngay khi init (KaTeX sẽ được xử lý Polling bên trong)
+                // Load Formulas ngay khi init
                 renderFormulaList(); 
 
                 // Mặc định hiển thị tab 'social'
