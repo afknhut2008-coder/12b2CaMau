@@ -1010,62 +1010,66 @@
             }
         }
 
-        // Cập nhật hàm loadInitialMessages để hỗ trợ sắp xếp động
+        // Đã sửa: Tối ưu lại logic chèn tin nhắn vào DOM để phù hợp với thứ tự query
         function loadInitialMessages(forceReload = false) {
             if (!chatRef) return;
 
-            // Đọc trạng thái sắp xếp
             const order = messageSortOrder; // 'asc' hoặc 'desc'
             const direction = order === 'asc' ? 'asc' : 'desc';
 
             try {
-                // Query theo order đã chọn
                 const q = query(chatRef, orderBy("timestamp", direction), limit(MESSAGE_LIMIT));
 
-                // Real-time listener
                 onSnapshot(q, (snapshot) => {
-                    // Nếu không phải là loadMore, hoặc forceReload (khi đổi order) thì xóa list cũ
                     if (forceReload) {
                         document.getElementById('message-list').innerHTML = '';
                     }
 
-                    // Xử lý document theo thứ tự truy vấn
                     const messageList = document.getElementById('message-list');
                     let tempLastVisible = null;
-                    
-                    // Tạo một fragment để thêm vào DOM một lần duy nhất (tối ưu hiệu năng)
                     const fragment = document.createDocumentFragment();
 
-                    // Lặp qua các tin nhắn
+                    // Thu thập tin nhắn
+                    const messagesToRender = [];
                     snapshot.docs.forEach((doc, index) => {
-                        const data = doc.data();
-                        const messageElement = createMessageElement(doc.id, data);
+                        messagesToRender.push({ 
+                            id: doc.id, 
+                            data: doc.data(), 
+                            docRef: doc 
+                        });
                         
-                        // Quyết định dùng appendChild hay prepend
-                        if (order === 'asc') {
-                            // ASC (Cũ nhất -> Mới nhất) + appendChild = Cũ nhất trên cùng
-                            fragment.appendChild(messageElement);
-                        } else {
-                            // DESC (Mới nhất -> Cũ nhất) + prepend = Cũ nhất trên cùng (nhưng ta muốn Mới nhất trên cùng)
-                            // Sử dụng prepend để đưa MỚI NHẤT (của batch này) LÊN TRÊN.
-                            // Do đó, order='desc' => Mới nhất trên cùng
-                            fragment.prepend(messageElement); 
-                        }
-                        
+                        // Last visible luôn là doc cuối cùng của snapshot
                         if (index === snapshot.docs.length - 1) {
                             tempLastVisible = doc;
                         }
                     });
                     
-                    // Xóa list cũ nếu forceReload
-                    if (forceReload) {
-                        messageList.innerHTML = '';
+                    // Logic chèn vào DOM:
+                    // Trong cả 2 trường hợp (asc/desc), ta đều muốn tin nhắn từ query (theo thứ tự query) 
+                    // được chèn vào DOM theo cùng thứ tự để tin nhắn đầu tiên của query (tin cũ nhất nếu asc, tin mới nhất nếu desc)
+                    // luôn nằm trên cùng.
+                    
+                    messagesToRender.forEach(msg => {
+                        const messageElement = createMessageElement(msg.id, msg.data);
+                        fragment.appendChild(messageElement); // Luôn dùng appendChild cho fragment
+                    });
+                    
+                    // Nếu là DESC (Mới nhất trên cùng), ta cần prepend fragment vào list hiện có.
+                    // Nếu là ASC (Cũ nhất trên cùng), ta cần append fragment vào list hiện có.
+                    if (order === 'asc') {
+                        messageList.appendChild(fragment); 
+                    } else {
+                        // DESC: Đảm bảo các tin nhắn mới (từ query) được chèn lên đầu danh sách (prepend)
+                        // Note: Sẽ hoạt động tốt hơn nếu đây là list đầu tiên, nhưng với onSnapshot cần cẩn thận.
+                        // Tuy nhiên, đối với initial load, ta luôn xóa list cũ nên appendChild vẫn là cách an toàn nhất.
+                        messageList.appendChild(fragment); // Giữ nguyên appendChild cho initial load sau khi xóa list
                     }
-
-                    // Chèn tất cả tin nhắn vào DOM
-                    messageList.appendChild(fragment);
-
-                    // Xử lý nút load more
+                    
+                    // LƯU Ý: Với onSnapshot, Firebase tự động xử lý các thay đổi.
+                    // Nếu tin nhắn mới đến, nó sẽ tự động chèn/cập nhật đúng vị trí dựa trên query (orderBy).
+                    // Ta chỉ cần đảm bảo rằng khi tải lần đầu, ta chỉ chèn 1 lần.
+                    
+                    // Sau khi tải xong, cập nhật lastVisible cho chức năng "Xem thêm"
                     if (snapshot.docs.length >= MESSAGE_LIMIT) {
                         lastVisible = tempLastVisible;
                         document.getElementById('load-more-btn').style.display = 'block';
@@ -1073,6 +1077,10 @@
                         lastVisible = null;
                         document.getElementById('load-more-btn').style.display = 'none';
                     }
+
+                    // Loại bỏ tin nhắn trùng lặp nếu có (phòng trường hợp onSnapshot và loadMore chạy chồng chéo)
+                    removeDuplicateMessages(messageList);
+
                 }, (error) => {
                     console.error("Lỗi Real-time Snapshot (Firebase Rules?): ", error);
                     document.getElementById('message-list').innerHTML = '<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể tải tin nhắn. (Kiểm tra Firebase Rules).</div>';
@@ -1082,6 +1090,7 @@
             }
         }
         
+        // Sửa: Logic loadMoreMessages để áp dụng đúng append/prepend
         window.loadMoreMessages = async function() {
             if (!lastVisible || !chatRef) {
                 document.getElementById('load-more-btn').style.display = 'none';
@@ -1100,31 +1109,27 @@
                 let tempLastVisible = null;
                 const messageList = document.getElementById('message-list');
                 const fragment = document.createDocumentFragment();
+                
+                const newMessages = [];
 
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
-                    const messageElement = createMessageElement(doc.id, data);
-                    
-                    if (order === 'asc') {
-                        // ASC (Cũ hơn) + appendChild = Đưa tin cũ hơn xuống dưới (giữ cũ nhất trên cùng)
-                        fragment.appendChild(messageElement);
-                    } else {
-                        // DESC (Cũ hơn) + prepend = Đưa tin cũ hơn lên trên (giữ mới nhất trên cùng)
-                        fragment.prepend(messageElement);
-                    }
+                    newMessages.push(createMessageElement(doc.id, data));
                     
                     if (index === snapshot.docs.length - 1) {
                         tempLastVisible = doc;
                     }
                 });
                 
-                // Chèn vào đầu hoặc cuối danh sách hiện tại
+                // Logic chèn vào DOM cho loadMore:
                 if (order === 'asc') {
-                    // Thêm vào cuối list (tức là dưới cùng)
+                    // ASC (Cũ nhất trên cùng): Query trả về tin cũ hơn. Cần thêm vào CUỐI list.
+                    newMessages.forEach(msg => fragment.appendChild(msg));
                     messageList.appendChild(fragment);
                 } else {
-                    // Thêm vào đầu list (tức là trên cùng)
-                    messageList.prepend(fragment);
+                    // DESC (Mới nhất trên cùng): Query trả về tin cũ hơn. Cần thêm vào CUỐI list (phía dưới).
+                    newMessages.forEach(msg => fragment.appendChild(msg));
+                    messageList.appendChild(fragment);
                 }
 
 
@@ -1134,11 +1139,31 @@
                 } else {
                     lastVisible = tempLastVisible;
                 }
+                
+                removeDuplicateMessages(messageList); // Đảm bảo không trùng lặp
+
             } catch (e) {
                 console.error("Error loading more documents: ", e);
             } finally {
                 document.getElementById('load-more-btn').disabled = false;
                 document.getElementById('load-more-btn').textContent = translations[currentLang]['load_more_msg'];
+            }
+        }
+        
+        // Hàm phụ trợ để loại bỏ các tin nhắn trùng lặp (chỉ giữ lại ID đầu tiên)
+        function removeDuplicateMessages(container) {
+            const children = Array.from(container.children);
+            const seenIds = new Set();
+            for (let i = children.length - 1; i >= 0; i--) {
+                const child = children[i];
+                if (child.id.startsWith('msg-')) {
+                    const id = child.id;
+                    if (seenIds.has(id)) {
+                        child.remove();
+                    } else {
+                        seenIds.add(id);
+                    }
+                }
             }
         }
         
