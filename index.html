@@ -980,9 +980,9 @@
         function loadInitialMessages() {
             if (!chatRef) return;
             try {
-                // FIX ĐỘT PHÁ: Đổi sang DESC (mới nhất trước) và dùng PREPEND để đảo ngược list
-                // => đảm bảo TIN NHẮN CŨ NHẤT (SỚM NHẤT) LÊN TRÊN CÙNG
-                const q = query(chatRef, orderBy("timestamp", "desc"), limit(MESSAGE_LIMIT));
+                // FIX CUỐI CÙNG: Đổi sang ASC (cũ nhất trước) và dùng appendChild
+                // => Đảm bảo TIN NHẮN CŨ NHẤT (SỚM NHẤT) LÊN TRÊN CÙNG
+                const q = query(chatRef, orderBy("timestamp", "asc"), limit(MESSAGE_LIMIT));
 
                 // Real-time listener for the first batch
                 onSnapshot(q, (snapshot) => {
@@ -1021,15 +1021,15 @@
             document.getElementById('load-more-btn').textContent = translations[currentLang]['loading_msg'];
 
             try {
-                // FIX ĐỘT PHÁ: Đổi sang DESC (mới nhất trước) và dùng PREPEND để đảo ngược list
-                // startAfter(lastVisible) khi DESC sẽ lấy các tin nhắn cũ hơn lastVisible
-                const q = query(chatRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+                // FIX CUỐI CÙNG: Đổi sang ASC (cũ nhất trước) và dùng appendChild
+                // startAfter(lastVisible) khi ASC sẽ lấy các tin nhắn mới hơn lastVisible
+                const q = query(chatRef, orderBy("timestamp", "asc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 let tempLastVisible = null;
 
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
-                    // Thêm tin nhắn mới (cũ hơn) vào đầu danh sách để duy trì thứ tự CŨ NHẤT Ở TRÊN CÙNG
+                    // Thêm tin nhắn mới (mới hơn) vào cuối danh sách để duy trì thứ tự CŨ NHẤT Ở TRÊN CÙNG
                     renderMessage(doc.id, data); 
                     if (index === snapshot.docs.length - 1) {
                         tempLastVisible = doc;
@@ -1075,9 +1075,9 @@
                     <span id="likes-text-${id}">${likeText}</span>
                 </div>
             `;
-            // Sử dụng prepend để đảo ngược thứ tự truy vấn (DESC)
-            // Query DESC (Mới nhất -> Cũ nhất) + Prepend = Cũ nhất (Sớm nhất) ở trên cùng.
-            messageList.prepend(messageElement);
+            // Sử dụng appendChild (đã đổi từ prepend) để đảm bảo:
+            // Query ASC (Cũ nhất -> Mới nhất) + appendChild = Cũ nhất (Sớm nhất) ở trên cùng.
+            messageList.appendChild(messageElement);
         }
 
         window.toggleLike = async function(id, currentLikes) {
