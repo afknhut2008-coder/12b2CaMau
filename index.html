@@ -618,7 +618,7 @@
         
         // --- CƠ SỞ DỮ LIỆU CÔNG THỨC TOÁN HỌC (KA-TEX) - ĐÃ PHÂN LOẠI CHI TIẾT THEO YÊU CẦU ---
         const MATH_FORMULA_DATA = [
-            // 1. Đại Số Cơ Bản (Cấp 2)
+            // 1. ĐẠI SỐ CƠ BẢN (HẰNG ĐẲNG THỨC, PT BẬC 2)
             { 
                 category_vi: "1. Đại Số Cơ Bản (Hằng đẳng thức & PT Bậc 2)", 
                 icon: "fa-superscript", 
@@ -628,66 +628,110 @@
                     { name_vi: "Lập phương tổng", formula: "(a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3", variables_vi: "" },
                     { name_vi: "Tổng hai lập phương", formula: "a^3 + b^3 = (a+b)(a^2 - ab + b^2)", variables_vi: "" },
                     { name_vi: "Delta (Phương trình bậc 2)", formula: "\\Delta = b^2 - 4ac", variables_vi: "$a, b, c$: hệ số của $ax^2+bx+c=0$" },
-                    { name_vi: "Định lý Vi-ét (Tổng nghiệm)", formula: "x_1 + x_2 = -\\frac{b}{a}", variables_vi: "$x_1, x_2$: nghiệm của $ax^2+bx+c=0$" },
+                    { name_vi: "Định lý Vi-ét (Tổng & Tích nghiệm)", formula: "x_1 + x_2 = -\\frac{b}{a} \\quad ; \\quad x_1 x_2 = \\frac{c}{a}", variables_vi: "$x_1, x_2$: nghiệm của $ax^2+bx+c=0$" },
                     { name_vi: "Công thức Nghiệm", formula: "x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}", variables_vi: "" },
                 ] 
             },
-            // 2. Hình Học Phẳng & Công Thức Diện Tích
+            
+            // 2. CÔNG THỨC DIỆN TÍCH TAM GIÁC (TOÀN DIỆN)
             { 
-                category_vi: "2. Hình Học Phẳng & Công Thức Diện Tích", 
+                category_vi: "2. Hình Học Phẳng: Công Thức Diện Tích Tam Giác (Toàn diện)", 
                 icon: "fa-draw-polygon", 
                 formulas: [
-                    { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: dài, rộng" }, 
-                    { name_vi: "Diện tích Tam Giác", formula: "S = \\frac{1}{2}ah", variables_vi: "$a$: cạnh đáy, $h$: chiều cao tương ứng" }, 
-                    { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền" }, 
-                    { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao" }, 
-                    { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" }, 
+                    { name_vi: "Công thức cơ bản", formula: "S = \\frac{1}{2} a \\cdot h_a", variables_vi: "$a$: cạnh đáy, $h_a$: chiều cao tương ứng" }, 
+                    { name_vi: "Công thức Lượng giác", formula: "S = \\frac{1}{2}ab \\sin C", variables_vi: "$a, b$: hai cạnh, $C$: góc xen giữa" }, 
+                    { name_vi: "Công thức Heron (Dùng nửa chu vi $p$)", formula: "S = \\sqrt{p(p-a)(p-b)(p-c)} \\quad \\text{với } p = \\frac{a+b+c}{2}", variables_vi: "$a, b, c$: độ dài 3 cạnh, $p$: nửa chu vi" }, 
+                    { name_vi: "Dùng bán kính đường tròn ngoại tiếp $R$", formula: "S = \\frac{abc}{4R}", variables_vi: "$a, b, c$: 3 cạnh, $R$: bán kính ngoại tiếp" }, 
+                    { name_vi: "Dùng bán kính đường tròn nội tiếp $r$", formula: "S = p \\cdot r", variables_vi: "$p$: nửa chu vi, $r$: bán kính nội tiếp" }, 
+                    { name_vi: "Tam giác Vuông", formula: "S = \\frac{1}{2} \\cdot a \\cdot b", variables_vi: "$a, b$: hai cạnh góc vuông" },
+                    { name_vi: "Tam giác đều cạnh $a$", formula: "S = \\frac{a^2\\sqrt{3}}{4}", variables_vi: "$a$: độ dài cạnh tam giác đều" },
+                    { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền (áp dụng cho tam giác vuông)" }, 
                 ] 
             }, 
-            // 3. Giải Tích (Đạo Hàm)
+
+            // 3. CÔNG THỨC DIỆN TÍCH TỨ GIÁC & HÌNH TRÒN
             { 
-                category_vi: "3. Giải Tích (Đạo Hàm)", 
+                category_vi: "3. Hình Học Phẳng: Tứ Giác và Hình Tròn", 
+                icon: "fa-circle", 
+                formulas: [
+                    { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: chiều dài, chiều rộng" }, 
+                    { name_vi: "Diện tích Hình Vuông", formula: "S = a^2", variables_vi: "$a$: cạnh hình vuông" }, 
+                    { name_vi: "Diện tích Hình Bình Hành", formula: "S = a \\cdot h", variables_vi: "$a$: cạnh đáy, $h$: chiều cao" }, 
+                    { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao" }, 
+                    { name_vi: "Diện tích Hình Thoi", formula: "S = \\frac{1}{2} d_1 d_2", variables_vi: "$d_1, d_2$: hai đường chéo" }, 
+                    { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" }, 
+                    { name_vi: "Chu vi Hình Tròn", formula: "C = 2 \\pi r", variables_vi: "$r$: bán kính" },
+                ] 
+            }, 
+            
+            // 4. LƯỢNG GIÁC & HỆ THỨC TRONG TAM GIÁC
+            { 
+                category_vi: "4. Lượng Giác & Hệ Thức trong Tam Giác", 
+                icon: "fa-wave-square", 
+                formulas: [ 
+                    { name_vi: "Hệ thức cơ bản", formula: "\\sin^2 x + \\cos^2 x = 1", variables_vi: "" },
+                    { name_vi: "Công thức Sin nhân đôi", formula: "\\sin 2x = 2 \\sin x \\cos x", variables_vi: "" },
+                    { name_vi: "Công thức Cosin nhân đôi", formula: "\\cos 2x = \\cos^2 x - \\sin^2 x = 2\\cos^2 x - 1 = 1 - 2\\sin^2 x", variables_vi: "" },
+                    { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "$a, b, c$: cạnh, $A, B, C$: góc đối diện, $R$: bán kính ngoại tiếp" },
+                    { name_vi: "Định lý Cosin", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "" },
+                ] 
+            },
+            
+            // 5. GIẢI TÍCH (ĐẠO HÀM)
+            { 
+                category_vi: "5. Giải Tích (Đạo Hàm)", 
                 icon: "fa-arrow-up-right-dots", 
                 formulas: [ 
                     { name_vi: "Đạo Hàm (Hàm Mũ)", formula: "(e^u)' = u'e^u", variables_vi: "$u$: hàm số theo $x$" },
                     { name_vi: "Đạo Hàm (Hàm Lôgarit)", formula: "(\\ln |u|)' = \\frac{u'}{u}", variables_vi: "" },
+                    { name_vi: "Đạo Hàm (Hàm Lũy Thừa)", formula: "((u^n))' = n \\cdot u^{n-1} \\cdot u'", variables_vi: "" },
                     { name_vi: "Đạo Hàm (Tích)", formula: "(uv)' = u'v + uv'", variables_vi: "$u, v$: hàm số theo $x$" },
                     { name_vi: "Đạo Hàm (Thương)", formula: "(\\frac{u}{v})' = \\frac{u'v - uv'}{v^2}", variables_vi: "" },
+                    { name_vi: "Đạo Hàm của Sin", formula: "(\\sin u)' = u' \\cos u", variables_vi: "" },
+                    { name_vi: "Đạo Hàm của Cos", formula: "(\\cos u)' = -u' \\sin u", variables_vi: "" },
                 ] 
             },
-            // 4. Giải Tích (Nguyên Hàm & Tích Phân)
+            
+            // 6. GIẢI TÍCH (NGUYÊN HÀM & TÍCH PHÂN)
             { 
-                category_vi: "4. Giải Tích (Nguyên Hàm & Tích Phân)", 
+                category_vi: "6. Giải Tích (Nguyên Hàm & Tích Phân)", 
                 icon: "fa-infinity", 
                 formulas: [ 
-                    { name_vi: "Nguyên Hàm (Cơ bản)", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\neq -1, C$: hằng số" },
-                    { name_vi: "Diện tích Hình Phẳng (Tích phân)", formula: "S = \\int_{a}^{b} |f(x)| dx", variables_vi: "$f(x)$: hàm số theo $x$" }, 
+                    { name_vi: "Nguyên Hàm (Hàm Lũy Thừa)", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\neq -1, C$: hằng số" },
+                    { name_vi: "Nguyên Hàm (Hàm $1/x$)", formula: "\\int \\frac{1}{x} dx = \\ln |x| + C", variables_vi: "" },
+                    { name_vi: "Nguyên Hàm (Hàm $e^x$)", formula: "\\int e^x dx = e^x + C", variables_vi: "" },
+                    { name_vi: "Tích phân xác định (Công thức Newton-Leibniz)", formula: "\\int_{a}^{b} f(x) dx = F(b) - F(a)", variables_vi: "$F(x)$: nguyên hàm của $f(x)$" },
+                    { name_vi: "Diện tích Hình Phẳng", formula: "S = \\int_{a}^{b} |f(x)| dx", variables_vi: "$f(x)$: hàm số theo $x$" }, 
                 ] 
             },
-            // 5. Lượng Giác & Giới Hạn
+
+            // 7. THỂ TÍCH & DIỆN TÍCH BỀ MẶT HÌNH HỌC KHÔNG GIAN
             { 
-                category_vi: "5. Lượng Giác & Giới Hạn", 
-                icon: "fa-wave-square", 
-                formulas: [ 
-                    { name_vi: "Công thức Sin nhân đôi", formula: "\\sin 2x = 2 \\sin x \\cos x", variables_vi: "" },
-                    { name_vi: "Công thức Cosin nhân đôi", formula: "\\cos 2x = \\cos^2 x - \\sin^2 x", variables_vi: "" },
-                    { name_vi: "Giới hạn cơ bản (sin)", formula: "\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1", variables_vi: "" },
-                    { name_vi: "Logarit (Đổi cơ số)", formula: "\\log_a b = \\frac{\\log_c b}{\\log_c a}", variables_vi: "$a, b, c > 0, a, c \\neq 1$" },
-                ] 
-            },
-            // 6. Thể Tích & Hình Học Không Gian
-            { 
-                category_vi: "6. Thể Tích & Hình Học Không Gian", 
+                category_vi: "7. Thể Tích & Diện Tích Bề Mặt Hình Học Không Gian", 
                 icon: "fa-cube", 
                 formulas: [ 
-                    { name_vi: "Thể tích Hình Hộp Chữ Nhật", formula: "V = a \\times b \\times c", variables_vi: "$a, b, c$: ba kích thước" },
                     { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3}Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" }, 
                     { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" }, 
                     { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính" }, 
                     { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính" }, 
                     { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" }, 
+                    { name_vi: "Diện tích Toàn phần Khối Trụ", formula: "S_{tp} = 2\\pi r^2 + 2\\pi r h", variables_vi: "" },
                     { name_vi: "Thể tích Khối Nón", formula: "V = \\frac{1}{3} \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
+                    { name_vi: "Diện tích Toàn phần Khối Nón", formula: "S_{tp} = \\pi r^2 + \\pi r l", variables_vi: "$l$: đường sinh" },
                 ] 
+            },
+            
+            // 8. TỔ HỢP - XÁC SUẤT
+            {
+                category_vi: "8. Tổ Hợp - Xác Suất",
+                icon: "fa-percent",
+                formulas: [
+                    { name_vi: "Hoán vị", formula: "P_n = n!", variables_vi: "$n$: số phần tử" },
+                    { name_vi: "Chỉnh hợp chập $k$ của $n$", formula: "A_n^k = \\frac{n!}{(n-k)!}", variables_vi: "$0 \\le k \\le n$" },
+                    { name_vi: "Tổ hợp chập $k$ của $n$", formula: "C_n^k = \\frac{n!}{k!(n-k)!}", variables_vi: "$0 \\le k \\le n$" },
+                    { name_vi: "Công thức Nhị thức Newton", formula: "(a+b)^n = \\sum_{k=0}^{n} C_n^k a^{n-k} b^k", variables_vi: "" },
+                    { name_vi: "Công thức Xác suất cơ bản", formula: "P(A) = \\frac{|\\Omega_A|}{|\\Omega|}", variables_vi: "$|\\Omega|$: số kết quả có thể, $|\\Omega_A|$: số kết quả thuận lợi cho $A$" },
+                ]
             }
         ];
         
@@ -987,7 +1031,7 @@
 
         window.sendMessage = async function() {
             if (!chatRef) {
-                alert(currentLang === 'vi' ? "Lỗi: Hệ thống chat chưa được khởi tạo (Lỗi Firebase)." : "Error: Chat system not initialized (Firebase Error).");
+                alert(currentLang === 'vi' ? "Lỗi: Hệ thống chat chưa được khởi tạo (Lỗi Firebase)." : "Error: Chat system not initialized (Lỗi Firebase).");
                 return;
             }
             const messageText = document.getElementById('message-text').value.trim();
