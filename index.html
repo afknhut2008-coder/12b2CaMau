@@ -125,7 +125,7 @@
             outline: none;
         }
 
-        .btn-send, .next-btn, .game-button { 
+        .btn-send, .next-btn, .game-button, #toggle-order-btn { 
             padding: 12px 25px;
             border: none;
             color: white;
@@ -136,7 +136,7 @@
             background: var(--primary-gradient);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        .btn-send:hover, .next-btn:hover, .game-button:hover {
+        .btn-send:hover, .next-btn:hover, .game-button:hover, #toggle-order-btn:hover {
             opacity: 0.95;
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
@@ -414,6 +414,16 @@
             #tictactoe-board { width: 180px; height: 180px; }
             .formula-katex-display { font-size: 1.3rem; }
         }
+        
+        /* New Styles for Toggle Button */
+        #toggle-order-btn {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: block;
+            background: linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%);
+        }
     </style>
 </head>
 <body onload="initApp()">
@@ -454,6 +464,8 @@
                 </div>
             </div>
             
+            <button id="toggle-order-btn" onclick="toggleMessageSortOrder()"><i class="fas fa-sort"></i> <span id="toggle-order-text">Sắp xếp: Cũ nhất trên cùng</span></button>
+
             <div id="message-list">
                 <div class="card" style="padding: 15px;">
                     <div class="skeleton" style="width: 50%; height: 15px; margin-bottom: 10px; background-color: #e0e0e0; border-radius: 4px;"></div>
@@ -679,8 +691,6 @@
         ];
         
         // --- LOGIC ĐA NGÔN NGỮ ---
-        // (Giữ nguyên phần translations)
-
         const translations = {
             'vi': {
                 'community': 'Cộng Đồng',
@@ -695,6 +705,8 @@
                 'likes_count_en': 'Likes',
                 'message_time': 'Gửi lúc',
                 'like_error': 'Không thể thích tin nhắn.',
+                'sort_asc_text': 'Sắp xếp: Cũ nhất trên cùng', // New
+                'sort_desc_text': 'Sắp xếp: Mới nhất trên cùng', // New
 
                 // QUIZ
                 'quiz_title': 'Thử Thách Đố Vui (10 Câu)',
@@ -786,6 +798,8 @@
                 'likes_count_en': 'Likes', 
                 'message_time': 'Sent at',
                 'like_error': 'Could not like message.',
+                'sort_asc_text': 'Sort: Oldest on Top', // New
+                'sort_desc_text': 'Sort: Newest on Top', // New
 
                 // QUIZ
                 'quiz_title': 'Quiz Challenge (10 Qs)',
@@ -807,7 +821,7 @@
                 'q_content_ph': 'Question Content',
                 'ans_a_ph': 'Answer A',
                 'ans_b_ph': 'Answer B',
-                'ans_c_ph': 'Answer C',
+                'ans_c_ph': 'Answer Answer C',
                 'ans_d_ph': 'Answer D',
                 'select_correct_ans': 'Select Correct Answer',
                 'ans_a_correct': 'Answer A is correct',
@@ -867,19 +881,20 @@
         };
 
         let currentLang = localStorage.getItem('appLang') || 'vi';
+        // NEW: Lưu trạng thái sắp xếp tin nhắn (mặc định: ASC - cũ nhất trên cùng)
+        let messageSortOrder = localStorage.getItem('messageSortOrder') || 'asc';
 
         window.toggleLanguage = function() {
             currentLang = currentLang === 'vi' ? 'en' : 'vi';
             localStorage.setItem('appLang', currentLang);
             applyLanguage(currentLang);
-            // Cần cập nhật trạng thái game/quiz nếu có chuỗi dịch động
             updateQuizStats();
-            // Lần đầu chạy memory game, cần dịch status
             if(window.memoryCards && window.memoryCards.length > 0) {
                  updateMemoryStatus(true);
             }
-            // Tải lại danh sách bài hát để cập nhật button "Bình chọn"
             loadClassSongs(); 
+            // Cập nhật text của nút chuyển đổi sắp xếp
+            updateSortButtonText();
         }
 
         function applyLanguage(lang) {
@@ -897,6 +912,24 @@
             });
              document.getElementById('lang-switch').textContent = lang === 'vi' ? 'VI / EN' : 'EN / VI';
         }
+
+        // NEW: Cập nhật text của nút chuyển đổi sắp xếp
+        function updateSortButtonText() {
+            const textElement = document.getElementById('toggle-order-text');
+            if (textElement) {
+                const key = messageSortOrder === 'asc' ? 'sort_asc_text' : 'sort_desc_text';
+                textElement.textContent = translations[currentLang][key];
+            }
+        }
+        
+        // NEW: Chức năng chuyển đổi sắp xếp
+        window.toggleMessageSortOrder = function() {
+            messageSortOrder = messageSortOrder === 'asc' ? 'desc' : 'asc';
+            localStorage.setItem('messageSortOrder', messageSortOrder);
+            updateSortButtonText();
+            loadInitialMessages(true); // Tải lại danh sách với thứ tự mới
+        }
+
 
         // --- LOGIC TAB CON ---
         window.showTab = function(tabId) {
@@ -977,25 +1010,62 @@
             }
         }
 
-        function loadInitialMessages() {
+        // Cập nhật hàm loadInitialMessages để hỗ trợ sắp xếp động
+        function loadInitialMessages(forceReload = false) {
             if (!chatRef) return;
-            try {
-                // FIX CUỐI CÙNG: Đổi sang ASC (cũ nhất trước) và dùng appendChild
-                // => Đảm bảo TIN NHẮN CŨ NHẤT (SỚM NHẤT) LÊN TRÊN CÙNG
-                const q = query(chatRef, orderBy("timestamp", "asc"), limit(MESSAGE_LIMIT));
 
-                // Real-time listener for the first batch
+            // Đọc trạng thái sắp xếp
+            const order = messageSortOrder; // 'asc' hoặc 'desc'
+            const direction = order === 'asc' ? 'asc' : 'desc';
+
+            try {
+                // Query theo order đã chọn
+                const q = query(chatRef, orderBy("timestamp", direction), limit(MESSAGE_LIMIT));
+
+                // Real-time listener
                 onSnapshot(q, (snapshot) => {
-                    document.getElementById('message-list').innerHTML = ''; // Clear for fresh re-render
+                    // Nếu không phải là loadMore, hoặc forceReload (khi đổi order) thì xóa list cũ
+                    if (forceReload) {
+                        document.getElementById('message-list').innerHTML = '';
+                    }
+
+                    // Xử lý document theo thứ tự truy vấn
+                    const messageList = document.getElementById('message-list');
                     let tempLastVisible = null;
+                    
+                    // Tạo một fragment để thêm vào DOM một lần duy nhất (tối ưu hiệu năng)
+                    const fragment = document.createDocumentFragment();
+
+                    // Lặp qua các tin nhắn
                     snapshot.docs.forEach((doc, index) => {
                         const data = doc.data();
-                        renderMessage(doc.id, data); 
+                        const messageElement = createMessageElement(doc.id, data);
+                        
+                        // Quyết định dùng appendChild hay prepend
+                        if (order === 'asc') {
+                            // ASC (Cũ nhất -> Mới nhất) + appendChild = Cũ nhất trên cùng
+                            fragment.appendChild(messageElement);
+                        } else {
+                            // DESC (Mới nhất -> Cũ nhất) + prepend = Cũ nhất trên cùng (nhưng ta muốn Mới nhất trên cùng)
+                            // Sử dụng prepend để đưa MỚI NHẤT (của batch này) LÊN TRÊN.
+                            // Do đó, order='desc' => Mới nhất trên cùng
+                            fragment.prepend(messageElement); 
+                        }
+                        
                         if (index === snapshot.docs.length - 1) {
                             tempLastVisible = doc;
                         }
                     });
+                    
+                    // Xóa list cũ nếu forceReload
+                    if (forceReload) {
+                        messageList.innerHTML = '';
+                    }
 
+                    // Chèn tất cả tin nhắn vào DOM
+                    messageList.appendChild(fragment);
+
+                    // Xử lý nút load more
                     if (snapshot.docs.length >= MESSAGE_LIMIT) {
                         lastVisible = tempLastVisible;
                         document.getElementById('load-more-btn').style.display = 'block';
@@ -1020,21 +1090,43 @@
             document.getElementById('load-more-btn').disabled = true;
             document.getElementById('load-more-btn').textContent = translations[currentLang]['loading_msg'];
 
+            const order = messageSortOrder;
+            const direction = order === 'asc' ? 'asc' : 'desc';
+
             try {
-                // FIX CUỐI CÙNG: Đổi sang ASC (cũ nhất trước) và dùng appendChild
-                // startAfter(lastVisible) khi ASC sẽ lấy các tin nhắn mới hơn lastVisible
-                const q = query(chatRef, orderBy("timestamp", "asc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+                // startAfter(lastVisible) sẽ lấy các tin nhắn *tiếp theo* theo direction
+                const q = query(chatRef, orderBy("timestamp", direction), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 let tempLastVisible = null;
+                const messageList = document.getElementById('message-list');
+                const fragment = document.createDocumentFragment();
 
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
-                    // Thêm tin nhắn mới (mới hơn) vào cuối danh sách để duy trì thứ tự CŨ NHẤT Ở TRÊN CÙNG
-                    renderMessage(doc.id, data); 
+                    const messageElement = createMessageElement(doc.id, data);
+                    
+                    if (order === 'asc') {
+                        // ASC (Cũ hơn) + appendChild = Đưa tin cũ hơn xuống dưới (giữ cũ nhất trên cùng)
+                        fragment.appendChild(messageElement);
+                    } else {
+                        // DESC (Cũ hơn) + prepend = Đưa tin cũ hơn lên trên (giữ mới nhất trên cùng)
+                        fragment.prepend(messageElement);
+                    }
+                    
                     if (index === snapshot.docs.length - 1) {
                         tempLastVisible = doc;
                     }
                 });
+                
+                // Chèn vào đầu hoặc cuối danh sách hiện tại
+                if (order === 'asc') {
+                    // Thêm vào cuối list (tức là dưới cùng)
+                    messageList.appendChild(fragment);
+                } else {
+                    // Thêm vào đầu list (tức là trên cùng)
+                    messageList.prepend(fragment);
+                }
+
 
                 if (snapshot.docs.length < MESSAGE_LIMIT) {
                     lastVisible = null;
@@ -1049,12 +1141,10 @@
                 document.getElementById('load-more-btn').textContent = translations[currentLang]['load_more_msg'];
             }
         }
-
-        function renderMessage(id, data) {
-            const messageList = document.getElementById('message-list');
+        
+        // Tách logic tạo element ra khỏi render
+        function createMessageElement(id, data) {
             const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(currentLang) : translations[currentLang]['message_time'];
-            
-            // Kiểm tra xem người dùng đã thích tin nhắn này chưa
             const likedMessages = JSON.parse(localStorage.getItem('likedMessages')) || {};
             const isLiked = likedMessages[id] === true;
             
@@ -1075,9 +1165,7 @@
                     <span id="likes-text-${id}">${likeText}</span>
                 </div>
             `;
-            // Sử dụng appendChild (đã đổi từ prepend) để đảm bảo:
-            // Query ASC (Cũ nhất -> Mới nhất) + appendChild = Cũ nhất (Sớm nhất) ở trên cùng.
-            messageList.appendChild(messageElement);
+            return messageElement;
         }
 
         window.toggleLike = async function(id, currentLikes) {
@@ -1825,10 +1913,11 @@
         window.initApp = function() {
              try {
                 applyLanguage(currentLang);
+                updateSortButtonText(); // Cập nhật text nút sắp xếp khi khởi tạo
                 
                 // Tải dữ liệu chính (Chat, Quiz, Songs)
                 if (db) { 
-                    loadInitialMessages();
+                    loadInitialMessages(true); // Luôn forceReload ban đầu để áp dụng order từ localStorage
                     initQuiz();
                     loadClassSongs(); 
                 } else {
