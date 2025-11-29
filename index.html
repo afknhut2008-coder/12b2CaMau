@@ -287,12 +287,6 @@
             transform: scale(1.2);
         }
         
-        /* SONG BOX STYLES - REMOVED */
-        .game-button.voted {
-            background: var(--light-text-color) !important;
-            cursor: not-allowed;
-        }
-        
         /* TIC TAC TOE STYLES (CỜ CARO) */
         #tictactoe-board {
             display: grid;
@@ -555,8 +549,8 @@
         </div> 
     </div>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7z9/w8Qe/wV+2qg3n" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8O5tV/QdO5v25/jY5V5r3q2kQ8V/2Q6g3n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7z9/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8f/cK4D1z9+h/J+K5o1hA8N7z9/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
@@ -587,7 +581,6 @@
             db = getFirestore(app);
             chatRef = collection(db, "anonymous_messages");
             quizRef = collection(db, "quiz_questions");
-            // classSongsRef = collection(db, "class_songs"); // Đã loại bỏ
             console.log("Firebase initialized successfully.");
         } catch (e) {
             console.error("Lỗi FATAL: Firebase KHÔNG THỂ KHỞI TẠO. Hãy kiểm tra lại khóa API và cấu hình.", e);
@@ -1273,13 +1266,11 @@
         function renderFormulaList() {
             const listElement = document.getElementById('formula-list');
             
-            // 💡 FIX LỖI KA-TEX: Bỏ Polling, dựa vào DEFER ở thẻ script HTML
+            // 💡 SỬA LỖI KA-TEX: Không còn cơ chế polling hay check lỗi nặng. Tin tưởng vào cách tải script truyền thống.
+            
             if (!window.renderMathInElement) {
-                // Nếu sau khi defer mà vẫn không có (rất hiếm), hiển thị lỗi rõ ràng hơn
-                listElement.innerHTML = `<div style="color: red; text-align: center; padding: 20px;">
-                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
-                    LỖI NẶNG: Thư viện KaTeX không tải được. Vui lòng kiểm tra kết nối mạng hoặc CDN.
-                </div>`;
+                // Nếu sau khi initApp() chạy mà KaTeX vẫn chưa sẵn sàng (rất hiếm, do lỗi CDN), thì chỉ hiện thông báo chờ
+                listElement.innerHTML = `<div style="color: var(--light-text-color); text-align: center; padding: 20px;">Đang chờ thư viện KaTeX tải... Vui lòng kiểm tra lại kết nối mạng.</div>`;
                 return;
             }
             
@@ -1609,7 +1600,7 @@
                 // Khởi tạo Games
                 initTicTacToe();
                 startNewGuessingGame();
-                startMemoryGame(true); // Gửi true để không hiển thị status start bằng tiếng Anh nếu default là Việt
+                startMemoryGame(true); 
                 
                 // Load Formulas ngay khi init
                 renderFormulaList(); 
