@@ -594,7 +594,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD8O5tV/QdO5v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u5eN5pD8O5tV/QdO5v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
@@ -1492,6 +1492,19 @@
 
         function renderFormulaList() {
             const listElement = document.getElementById('formula-list');
+            
+            // 💡 FIX LỖI KA-TEX: Polling (Tự kiểm tra và chờ)
+            if (!window.renderMathInElement) {
+                listElement.innerHTML = `<div style="color: orange; text-align: center; padding: 20px;">
+                    <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i>
+                    Đang chờ tải thư viện KaTeX... (Kiểm tra lại sau 500ms).
+                </div>`;
+                // Tự gọi lại hàm sau 500ms
+                setTimeout(renderFormulaList, 500); 
+                return;
+            }
+            
+            // --- LOGIC RENDER NẾU KA-TEX ĐÃ SẴN SÀNG ---
             listElement.innerHTML = ''; 
 
             MATH_FORMULA_CATEGORIES.forEach(category => {
@@ -1516,27 +1529,16 @@
                 });
             });
 
-            // Call KaTeX auto-render after mounting all elements
-            if (window.renderMathInElement) {
-                // Sử dụng auto-render để tìm và render các ký hiệu \(formula\)
-                window.renderMathInElement(listElement, {
-                    delimiters: [
-                        {left: "$$", right: "$$", display: true},
-                        {left: "\\[", right: "\\]", display: true},
-                        {left: "$", right: "$", display: false},
-                        {left: "\\(", right: "\\)", display: false}
-                    ],
-                    throwOnError : false
-                });
-            } else {
-                // Thông báo lỗi rõ ràng hơn nếu KaTeX vẫn không tải được
-                listElement.innerHTML = `<div style="color: red; text-align: center; padding: 20px;">
-                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
-                    LỖI TẢI KaTeX: Thư viện hiển thị công thức không tải được.
-                    <br> (Lý do thường là do lỗi kết nối mạng, chặn quảng cáo, hoặc lỗi CDN).
-                    <br> **Vui lòng thử tải lại trang.**
-                </div>`;
-            }
+            // Call KaTeX auto-render sau khi đã mount tất cả các phần tử
+            window.renderMathInElement(listElement, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false}
+                ],
+                throwOnError : false
+            });
         }
 
 
@@ -1830,7 +1832,7 @@
                 startNewGuessingGame();
                 startMemoryGame(true); // Gửi true để không hiển thị status start bằng tiếng Anh nếu default là Việt
                 
-                // Load Formulas ngay khi init (KaTeX cần được render)
+                // Load Formulas ngay khi init (KaTeX sẽ được xử lý Polling bên trong)
                 renderFormulaList(); 
 
                 // Mặc định hiển thị tab 'social'
