@@ -980,9 +980,9 @@
         function loadInitialMessages() {
             if (!chatRef) return;
             try {
-                // FIX: Sắp xếp theo "asc" (tăng dần) để tin nhắn cũ nhất lên đầu
-                // Đây là logic đã được xác nhận là đúng cho yêu cầu "sớm nhất ở đầu"
-                const q = query(chatRef, orderBy("timestamp", "asc"), limit(MESSAGE_LIMIT));
+                // FIX ĐỘT PHÁ: Đổi sang DESC (mới nhất trước) và dùng PREPEND để đảo ngược list
+                // => đảm bảo TIN NHẮN CŨ NHẤT (SỚM NHẤT) LÊN TRÊN CÙNG
+                const q = query(chatRef, orderBy("timestamp", "desc"), limit(MESSAGE_LIMIT));
 
                 // Real-time listener for the first batch
                 onSnapshot(q, (snapshot) => {
@@ -990,7 +990,7 @@
                     let tempLastVisible = null;
                     snapshot.docs.forEach((doc, index) => {
                         const data = doc.data();
-                        renderMessage(doc.id, data);
+                        renderMessage(doc.id, data); 
                         if (index === snapshot.docs.length - 1) {
                             tempLastVisible = doc;
                         }
@@ -1021,14 +1021,15 @@
             document.getElementById('load-more-btn').textContent = translations[currentLang]['loading_msg'];
 
             try {
-                // FIX: Load thêm tin nhắn theo "asc" (tăng dần) bắt đầu sau tin nhắn mới nhất của batch trước
-                const q = query(chatRef, orderBy("timestamp", "asc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
+                // FIX ĐỘT PHÁ: Đổi sang DESC (mới nhất trước) và dùng PREPEND để đảo ngược list
+                // startAfter(lastVisible) khi DESC sẽ lấy các tin nhắn cũ hơn lastVisible
+                const q = query(chatRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
                 let tempLastVisible = null;
 
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
-                    // Appending here will place newer messages *after* the existing list, maintaining the oldest-on-top order.
+                    // Thêm tin nhắn mới (cũ hơn) vào đầu danh sách để duy trì thứ tự CŨ NHẤT Ở TRÊN CÙNG
                     renderMessage(doc.id, data); 
                     if (index === snapshot.docs.length - 1) {
                         tempLastVisible = doc;
@@ -1074,14 +1075,14 @@
                     <span id="likes-text-${id}">${likeText}</span>
                 </div>
             `;
-            // Thêm vào cuối danh sách (appendChild). 
-            // Vì truy vấn là ASC (cũ nhất -> mới nhất), việc append sẽ đặt tin nhắn cũ nhất ở trên cùng.
-            messageList.appendChild(messageElement);
+            // Sử dụng prepend để đảo ngược thứ tự truy vấn (DESC)
+            // Query DESC (Mới nhất -> Cũ nhất) + Prepend = Cũ nhất (Sớm nhất) ở trên cùng.
+            messageList.prepend(messageElement);
         }
 
         window.toggleLike = async function(id, currentLikes) {
             if (!db) {
-                alert(currentLang === 'vi' ? "Lỗi: Hệ thống chat chưa được khởi tạo (Lỗi Firebase)." : "Error: Chat system not initialized (Firebase Error).");
+                alert(currentLang === 'vi' ? "Lỗi: Hệ thống chat chưa được khởi tạo (Lỗi Firebase)." : "Error: Chat system not initialized (Lỗi Firebase).");
                 return;
             }
             
