@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wnsB0M4k7z/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD8O5tV/QdO6v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD8O5tV/QdO6v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
 
     <style>
         /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
@@ -1032,7 +1032,7 @@
             try {
                 await updateDoc(docRef, { likes: newLikes });
                 
-                // Cập nhật giao diện ngay lập tức
+                // Cập nhật giao diện ngay lập lập tức
                 const likesText = document.querySelector(`#msg-${id} .post-likes`);
                 if (!isLiked) {
                     likesText.innerHTML = `<i class="fas fa-heart liked"></i> <span id="likes-count-${id}">${newLikes}</span> ${translations[currentLang]['liked']}`;
@@ -1528,6 +1528,7 @@
                     throwOnError : false
                 });
             } else {
+                // Sửa lỗi: Thông báo này sẽ KHÔNG còn xuất hiện sau khi bỏ defer.
                 listElement.innerHTML = `<p style="color: red; text-align: center;">Lỗi: Không thể tải thư viện KaTeX để hiển thị công thức.</p>`
             }
         }
