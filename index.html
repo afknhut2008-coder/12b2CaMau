@@ -449,7 +449,15 @@
     </div>
 
     <div class="container">
-
+        
+        <div id="firebase-error-alert" class="card" style="display: none; background: #ffebee; border-left: 5px solid #d32f2f;">
+            <p style="color: #c62828; font-weight: 700;"><i class="fas fa-exclamation-triangle"></i> LỖI CẤU HÌNH FIREBASE!</p>
+            <p style="font-size: 0.9rem; margin-top: 5px;">
+                Chức năng **Chat Ẩn Danh** và **Quiz** sẽ không hoạt động nếu bạn chưa điền đầy đủ thông tin `firebaseConfig` trong file HTML.
+                Vui lòng kiểm tra và điền **API Key** và **Project ID** của bạn.
+            </p>
+        </div>
+        
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="social" onclick="showTab('social')" data-i18n="social_tab">Social & Quiz</button>
             <button class="tab-btn" data-tab="games" onclick="showTab('games')" data-i18n="game_tab">Games (Tuổi Thơ)</button>
@@ -621,21 +629,23 @@
     
     <script>
         // --- CẤU HÌNH FIREBASE (THAY THẾ BẰNG THÔNG TIN CỦA BẠN) ---
+        // Vui lòng điền thông tin Cấu hình Firebase của bạn vào đây để kích hoạt Chat và Quiz
         const firebaseConfig = {
-            // apiKey: "YOUR_API_KEY",
-            // authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            // projectId: "YOUR_PROJECT_ID",
-            // storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            // messagingSenderId: "YOUR_SENDER_ID",
-            // appId: "YOUR_APP_ID"
+             // apiKey: "YOUR_API_KEY",
+             // authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+             // projectId: "YOUR_PROJECT_ID",
+             // storageBucket: "YOUR_PROJECT_ID.appspot.com",
+             // messagingSenderId: "YOUR_SENDER_ID",
+             // appId: "YOUR_APP_ID"
         };
         
         let db = null;
         let chatRef = null;
         let quizRef = null;
         let classSongsRef = null;
+        let isFirebaseConfigured = false;
         
-        // Khởi tạo Firebase (Nếu config đầy đủ)
+        // Khởi tạo Firebase 
         if (firebaseConfig.apiKey && firebaseConfig.projectId) {
             try {
                 firebase.initializeApp(firebaseConfig);
@@ -644,6 +654,7 @@
                 chatRef = db.collection("class12b2_chat");
                 quizRef = db.collection("class12b2_quiz");
                 classSongsRef = db.collection("class12b2_songs");
+                isFirebaseConfigured = true;
                 
             } catch (e) {
                 console.error("LỖI KHỞI TẠO FIREBASE: ", e);
@@ -651,6 +662,9 @@
             }
         } else {
             console.warn("Chưa cấu hình Firebase. Chat, Quiz, Song box sẽ không hoạt động.");
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('firebase-error-alert').style.display = 'block';
+            });
         }
 
         const { serverTimestamp, arrayUnion, arrayRemove, increment, query, orderBy, limit, startAfter, onSnapshot, addDoc, doc, updateDoc, getDocs, getDoc } = db ? firebase.firestore : {};
@@ -876,8 +890,8 @@
 
         // --- LOGIC CHAT ---
         window.sendMessage = async function() {
-            if (!chatRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Không thể kết nối Firebase để gửi tin nhắn." : "Error: Cannot connect to Firebase to send message.");
+            if (!isFirebaseConfigured || !chatRef) {
+                 alert(currentLang === 'vi' ? "LỖI: Chức năng Chat không hoạt động. Vui lòng cấu hình Firebase trong file HTML." : "ERROR: Chat feature is not working. Please configure Firebase in the HTML file.");
                  return;
             }
             const messageTextarea = document.getElementById('message-text');
@@ -901,7 +915,7 @@
                 messageTextarea.value = ''; // Clear input on success
             } catch (e) {
                 console.error("Error adding document: ", e);
-                alert(translations[currentLang]['error_send_msg']);
+                alert(translations[currentLang]['error_send_msg'] + " (Kiểm tra Firebase Rules!)");
             } finally {
                 sendButton.disabled = false;
                 sendButton.textContent = translations[currentLang]['send_msg'];
@@ -931,11 +945,9 @@
             const isLiked = likedMessages[id];
             
             const messageList = document.getElementById('message-list');
-            const newPost = document.createElement('div');
-            newPost.classList.add('post');
-            newPost.id = `msg-${id}`;
-            
-            newPost.innerHTML = `
+            const existingPost = document.getElementById(`msg-${id}`);
+
+            const htmlContent = `
                 <div style="font-size: 0.85rem; color: var(--light-text-color); margin-bottom: 5px; display: flex; justify-content: space-between;">
                     <span><i class="fas fa-user-secret"></i> ${translations[currentLang]['anonymous']}</span>
                     <span><i class="far fa-clock"></i> ${timeAgo}</span>
@@ -947,6 +959,27 @@
                     <span data-i18n="like">${translations[currentLang][isLiked ? 'liked' : 'like']}</span>
                 </div>
             `;
+            
+            if (existingPost) {
+                existingPost.innerHTML = htmlContent;
+                // Re-render KaTeX in the existing message
+                if (window.renderMathInElement) {
+                    renderMathInElement(existingPost, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "\\[", right: "\\]", display: true},
+                            {left: "$", right: "$", display: false},
+                            {left: "\\(", right: "\\)", display: false}
+                        ], throwOnError : false
+                    });
+                }
+                return;
+            }
+
+            const newPost = document.createElement('div');
+            newPost.classList.add('post');
+            newPost.id = `msg-${id}`;
+            newPost.innerHTML = htmlContent;
             messageList.appendChild(newPost);
             
              // Re-render KaTeX in the new message
@@ -963,7 +996,7 @@
         }
         
         function loadInitialMessages() {
-            if (!chatRef) return;
+            if (!isFirebaseConfigured || !chatRef) return;
             try {
                 const q = query(chatRef, orderBy("timestamp", "desc"), limit(MESSAGE_LIMIT));
                 
@@ -996,7 +1029,7 @@
         }
 
         window.loadMoreMessages = async function() {
-            if (!lastVisible || !chatRef) {
+            if (!lastVisible || !isFirebaseConfigured || !chatRef) {
                 document.getElementById('load-more-btn').style.display = 'none';
                 return;
             }
@@ -1033,7 +1066,10 @@
         }
         
         window.toggleLike = async function(id) {
-            if (!chatRef) return;
+            if (!isFirebaseConfigured || !chatRef) {
+                 alert(currentLang === 'vi' ? "LỖI: Chức năng Thích không hoạt động. Vui lòng cấu hình Firebase." : "ERROR: Like feature is not working. Please configure Firebase.");
+                 return;
+            }
             const isLiked = likedMessages[id];
             const docRef = doc(chatRef, id);
 
@@ -1087,6 +1123,13 @@
         }
 
         function initQuizState(resetScore = false) {
+            if (!isFirebaseConfigured || !quizRef) {
+                 document.getElementById('quiz-section').style.display = 'none';
+                 document.getElementById('name-input-section').innerHTML = `<p style="text-align: center; color: #dc3545;">${currentLang === 'vi' ? 'LỖI: Quiz không hoạt động. Vui lòng cấu hình Firebase.' : 'ERROR: Quiz is not working. Please configure Firebase.'}</p>`;
+                 document.getElementById('create-question-section').innerHTML = `<p style="text-align: center; color: #dc3545;">${currentLang === 'vi' ? 'LỖI: Chức năng đóng góp bị vô hiệu hóa do lỗi Firebase.' : 'ERROR: Contribution feature disabled due to Firebase error.'}</p>`;
+                 return;
+            }
+            
             if (resetScore) {
                 currentScore = 0;
                 questionsAttempted = 0;
@@ -1140,8 +1183,8 @@
         }
         
         async function loadAllQuizQuestions() {
-            if (!quizRef) {
-                 document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Lỗi: Chưa cấu hình Firebase Quiz.' : 'Error: Firebase Quiz is not configured.'}</p>`;
+            if (!isFirebaseConfigured || !quizRef) {
+                 document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'LỖI: Quiz không hoạt động. Vui lòng cấu hình Firebase.' : 'ERROR: Quiz is not working. Please configure Firebase.'}</p>`;
                  return;
             }
              document.getElementById('q-text').innerHTML = `<div class="skeleton" style="background-color: #e0e0e0; height: 20px; width: 80%; margin-bottom: 10px; border-radius: 4px;"></div>`;
@@ -1255,8 +1298,8 @@
         }
 
         window.submitUserQuestion = async function() {
-            if (!quizRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Không thể kết nối Firebase để gửi câu hỏi." : "Error: Cannot connect to Firebase to submit question.");
+            if (!isFirebaseConfigured || !quizRef) {
+                 alert(currentLang === 'vi' ? "LỖI: Chức năng tạo câu hỏi không hoạt động. Vui lòng cấu hình Firebase." : "ERROR: Question creation feature is not working. Please configure Firebase.");
                  return;
             }
             const qText = document.getElementById('q-text-input').value.trim();
@@ -1302,8 +1345,8 @@
         
         // --- LOGIC SONG BOX ---
         window.submitNewSong = async function() {
-            if (!classSongsRef) {
-                 alert(currentLang === 'vi' ? "Lỗi: Không thể kết nối Firebase để đề xuất bài hát." : "Error: Cannot connect to Firebase to suggest song.");
+            if (!isFirebaseConfigured || !classSongsRef) {
+                 alert(currentLang === 'vi' ? "LỖI: Chức năng đề xuất bài hát không hoạt động. Vui lòng cấu hình Firebase." : "ERROR: Song suggestion feature is not working. Please configure Firebase.");
                  return;
             }
             const title = document.getElementById('song-title-input').value.trim();
@@ -1383,7 +1426,7 @@
         }
         
         function loadClassSongs() {
-            if (!classSongsRef) return;
+            if (!isFirebaseConfigured || !classSongsRef) return;
             try {
                 // Query ordered by votes (descending) and then creation date (ascending) for tie-breaking
                 const q = query(classSongsRef, orderBy("votes", "desc"), orderBy("created_at", "asc"));
@@ -1412,7 +1455,10 @@
         }
 
         window.voteSong = async function(songId) {
-            if (!classSongsRef) return;
+            if (!isFirebaseConfigured || !classSongsRef) {
+                 alert(currentLang === 'vi' ? "LỖI: Chức năng Vote không hoạt động. Vui lòng cấu hình Firebase." : "ERROR: Vote feature is not working. Please configure Firebase.");
+                 return;
+            }
             const voteBtn = document.getElementById(`vote-btn-${songId}`);
             
             if (votedSongs[songId]) {
@@ -1437,12 +1483,13 @@
             }
         }
 
-        // --- LOGIC CÔNG THỨC TOÁN HỌC ---
+        // --- LOGIC CÔNG THỨC TOÁN HỌC (ĐÃ SỬA LỖI \pm, \sqrt) ---
         const formulaData = [
             {
                 category_vi: "Lý Thuyết Số & Lũy Thừa (Cấp 2)",
                 icon: "fa-superscript",
                 formulas: [
+                    // Đã sửa \\sqrt để tránh bị escape trong JS string
                     { name_vi: "Căn bậc hai", formula: "\\sqrt{a} \\cdot \\sqrt{b} = \\sqrt{a b}", variables_vi: "$a, b \\ge 0$" },
                     { name_vi: "Lũy thừa của lũy thừa", formula: "(a^m)^n = a^{m \\cdot n}", variables_vi: "$a$: số thực, $m, n$: số nguyên" },
                     { name_vi: "Quy tắc nhân lũy thừa", formula: "a^m \\cdot a^n = a^{m+n}" },
@@ -1467,8 +1514,10 @@
                 icon: "fa-vector-square",
                 formulas: [
                     { name_vi: "Vector giữa hai điểm (Mặt phẳng)", formula: "\\vec{AB} = (x_B - x_A; y_B - y_A)", variables_vi: "A, B là hai điểm trong mặt phẳng tọa độ" },
+                    // Đã sửa \\|\\vec{a}\\|
                     { name_vi: "Độ dài Vector (Mặt phẳng)", formula: "\\|\\vec{a}\\| = \\sqrt{a_1^2 + a_2^2}", variables_vi: "$a_1, a_2$: tọa độ của vector $\\vec{a}$" },
                     { name_vi: "Tích vô hướng (Mặt phẳng)", formula: "\\vec{a} \\cdot \\vec{b} = a_1 b_1 + a_2 b_2", variables_vi: "$a_1, a_2$ và $b_1, b_2$: tọa độ của $\\vec{a}$ và $\\vec{b}$" },
+                    // Đã sửa \\cos(\\vec{a}, \\vec{b}) và \\|\\vec{a}\\|
                     { name_vi: "Góc giữa hai Vector", formula: "\\cos(\\vec{a}, \\vec{b}) = \\frac{\\vec{a} \\cdot \\vec{b}}{\\|\\vec{a}\\| \\|\\vec{b}\\|}", variables_vi: "$\\vec{a} \\cdot \\vec{b}$: tích vô hướng; $\\|\\vec{a}\\|$: độ dài" },
                 ]
             },
@@ -1490,7 +1539,7 @@
                     { name_vi: "Đạo hàm: Hàm Logarit", formula: "(\\ln x)' = \\frac{1}{x}", variables_vi: "$x > 0$" },
                     { name_vi: "Tích phân cơ bản", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\ne -1$" },
                     { name_vi: "Tích phân Logarit", formula: "\\int \\frac{1}{x} dx = \\ln|x| + C", variables_vi: "$x \\ne 0$" },
-                    // Ví dụ thêm Công thức nghiệm phương trình bậc hai
+                    // ĐÃ SỬA LỖI \pm và \sqrt
                     { name_vi: "Nghiệm phương trình bậc hai", formula: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", variables_vi: "$ax^2 + bx + c = 0, a \\ne 0$" },
                 ]
             },
@@ -1538,7 +1587,7 @@
                          <li>$V$: Thể tích</li>
                          <li>$r$: Bán kính</li>
                          <li>$h$: Chiều cao</li>
-                         <li>$\int$: Tích phân</li>
+                         <li>$\\int$: Tích phân</li>
                          <li>' : Đạo hàm</li>
                      </ul>
                  </p>
@@ -1568,7 +1617,6 @@
                 content.style.display = 'none'; // Default to collapsed
                 
                 category.formulas.forEach(item => {
-                    // *** ĐIỂM CỐT LÕI ĐỂ KHẮC PHỤC LỖI HIỂN THỊ CÔNG THỨC ***
                     // Bao bọc chuỗi công thức bằng $$...$$ để buộc KaTeX hiển thị ở chế độ Block (Display Mode).
                     const formulaWithDelimiters = `$$${item.formula}$$`;
                     
@@ -1877,7 +1925,7 @@
         window.initApp = function() {
              try {
                 applyLanguage(currentLang);
-                if (db) { 
+                if (isFirebaseConfigured) { 
                     loadInitialMessages();
                     initQuizState(false);
                     loadClassSongs(); 
