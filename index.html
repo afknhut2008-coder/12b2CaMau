@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wnsB0M4k7z/wS78p2e1b+9b/3sC6JqA8N9b/MhV9P9Jz2P/g9Z6n2e4W5E2+6qg3n" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK4D1z9+h/J+K5o1hA8N7J9/wR/1J9v8l+9x7f2+6qg3n" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD8O5tV/QdO6v25/jY5V5r3q2kQ8V+8f5D9F4e4W6+E9Z6g9n" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-S3t+0w/Xh37x7aF/cK..." crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-y0Hk2T46u6eN5pD46sDkI7g5eF2N99d2K9zC4gA5D8G0wF7xL7n7N1J8x5F5J..." crossorigin="anonymous"></script>
 
     <style>
         /* CSS TỐI ƯU HÓA GIAO DIỆN MỚI (V3 - Tabs Updated) */
@@ -177,15 +177,15 @@
             box-shadow: 0 3px 10px rgba(74, 0, 224, 0.4);
         }
 
-        /* NEW: CÔNG THỨC TOÁN HỌC STYLES */
-        .formula-card {
+        /* NEW: CÔNG THỨC TOÁN HỌC STYLES - ĐÃ CẢI THIỆN */
+        .formula-card { 
             background: #ffffff; 
             padding: 15px; 
             border-left: 5px solid var(--secondary-color); 
-            border-radius: var(--radius-medium);
-            box-shadow: var(--shadow-soft);
-            margin-bottom: 15px;
-            transition: transform 0.2s;
+            border-radius: var(--radius-medium); 
+            box-shadow: var(--shadow-soft); 
+            margin-bottom: 15px; 
+            transition: transform 0.2s; 
         }
         .formula-card:hover {
             transform: translateY(-2px);
@@ -199,12 +199,15 @@
             padding-bottom: 5px;
             border-bottom: 1px dashed var(--border-color);
         }
+        /* Đã chỉnh lại CSS để KaTeX đẹp hơn */
         .formula-katex-display {
-            font-size: 1.5rem; /* Tăng kích thước KaTeX */
+            font-size: 1.7rem; /* Tăng kích thước KaTeX để dễ nhìn hơn */
             text-align: center;
-            margin: 10px 0;
+            margin: 15px 0; /* Tăng khoảng cách trên dưới */
             overflow-x: auto; /* Xử lý công thức dài */
-            padding: 10px 0;
+            padding: 15px 10px; /* Tăng padding xung quanh */
+            background-color: #f7f7f7; /* Thêm nền nhẹ để phân biệt rõ ràng */
+            border-radius: var(--radius-small);
         }
         .formula-variables {
             font-size: 0.9rem;
@@ -428,7 +431,10 @@
             .memory-card { height: 70px; }
             .card-face { font-size: 1.5rem; }
             #tictactoe-board { width: 180px; height: 180px; }
-            .formula-katex-display { font-size: 1.3rem; }
+            .formula-katex-display { 
+                font-size: 1.5rem; /* Tăng kích thước KaTeX trên di động */
+                padding: 10px 5px; /* Giảm padding ngang cho di động */
+            }
         }
     </style>
 </head>
@@ -573,12 +579,26 @@
                     </div>
                 <button id="memory-new-game-button" class="game-button" onclick="startMemoryGame(false)" data-i18n="memory_new_game" style="width: 100%; margin-top: 15px;">Chơi mới</button>
             </div>
+
+            <hr>
+            
+            <div class="guessing-wrapper card">
+                <h4 style="color: var(--text-color);"><i class="fas fa-dice"></i> <span data-i18n="guess_title">Trò Chơi Đoán Số (1-100)</span></h4>
+                <p id="guess-status" style="margin-bottom: 15px; font-weight: 600; color: var(--primary-color);" data-i18n="guess_status_start">Bạn có 10 lần đoán!</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="number" id="guess-input" data-i18n-placeholder="guess_input_ph" placeholder="Nhập số (1-100)" min="1" max="100" style="margin-bottom: 0;">
+                    <button id="guess-button" class="game-button" onclick="checkGuess()" data-i18n="guess_btn" style="width: 100px; flex-shrink: 0;">Đoán</button>
+                </div>
+                <p id="guess-result" style="color: #dc3545; font-weight: 600; margin-bottom: 10px;"></p>
+                <p id="guess-log" style="font-size: 0.9rem; color: var(--light-text-color);"></p>
+                <button id="guess-new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="width: 100%; margin-top: 15px;">Chơi mới</button>
+            </div>
             
             <hr>
-
-            <div class="tictactoe-wrapper card">
-                <h4 style="color: var(--text-color);"><i class="fas fa-border-all"></i> <span data-i18n="tictactoe_title">Chơi Cờ Caro (Tic-Tac-Toe)</span></h4>
-                <div id="tictactoe-status" data-i18n="tictactoe_status_x">Lượt của X</div>
+            
+            <div class="guessing-wrapper card">
+                <h4 style="color: var(--text-color);"><i class="fas fa-times"></i> <span data-i18n="tictactoe_title">Cờ Caro (Tic-Tac-Toe)</span></h4>
+                <p id="tictactoe-status" data-i18n="tictactoe_status_x">Lượt của X</p>
                 <div id="tictactoe-board">
                     <div class="cell" data-index="0"></div>
                     <div class="cell" data-index="1"></div>
@@ -590,106 +610,216 @@
                     <div class="cell" data-index="7"></div>
                     <div class="cell" data-index="8"></div>
                 </div>
-                <button id="tictactoe-reset" data-i18n="tictactoe_reset" onclick="resetGame()" class="btn-send" style="background: #6c757d;">Chơi lại</button>
+                <button class="game-button" onclick="resetTicTacToe()" data-i18n="new_game_btn" style="width: 100%; margin-top: 15px;">Chơi mới</button>
             </div>
             
-            <hr>
-
-            <div class="guessing-wrapper card">
-                <h4 style="color: var(--text-color);"><i class="fas fa-hashtag"></i> <span data-i18n="guessing_title">Game Đoán Số (1-100)</span></h4>
-                <p data-i18n="guessing_prompt">Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!</p>
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
-                    <input type="number" id="guess-input" min="1" max="100" data-i18n-placeholder="guess_ph" placeholder="Nhập số" style="flex-grow: 1; margin-bottom: 0;">
-                    <button id="guess-button" class="game-button" onclick="checkGuess()" data-i18n="guess_btn" style="width: 100px;">Đoán</button>
-                </div>
-                <div id="guess-result" style="margin-top: 15px; font-weight: 600; font-size: 1.1rem;"></div>
-                <div id="guess-log" style="color: var(--light-text-color); font-size: 0.9rem; margin-top: 5px;"></div>
-                <button id="new-game-button" class="game-button" onclick="startNewGuessingGame()" data-i18n="new_game_btn" style="background: var(--secondary-color); margin-top: 15px; width: 100%;">Chơi mới</button>
-            </div>
-            
-        </div> 
+        </div>
     </div>
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js" type="module"></script>
     
-    <script type="module">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // --- CẤU HÌNH FIREBASE (THAY THẾ BẰNG THÔNG TIN CỦA BẠN) ---
+        const firebaseConfig = {
+            // apiKey: "YOUR_API_KEY",
+            // authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            // projectId: "YOUR_PROJECT_ID",
+            // storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            // messagingSenderId: "YOUR_SENDER_ID",
+            // appId: "YOUR_APP_ID"
+        };
         
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, query, orderBy, onSnapshot, serverTimestamp, getDocs, limit, startAfter, updateDoc, increment, getDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        let db = null;
+        let chatRef = null;
+        let quizRef = null;
+        let classSongsRef = null;
         
-        // --- CẤU HÌNH NGÔN NGỮ & BIẾN TOÀN CỤC ---
-        let currentLang = localStorage.getItem('appLang') || 'vi';
+        // Khởi tạo Firebase (Nếu config đầy đủ)
+        if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                // Khai báo collections
+                chatRef = db.collection("class12b2_chat");
+                quizRef = db.collection("class12b2_quiz");
+                classSongsRef = db.collection("class12b2_songs");
+                
+            } catch (e) {
+                console.error("LỖI KHỞI TẠO FIREBASE: ", e);
+                db = null;
+            }
+        } else {
+            console.warn("Chưa cấu hình Firebase. Chat, Quiz, Song box sẽ không hoạt động.");
+        }
+
+        const { serverTimestamp, arrayUnion, arrayRemove, increment, query, orderBy, limit, startAfter, onSnapshot, addDoc, doc, updateDoc, getDocs, getDoc } = db ? firebase.firestore : {};
+        
+        // --- HẰNG SỐ CHUNG ---
         const MESSAGE_LIMIT = 5;
         let lastVisible = null;
-
+        let likedMessages = JSON.parse(localStorage.getItem('likedMessages') || '{}');
+        let votedSongs = JSON.parse(localStorage.getItem('votedSongs') || '{}');
+        
+        // --- LOGIC ĐA NGÔN NGỮ ---
+        let currentLang = localStorage.getItem('appLang') || 'vi';
         const translations = {
             'vi': {
-                'community': 'Cộng Đồng', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Tuổi Thơ)',
-                'chat_title': 'Góc Chat Ẩn Danh', 'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...', 'send_msg': 'Gửi tin nhắn',
-                'load_more_msg': 'Xem thêm tin nhắn', 'anonymous': 'Ẩn danh', 'just_now': 'Vừa xong',
-                'like': 'Lượt thích', 'liked': 'Lượt thích (Đã thích)', 'error_send_msg': 'Lỗi gửi tin nhắn.',
+                'community': 'Cộng Đồng',
+                'social_tab': 'Social & Quiz',
+                'game_tab': 'Games (Tuổi Thơ)',
+                // Chat
+                'chat_title': 'Góc Chat Ẩn Danh',
+                'chat_placeholder': 'Gửi tin nhắn ẩn danh cho cả lớp...',
+                'send_msg': 'Gửi tin nhắn',
+                'load_more_msg': 'Xem thêm tin nhắn',
+                'anonymous': 'Ẩn danh',
+                'just_now': 'Vừa xong',
+                'like': 'Lượt thích',
+                'liked': 'Lượt thích (Đã thích)',
+                'error_send_msg': 'Lỗi gửi tin nhắn.',
                 // Quiz
-                'quiz_title': 'Thử Thách Đố Vui (10 Câu)', 'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên:',
-                'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)', 'start_quiz': 'Bắt đầu Quiz',
-                'welcome': 'Chào mừng', 'completed': 'Đã xong', 'score': 'Điểm', 'next_q': 'Câu tiếp theo',
-                'quiz_done_h3': 'Hoàn thành!', 'final_score_p': 'Tổng điểm của bạn', 'play_again': 'Làm lại',
-                'create_q_title': 'Tạo Câu Hỏi Mới', 'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):',
-                'q_content_ph': 'Nội dung Câu hỏi', 'ans_a_ph': 'Đáp án A', 'ans_b_ph': 'Đáp án B',
-                'ans_c_ph': 'Đáp án C', 'ans_d_ph': 'Đáp án D', 'select_correct_ans': 'Chọn Đáp án Đúng',
-                'ans_a_correct': 'Đáp án A là đúng', 'ans_b_correct': 'Đáp án B là đúng', 'ans_c_correct': 'Đáp án C là đúng',
-                'ans_d_correct': 'Đáp án D là đúng', 'category_ph': 'Chủ đề (ví dụ: Toán, Lý)', 'submit_q': 'Gửi đóng góp', 
-                // Formulas
-                'formulas_title': 'Công Thức Toán Học (Lớp 1-12)', 
+                'quiz_title': 'Thử Thách Đố Vui (10 Câu)',
+                'name_prompt': 'Bắt đầu Quiz! Vui lòng nhập tên:',
+                'name_placeholder': 'Tên của bạn (ví dụ: Nam Kế Toán)',
+                'start_quiz': 'Bắt đầu Quiz',
+                'welcome': 'Chào mừng',
+                'completed': 'Đã xong',
+                'score': 'Điểm',
+                'next_q': 'Câu tiếp theo',
+                'quiz_done_h3': 'Hoàn thành!',
+                'final_score_p': 'Tổng điểm của bạn',
+                'play_again': 'Làm lại',
+                'create_q_title': 'Tạo Câu Hỏi Mới',
+                'contribute_q': 'Đóng góp Quiz (Câu hỏi được dùng ngay):',
+                'q_content_ph': 'Nội dung Câu hỏi',
+                'ans_a_ph': 'Đáp án A',
+                'ans_b_ph': 'Đáp án B',
+                'ans_c_ph': 'Đáp án C',
+                'ans_d_ph': 'Đáp án D',
+                'select_correct_ans': 'Chọn Đáp án Đúng',
+                'ans_a_correct': 'Đáp án A là đúng',
+                'ans_b_correct': 'Đáp án B là đúng',
+                'ans_c_correct': 'Đáp án C là đúng',
+                'ans_d_correct': 'Đáp án D là đúng',
+                'category_ph': 'Chủ đề (ví dụ: Toán, Lý)',
+                'submit_q': 'Gửi đóng góp',
                 // Song Box
-                'song_box_title': 'Hộp Nhạc Kỷ Niệm (Playlist Lớp)', 'song_input_title_ph': 'Tên bài hát và ca sĩ', 
-                'song_input_url_ph': 'Link YouTube/Spotify của bài hát', 'song_input_memory_ph': 'Kỷ niệm/Lý do đề xuất (tùy chọn)', 
-                'song_input_sender_ph': 'Tên người đề xuất (tùy chọn)', 'song_submit_btn': 'Đề Xuất Bài Hát', 'song_vote_btn': 'Bình Chọn', 
-                'song_voted': 'Đã Bình Chọn', 'song_list_sender': 'Đề xuất bởi', 'song_list_votes': 'Bình chọn', 
-                'song_list_no_songs': 'Chưa có bài hát nào được đề xuất. Hãy là người đầu tiên!', 'song_error_required': 'Vui lòng nhập Tên bài hát và Link hợp lệ.', 
-                'song_voted_error': 'Bạn chỉ có thể bình chọn cho mỗi bài hát một lần.',
+                'song_box_title': 'Hộp Nhạc Kỷ Niệm (Playlist Lớp)',
+                'song_input_title_ph': 'Tên bài hát và ca sĩ',
+                'song_input_url_ph': 'Link YouTube/Spotify của bài hát',
+                'song_input_memory_ph': 'Kỷ niệm/Lý do đề xuất (tùy chọn)',
+                'song_input_sender_ph': 'Tên người đề xuất (tùy chọn)',
+                'song_submit_btn': 'Đề Xuất Bài Hát',
+                'song_list_sender': 'Người gửi',
+                'song_list_votes': 'Lượt vote',
+                'song_list_vote_btn': 'Vote',
+                'song_list_voted_btn': 'Đã Vote',
+                'song_list_top_badge': 'TOP 1',
+                'song_list_no_songs': 'Chưa có bài hát nào được đề xuất.',
+                // Formulas
+                'formulas_title': 'Công Thức Toán Học (Lớp 1-12)',
                 // Games
-                'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ', 'tictactoe_title': 'Chơi Cờ Caro (Tic-Tac-Toe)', 'tictactoe_status_x': 'Lượt của X', 
-                'tictactoe_status_o': 'Lượt của O', 'tictactoe_win_x': 'X thắng!', 'tictactoe_win_o': 'O thắng!', 'tictactoe_draw': 'Hòa!', 
-                'tictactoe_reset': 'Chơi lại', 'guessing_title': 'Game Đoán Số (1-100)', 'guessing_prompt': 'Tôi đã chọn một số từ 1 đến 100. Bạn có 10 lần đoán!', 
-                'guess_ph': 'Nhập số', 'guess_btn': 'Đoán', 'guess_low': 'Quá thấp! Đoán số lớn hơn.', 'guess_high': 'Quá cao! Đoán số nhỏ hơn.', 
-                'guess_win': '🎉 CHÚC MỪNG! Bạn đã đoán đúng số %s!', 'guess_lose': 'HẾT LƯỢT! Số bí mật là %s.', 'guess_input_error': 'Vui lòng nhập số hợp lệ (1-100).', 
-                'guess_try_left': 'Còn lại: %t lần đoán', 'new_game_btn': 'Chơi mới', 'memory_title': 'Game Ghép Cặp (Memory Match)', 
-                'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!', 'memory_status_turn': 'Lượt đi: %t', 'memory_status_win': '🏆 HOÀN THÀNH trong %t lượt đi!', 
+                'tictactoe_title': 'Cờ Caro (Tic-Tac-Toe)',
+                'tictactoe_status_x': 'Lượt của X',
+                'tictactoe_status_o': 'Lượt của O',
+                'tictactoe_status_win': '🏆 Người thắng: %s!',
+                'tictactoe_status_draw': 'HÒA!',
+                'game_h3': 'Khu Vực Trò Chơi Tuổi Thơ',
+                'guess_title': 'Trò Chơi Đoán Số (1-100)',
+                'guess_status_start': 'Bạn có 10 lần đoán!',
+                'guess_input_ph': 'Nhập số (1-100)',
+                'guess_btn': 'Đoán',
+                'guess_low': 'Thấp hơn! Hãy thử lại.',
+                'guess_high': 'Cao hơn! Hãy thử lại.',
+                'guess_win': '🏆 CHÍNH XÁC! Số bí mật là %s!',
+                'guess_lose': 'HẾT LƯỢT! Số bí mật là %s.',
+                'guess_input_error': 'Vui lòng nhập số hợp lệ (1-100).',
+                'guess_try_left': 'Còn lại: %t lần đoán',
+                'new_game_btn': 'Chơi mới',
+                'memory_title': 'Game Ghép Cặp (Memory Match)',
+                'memory_status_start': 'Bấm "Chơi mới" để bắt đầu!',
+                'memory_status_turn': 'Lượt đi: %t',
+                'memory_status_win': '🏆 HOÀN THÀNH trong %t lượt đi!',
                 'memory_new_game': 'Chơi mới'
             },
             'en': {
-                'community': 'Community', 'social_tab': 'Social & Quiz', 'game_tab': 'Games (Childhood)',
-                'chat_title': 'Anonymous Chat Corner', 'chat_placeholder': 'Send an anonymous message to the class...', 'send_msg': 'Send Message',
-                'load_more_msg': 'Load more messages', 'anonymous': 'Anonymous', 'just_now': 'Just now',
-                'like': 'Likes', 'liked': 'Likes (Liked)', 'error_send_msg': 'Error sending message.',
+                'community': 'Community',
+                'social_tab': 'Social & Quiz',
+                'game_tab': 'Games (Childhood)',
+                // Chat
+                'chat_title': 'Anonymous Chat Corner',
+                'chat_placeholder': 'Send an anonymous message to the class...',
+                'send_msg': 'Send Message',
+                'load_more_msg': 'Load more messages',
+                'anonymous': 'Anonymous',
+                'just_now': 'Just now',
+                'like': 'Likes',
+                'liked': 'Likes (Liked)',
+                'error_send_msg': 'Error sending message.',
                 // Quiz
-                'quiz_title': 'Quiz Challenge (10 Questions)', 'name_prompt': 'Start Quiz! Please enter your name:',
-                'name_placeholder': 'Your Name (e.g., Nam Accountant)', 'start_quiz': 'Start Quiz',
-                'welcome': 'Welcome', 'completed': 'Completed', 'score': 'Score', 'next_q': 'Next Question',
-                'quiz_done_h3': 'Finished!', 'final_score_p': 'Your total score', 'play_again': 'Play Again',
-                'create_q_title': 'Create New Question', 'contribute_q': 'Contribute Quiz (Question is used immediately):',
-                'q_content_ph': 'Question Content', 'ans_a_ph': 'Answer A', 'ans_b_ph': 'Answer B',
-                'ans_c_ph': 'Answer C', 'ans_d_ph': 'Answer D', 'select_correct_ans': 'Select Correct Answer',
-                'ans_a_correct': 'Answer A is correct', 'ans_b_correct': 'Answer B is correct', 'ans_c_correct': 'Answer C is correct',
-                'ans_d_correct': 'Answer D is correct', 'category_ph': 'Category (e.g., Math, Physics)', 'submit_q': 'Submit Contribution',
-                // Formulas
-                'formulas_title': 'Math Formulas (Grade 1-12)', 
+                'quiz_title': 'Quiz Challenge (10 Questions)',
+                'name_prompt': 'Start Quiz! Please enter your name:',
+                'name_placeholder': 'Your Name (e.g., Nam Accountant)',
+                'start_quiz': 'Start Quiz',
+                'welcome': 'Welcome',
+                'completed': 'Completed',
+                'score': 'Score',
+                'next_q': 'Next Question',
+                'quiz_done_h3': 'Finished!',
+                'final_score_p': 'Your total score',
+                'play_again': 'Play Again',
+                'create_q_title': 'Create New Question',
+                'contribute_q': 'Contribute Quiz (Question is used immediately):',
+                'q_content_ph': 'Question Content',
+                'ans_a_ph': 'Answer A',
+                'ans_b_ph': 'Answer B',
+                'ans_c_ph': 'Answer C',
+                'ans_d_ph': 'Answer D',
+                'select_correct_ans': 'Select Correct Answer',
+                'ans_a_correct': 'Answer A is correct',
+                'ans_b_correct': 'Answer B is correct',
+                'ans_c_correct': 'Answer C is correct',
+                'ans_d_correct': 'Answer D is correct',
+                'category_ph': 'Category (e.g., Math, Physics)',
+                'submit_q': 'Submit Contribution',
                 // Song Box
-                'song_box_title': 'Class Song Playlist Box', 'song_input_title_ph': 'Song title and artist', 
-                'song_input_url_ph': 'YouTube/Spotify Link to the song', 'song_input_memory_ph': 'Related memory/Reason (optional)', 
-                'song_input_sender_ph': 'Suggester\'s name (optional)', 'song_submit_btn': 'Suggest Song', 'song_vote_btn': 'Vote', 
-                'song_voted': 'Voted', 'song_list_sender': 'Suggested by', 'song_list_votes': 'Votes', 
-                'song_list_no_songs': 'No songs suggested yet. Be the first!', 'song_error_required': 'Please enter a Song Title and a valid Link.', 
-                'song_voted_error': 'You can only vote for each song once.',
+                'song_box_title': 'Class Memory Song Box (Playlist)',
+                'song_input_title_ph': 'Song Title and Artist',
+                'song_input_url_ph': 'YouTube/Spotify Link',
+                'song_input_memory_ph': 'Memory/Reason for Suggestion (optional)',
+                'song_input_sender_ph': 'Proposer Name (optional)',
+                'song_submit_btn': 'Suggest Song',
+                'song_list_sender': 'Sender',
+                'song_list_votes': 'Votes',
+                'song_list_vote_btn': 'Vote',
+                'song_list_voted_btn': 'Voted',
+                'song_list_top_badge': 'TOP 1',
+                'song_list_no_songs': 'No songs have been suggested yet.',
+                // Formulas
+                'formulas_title': 'Math Formulas (Grade 1-12)',
                 // Games
-                'game_h3': 'Childhood Games Area', 'tictactoe_title': 'Tic-Tac-Toe', 'tictactoe_status_x': 'X\'s turn', 
-                'tictactoe_status_o': 'O\'s turn', 'tictactoe_win_x': 'X Wins!', 'tictactoe_win_o': 'O Wins!', 'tictactoe_draw': 'Draw!', 
-                'tictactoe_reset': 'Reset Game', 'guessing_title': 'Number Guessing Game (1-100)', 'guessing_prompt': 'I have selected a number between 1 and 100. You have 10 guesses!', 
-                'guess_ph': 'Enter number', 'guess_btn': 'Guess', 'guess_low': 'Too low! Guess higher.', 'guess_high': 'Too high! Guess lower.', 
-                'guess_win': '🎉 CONGRATULATIONS! You guessed the number %s!', 'guess_lose': 'OUT OF TURNS! The secret number was %s.', 'guess_input_error': 'Please enter a valid number (1-100).', 
-                'guess_try_left': 'Guesses left: %t', 'new_game_btn': 'New Game', 'memory_title': 'Memory Match Game', 
-                'memory_status_start': 'Click "New Game" to start!', 'memory_status_turn': 'Moves: %t', 'memory_status_win': '🏆 FINISHED in %t moves!', 
+                'tictactoe_title': 'Tic-Tac-Toe',
+                'tictactoe_status_x': 'X\'s turn',
+                'tictactoe_status_o': 'O\'s turn',
+                'tictactoe_status_win': '🏆 Winner: %s!',
+                'tictactoe_status_draw': 'DRAW!',
+                'game_h3': 'Childhood Games Area',
+                'guess_title': 'Number Guessing Game (1-100)',
+                'guess_status_start': 'You have 10 guesses!',
+                'guess_input_ph': 'Enter number (1-100)',
+                'guess_btn': 'Guess',
+                'guess_low': 'Too low! Try again.',
+                'guess_high': 'Too high! Try again.',
+                'guess_win': '🏆 CORRECT! The secret number was %s!',
+                'guess_lose': 'GAME OVER! The secret number was %s.',
+                'guess_input_error': 'Please enter a valid number (1-100).',
+                'guess_try_left': 'Guesses Left: %t',
+                'new_game_btn': 'New Game',
+                'memory_title': 'Memory Match Game',
+                'memory_status_start': 'Click "New Game" to start!',
+                'memory_status_turn': 'Moves: %t',
+                'memory_status_win': '🏆 FINISHED in %t moves!',
                 'memory_new_game': 'New Game'
             }
         };
@@ -705,7 +835,7 @@
             // Re-render messages/songs if visible to update timestamps/buttons
             if (document.getElementById('social').style.display === 'block' && db) {
                 loadInitialMessages();
-                loadClassSongs();
+                loadClassSongs(); 
             }
             // Update quiz status
             updateQuizStats();
@@ -733,74 +863,105 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
 
-            if (tabId === 'games' && !window.gamesInitialized) { 
-                initTicTacToe(); 
-                startNewGuessingGame(); 
-                startMemoryGame(true); 
-                window.gamesInitialized = true; 
-            } else if (tabId === 'formulas' && !window.formulasInitialized) { 
-                renderFormulaList(); 
-                window.formulasInitialized = true; 
+            if (tabId === 'games' && !window.gamesInitialized) {
+                initTicTacToe();
+                startNewGuessingGame();
+                startMemoryGame(true);
+                window.gamesInitialized = true;
+            } else if (tabId === 'formulas' && !window.formulasInitialized) {
+                 renderFormulaList();
+                 window.formulasInitialized = true;
             }
         }
 
-        // ⚠️ CẤU HÌNH FIREBASE // Dòng 1: Khóa Firebase API KEY (PHẢI THAY THẾ BẰNG KEY CỦA BẠN!)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBSqEO-mi650wMN2gwVac3nwLFtg4TTX80", // 👈 THAY THẾ KEY NÀY!
-            authDomain: "b2-6431c.firebaseapp.com",
-            projectId: "b2-6431c",
-            storageBucket: "b2-6431c.appspot.com",
-            messagingSenderId: "164059778488",
-            appId: "1:164059778488:web:9eca97e23ab644df48534d",
-            measurementId: "G-19QWD4RCYC"
-        };
-        let db = null;
-        let chatRef = null;
-        let quizRef = null;
-        let classSongsRef = null;
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            chatRef = collection(db, "anonymous_messages");
-            quizRef = collection(db, "quiz_questions");
-            classSongsRef = collection(db, "class_songs");
-            console.log("Firebase initialized successfully.");
-        } catch (e) {
-            console.error("Lỗi FATAL: Firebase KHÔNG được khởi tạo.", e);
-            alert("Lỗi nghiêm trọng: Không thể kết nối Firebase. Kiểm tra Console Log (F12) để biết chi tiết.");
-        }
-
-
-        // --- LOGIC CHAT ẨN DANH ---
+        // --- LOGIC CHAT ---
         window.sendMessage = async function() {
-            if (!chatRef) return;
+            if (!chatRef) {
+                 alert(currentLang === 'vi' ? "Lỗi: Không thể kết nối Firebase để gửi tin nhắn." : "Error: Cannot connect to Firebase to send message.");
+                 return;
+            }
             const messageTextarea = document.getElementById('message-text');
-            const message = messageTextarea.value.trim();
+            const messageText = messageTextarea.value.trim();
             const sendButton = document.getElementById('btn-send-msg');
 
-            if (message === '') {
-                alert(currentLang === 'vi' ? "Vui lòng nhập nội dung tin nhắn." : "Please enter a message content.");
+            if (messageText === "") {
+                alert(currentLang === 'vi' ? "Vui lòng nhập nội dung tin nhắn." : "Please enter message content.");
                 return;
             }
-
+            
             sendButton.disabled = true;
+            sendButton.textContent = currentLang === 'vi' ? 'Đang gửi...' : 'Sending...';
 
             try {
                 await addDoc(chatRef, {
-                    text: message,
+                    text: messageText,
                     timestamp: serverTimestamp(),
                     likes: 0
                 });
-                messageTextarea.value = '';
+                messageTextarea.value = ''; // Clear input on success
             } catch (e) {
                 console.error("Error adding document: ", e);
                 alert(translations[currentLang]['error_send_msg']);
             } finally {
                 sendButton.disabled = false;
+                sendButton.textContent = translations[currentLang]['send_msg'];
             }
         }
 
+        function timeSince(date) {
+            if (!date) return translations[currentLang]['just_now'];
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) { return currentLang === 'vi' ? Math.floor(interval) + " năm trước" : Math.floor(interval) + " years ago"; }
+            interval = seconds / 2592000;
+            if (interval > 1) { return currentLang === 'vi' ? Math.floor(interval) + " tháng trước" : Math.floor(interval) + " months ago"; }
+            interval = seconds / 86400;
+            if (interval > 1) { return currentLang === 'vi' ? Math.floor(interval) + " ngày trước" : Math.floor(interval) + " days ago"; }
+            interval = seconds / 3600;
+            if (interval > 1) { return currentLang === 'vi' ? Math.floor(interval) + " giờ trước" : Math.floor(interval) + " hours ago"; }
+            interval = seconds / 60;
+            if (interval > 1) { return currentLang === 'vi' ? Math.floor(interval) + " phút trước" : Math.floor(interval) + " minutes ago"; }
+            return translations[currentLang]['just_now'];
+        }
+
+        function renderMessage(id, data) {
+            const date = data.timestamp ? data.timestamp.toDate() : null;
+            const timeAgo = timeSince(date);
+            const isLiked = likedMessages[id];
+            
+            const messageList = document.getElementById('message-list');
+            const newPost = document.createElement('div');
+            newPost.classList.add('post');
+            newPost.id = `msg-${id}`;
+            
+            newPost.innerHTML = `
+                <div style="font-size: 0.85rem; color: var(--light-text-color); margin-bottom: 5px; display: flex; justify-content: space-between;">
+                    <span><i class="fas fa-user-secret"></i> ${translations[currentLang]['anonymous']}</span>
+                    <span><i class="far fa-clock"></i> ${timeAgo}</span>
+                </div>
+                <p style="white-space: pre-wrap;">${data.text}</p>
+                <div class="post-likes" onclick="toggleLike('${id}')">
+                    <i class="fas fa-heart ${isLiked ? 'liked' : ''}"></i> 
+                    <span id="likes-count-${id}">${data.likes || 0}</span> 
+                    <span data-i18n="like">${translations[currentLang][isLiked ? 'liked' : 'like']}</span>
+                </div>
+            `;
+            messageList.appendChild(newPost);
+            
+             // Re-render KaTeX in the new message
+             if (window.renderMathInElement) {
+                renderMathInElement(newPost, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "\\[", right: "\\]", display: true},
+                        {left: "$", right: "$", display: false},
+                        {left: "\\(", right: "\\)", display: false}
+                    ], throwOnError : false
+                });
+            }
+        }
+        
         function loadInitialMessages() {
             if (!chatRef) return;
             try {
@@ -839,14 +1000,15 @@
                 document.getElementById('load-more-btn').style.display = 'none';
                 return;
             }
+            
             document.getElementById('load-more-btn').disabled = true;
             document.getElementById('load-more-btn').textContent = currentLang === 'vi' ? 'Đang tải...' : 'Loading...';
             
             try {
                 const q = query(chatRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(MESSAGE_LIMIT));
                 const snapshot = await getDocs(q);
-                let tempLastVisible = null;
                 
+                let tempLastVisible = null;
                 snapshot.docs.forEach((doc, index) => {
                     const data = doc.data();
                     renderMessage(doc.id, data);
@@ -862,67 +1024,46 @@
                     lastVisible = tempLastVisible;
                 }
             } catch (e) {
-                console.error("Error loading more documents: ", e);
+                console.error("Lỗi tải thêm tin nhắn: ", e);
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi tải thêm tin nhắn." : "An error occurred while loading more messages.");
             } finally {
                 document.getElementById('load-more-btn').disabled = false;
                 document.getElementById('load-more-btn').textContent = translations[currentLang]['load_more_msg'];
             }
         }
-
-        function renderMessage(id, data) {
-            const messageList = document.getElementById('message-list');
-            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(currentLang) : translations[currentLang]['just_now'];
-            
-            // Check if liked by this user
-            const likedMessages = JSON.parse(localStorage.getItem('likedMessages')) || {};
-            const isLiked = likedMessages[id] === true;
-            const likeIconClass = isLiked ? 'fas fa-heart liked' : 'fas fa-heart';
-            const likeText = isLiked ? translations[currentLang]['liked'] : translations[currentLang]['like'];
-
-            const messageElement = document.createElement('div');
-            messageElement.id = `msg-${id}`;
-            messageElement.classList.add('post', 'card');
-            messageElement.style.padding = '15px 20px';
-            messageElement.innerHTML = `
-                <p style="font-size: 1.1rem; word-break: break-word;">${data.text}</p>
-                <div style="font-size: 0.8rem; color: var(--light-text-color); margin-top: 5px;">${date}</div>
-                <div class="post-likes" id="likes-action-${id}" onclick="toggleLike('${id}')">
-                    <i class="${likeIconClass}"></i> <span id="likes-count-${id}">${data.likes || 0}</span> ${likeText}
-                </div>
-            `;
-            messageList.appendChild(messageElement);
-        }
-
+        
         window.toggleLike = async function(id) {
             if (!chatRef) return;
-            const likedMessages = JSON.parse(localStorage.getItem('likedMessages')) || {};
-            const isLiked = likedMessages[id] === true;
-            const docRef = doc(db, "anonymous_messages", id);
-            
+            const isLiked = likedMessages[id];
+            const docRef = doc(chatRef, id);
+
             try {
                 let newLikes = 0;
-                
                 if (isLiked) {
                     // Unlike: Decrease count
                     await updateDoc(docRef, { likes: increment(-1) });
                     delete likedMessages[id];
-                    newLikes = (await getDoc(docRef)).data().likes;
                 } else {
                     // Like: Increase count
                     await updateDoc(docRef, { likes: increment(1) });
                     likedMessages[id] = true;
-                    newLikes = (await getDoc(docRef)).data().likes;
                 }
+                
+                // Fetch the new likes count (this is necessary because increment doesn't return the new value immediately)
+                newLikes = (await getDoc(docRef)).data().likes;
 
                 localStorage.setItem('likedMessages', JSON.stringify(likedMessages));
 
                 // Update UI without full re-render
                 const likesText = document.querySelector(`#msg-${id} .post-likes`);
-                if (!isLiked) {
-                    likesText.innerHTML = `<i class="fas fa-heart liked"></i> <span id="likes-count-${id}">${newLikes}</span> ${translations[currentLang]['liked']}`;
-                } else {
-                    likesText.innerHTML = `<i class="fas fa-heart"></i> <span id="likes-count-${id}">${newLikes}</span> ${translations[currentLang]['like']}`;
-                }
+                const likeIconClass = likedMessages[id] ? 'fas fa-heart liked' : 'fas fa-heart';
+                const likeTextKey = likedMessages[id] ? 'liked' : 'like';
+
+                likesText.innerHTML = `
+                    <i class="${likeIconClass}"></i> 
+                    <span id="likes-count-${id}">${newLikes}</span> 
+                    <span data-i18n="like">${translations[currentLang][likeTextKey]}</span>
+                `;
 
             } catch (e) {
                 console.error("Error updating like: ", e);
@@ -937,7 +1078,8 @@
         let questionsAttempted = parseInt(localStorage.getItem('questionsAttempted') || '0');
         let allQuestions = [];
         let availableQuestions = [];
-        
+        let currentQuestionIndex = -1;
+
         function updateQuizStats() {
             document.getElementById('current-user-display').textContent = currentUserName || translations[currentLang]['anonymous'];
             document.getElementById('current-score').textContent = currentScore;
@@ -955,64 +1097,60 @@
             currentScore = parseInt(localStorage.getItem('quizScore') || '0');
             questionsAttempted = parseInt(localStorage.getItem('questionsAttempted') || '0');
             updateQuizStats();
-            document.getElementById('quiz-complete').style.display = 'none';
-            document.getElementById('quiz-content').style.display = 'block';
-        }
 
-        window.saveUserName = function() {
-            const nameInput = document.getElementById('user-name-input').value.trim();
-            if (nameInput.length < 2) {
-                alert(currentLang === 'vi' ? "Vui lòng nhập tên hợp lệ (ít nhất 2 ký tự)." : "Please enter a valid name (at least 2 characters).");
-                return;
-            }
-            currentUserName = nameInput;
-            localStorage.setItem('quizUserName', currentUserName);
-            initQuizState(true);
-            document.getElementById('name-input-section').style.display = 'none';
-            document.getElementById('quiz-section').style.display = 'block';
-            loadQuizQuestions();
-        }
-
-        function initQuiz() {
-            if (currentUserName && questionsAttempted < MAX_QUIZ_QUESTIONS) {
+            if (currentUserName) {
                 document.getElementById('name-input-section').style.display = 'none';
                 document.getElementById('quiz-section').style.display = 'block';
-                initQuizState(false);
-                loadQuizQuestions();
+                // Check if all questions have been attempted
+                if (questionsAttempted >= MAX_QUIZ_QUESTIONS) {
+                    document.getElementById('quiz-content').style.display = 'none';
+                    document.getElementById('final-score-display').textContent = `${currentScore}/${MAX_QUIZ_QUESTIONS}`;
+                    document.getElementById('quiz-complete').style.display = 'block';
+                } else {
+                    document.getElementById('quiz-complete').style.display = 'none';
+                    document.getElementById('quiz-content').style.display = 'block';
+                    if (allQuestions.length === 0) {
+                        loadAllQuizQuestions();
+                    } else {
+                         // Attempt to load the next question in the current session
+                        loadNextQuestion();
+                    }
+                }
             } else {
                 document.getElementById('name-input-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
             }
         }
-
-        function handleQuizComplete() {
-            document.getElementById('final-score-display').textContent = `${currentScore} / ${MAX_QUIZ_QUESTIONS}`;
-            document.getElementById('quiz-content').style.display = 'none';
-            document.getElementById('quiz-complete').style.display = 'block';
-            // Clear current game session data
-            localStorage.removeItem('questionsAttempted');
-            localStorage.removeItem('quizScore');
-            questionsAttempted = MAX_QUIZ_QUESTIONS;
-            updateQuizStats();
+        
+        window.saveUserName = function() {
+            const name = document.getElementById('user-name-input').value.trim();
+            if (name.length < 2) {
+                alert(currentLang === 'vi' ? "Vui lòng nhập tên hợp lệ (ít nhất 2 ký tự)." : "Please enter a valid name (at least 2 characters).");
+                return;
+            }
+            localStorage.setItem('quizUserName', name);
+            currentUserName = name;
+            initQuizState(true); // Reset score when starting new
         }
 
         window.resetQuiz = function() {
             initQuizState(true);
-            loadQuizQuestions();
+            currentQuestionIndex = -1;
+            loadAllQuizQuestions(); // Re-load and shuffle
         }
-
-        async function loadQuizQuestions() {
-            if (!quizRef) return;
-            if (allQuestions.length > 0) {
-                const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random());
-                availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
-                loadNextQuestion();
-                return;
+        
+        async function loadAllQuizQuestions() {
+            if (!quizRef) {
+                 document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Lỗi: Chưa cấu hình Firebase Quiz.' : 'Error: Firebase Quiz is not configured.'}</p>`;
+                 return;
             }
-
+             document.getElementById('q-text').innerHTML = `<div class="skeleton" style="background-color: #e0e0e0; height: 20px; width: 80%; margin-bottom: 10px; border-radius: 4px;"></div>`;
+            document.getElementById('options').innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
+            
             try {
                 const q = query(quizRef);
                 const snapshot = await getDocs(q);
+                
                 allQuestions = snapshot.docs.map(doc => {
                     const data = doc.data();
                     // Map old data structure to a consistent one for the quiz logic
@@ -1029,10 +1167,12 @@
                     document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Chưa có câu hỏi nào trong ngân hàng dữ liệu.' : 'No questions available in the database.'}</p>`;
                     return;
                 }
-
+                
                 const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random());
                 availableQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS);
+                currentQuestionIndex = -1;
                 loadNextQuestion();
+
             } catch (e) {
                 console.error("Error loading quiz questions: ", e);
                 document.getElementById('quiz-content').innerHTML = `<p style="text-align: center; margin-top: 20px; color: #dc3545;">${currentLang === 'vi' ? 'Lỗi tải dữ liệu Quiz. Vui lòng kiểm tra lại thông tin cấu hình Firebase.' : 'Error loading Quiz data. Check Firebase configuration.'}</p>`;
@@ -1044,66 +1184,81 @@
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '<div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div><div class="skeleton" style="background-color: #e0e0e0; height: 50px; border-radius: 8px;"></div>';
 
-            if (questionsAttempted >= MAX_QUIZ_QUESTIONS || availableQuestions.length === 0) {
-                handleQuizComplete();
+            currentQuestionIndex++;
+            
+            if (questionsAttempted >= MAX_QUIZ_QUESTIONS || currentQuestionIndex >= availableQuestions.length) {
+                // Quiz complete logic
+                document.getElementById('quiz-content').style.display = 'none';
+                document.getElementById('final-score-display').textContent = `${currentScore}/${MAX_QUIZ_QUESTIONS}`;
+                document.getElementById('quiz-complete').style.display = 'block';
                 return;
             }
-
-            const currentQ = availableQuestions.pop();
-            window.currentQuestion = currentQ;
-
-            document.getElementById('q-category').textContent = currentQ.category;
-            document.getElementById('q-text').textContent = currentQ.text;
             
-            let options = currentQ.answers.map((ans, index) => ({ text: ans, index: index }));
-            options = options.sort(() => 0.5 - Math.random());
-
+            const q = availableQuestions[currentQuestionIndex];
+            
+            document.getElementById('q-category').textContent = q.category;
+            document.getElementById('q-text').textContent = q.text;
             optionsDiv.innerHTML = '';
-            options.forEach((option) => {
-                const btn = document.createElement('button');
-                btn.classList.add('opt-btn');
-                btn.textContent = option.text;
-                btn.onclick = () => checkAnswer(option.index);
-                btn.setAttribute('data-index', option.index);
-                optionsDiv.appendChild(btn);
+            
+            q.answers.forEach((ans, index) => {
+                const optBtn = document.createElement('button');
+                optBtn.classList.add('opt-btn');
+                optBtn.setAttribute('data-index', index);
+                optBtn.textContent = ans;
+                optBtn.onclick = () => checkAnswer(optBtn, index, q.correctAnswer);
+                optionsDiv.appendChild(optBtn);
             });
+            
+            // Re-render KaTeX in the question text
+             if (window.renderMathInElement) {
+                renderMathInElement(document.getElementById('quiz-content'), {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "\\[", right: "\\]", display: true},
+                        {left: "$", right: "$", display: false},
+                        {left: "\\(", right: "\\)", display: false}
+                    ], throwOnError : false
+                });
+            }
+            
+            updateQuizStats();
         }
 
-        window.checkAnswer = function(selectedIndex) {
-            const correctIndex = window.currentQuestion.correctAnswer;
-            const isCorrect = selectedIndex === correctIndex;
+        function checkAnswer(selectedButton, selectedIndex, correctIndex) {
+            questionsAttempted++;
+            localStorage.setItem('questionsAttempted', questionsAttempted);
+            
             const optionsDiv = document.getElementById('options');
-            const options = optionsDiv.querySelectorAll('.opt-btn');
+            const optionButtons = optionsDiv.querySelectorAll('.opt-btn');
 
-            // Disable all buttons and show result
-            options.forEach(btn => {
-                const btnIndex = parseInt(btn.getAttribute('data-index'));
+            // Disable all buttons
+            optionButtons.forEach(btn => {
                 btn.disabled = true;
-                if (btnIndex === correctIndex) {
+                btn.onclick = null;
+                // Highlight correct/wrong
+                const index = parseInt(btn.getAttribute('data-index'));
+                if (index === correctIndex) {
                     btn.classList.add('correct');
-                } else if (btnIndex === selectedIndex) {
+                } else if (index === selectedIndex) {
                     btn.classList.add('wrong');
                 }
             });
 
-            if (isCorrect) {
+            // Update score if correct
+            if (selectedIndex === correctIndex) {
                 currentScore++;
                 localStorage.setItem('quizScore', currentScore);
             }
             
-            questionsAttempted++;
-            localStorage.setItem('questionsAttempted', questionsAttempted);
             updateQuizStats();
-
-            // Show next button
             document.getElementById('next-btn').style.display = 'block';
-            if (questionsAttempted >= MAX_QUIZ_QUESTIONS) {
-                document.getElementById('next-btn').textContent = currentLang === 'vi' ? 'Xem Kết Quả' : 'View Results';
-            }
         }
 
         window.submitUserQuestion = async function() {
-            if (!quizRef) return;
+            if (!quizRef) {
+                 alert(currentLang === 'vi' ? "Lỗi: Không thể kết nối Firebase để gửi câu hỏi." : "Error: Cannot connect to Firebase to submit question.");
+                 return;
+            }
             const qText = document.getElementById('q-text-input').value.trim();
             const ans0 = document.getElementById('q-ans-0').value.trim();
             const ans1 = document.getElementById('q-ans-1').value.trim();
@@ -1116,7 +1271,7 @@
                 alert(currentLang === 'vi' ? "Vui lòng nhập đầy đủ Nội dung câu hỏi, 4 đáp án, và chọn đáp án đúng." : "Please enter the Question content, 4 answers, and select the correct answer.");
                 return;
             }
-
+            
             const newQuestion = {
                 q: qText,
                 a: [ans0, ans1, ans2, ans3],
@@ -1130,6 +1285,7 @@
                 await addDoc(quizRef, newQuestion);
                 alert(currentLang === 'vi' ? "Đóng góp thành công! Câu hỏi của bạn đã được thêm vào ngân hàng câu hỏi!" : "Contribution successful! Your question has been added to the question bank!");
                 
+                // Clear inputs
                 document.getElementById('q-text-input').value = '';
                 document.getElementById('q-ans-0').value = '';
                 document.getElementById('q-ans-1').value = '';
@@ -1138,53 +1294,49 @@
                 document.getElementById('q-correct-select').value = -1;
                 document.getElementById('q-cat-input').value = '';
                 
-                allQuestions = []; // Force reload next time
-                loadQuizQuestions();
             } catch (e) {
-                console.error("Error submitting question: ", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi gửi câu hỏi. Kiểm tra Rules Firebase!" : "An error occurred while submitting the question. Check Firebase Rules!");
+                console.error("Error submitting new question: ", e);
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi đóng góp câu hỏi. Kiểm tra Rules Firebase!" : "An error occurred while contributing the question. Check Firebase Rules!");
             }
         }
-
-
-        // --- LOGIC HỘP NHẠC KỶ NIỆM ---
-        let votedSongs = JSON.parse(localStorage.getItem('votedSongs')) || {};
         
+        // --- LOGIC SONG BOX ---
         window.submitNewSong = async function() {
             if (!classSongsRef) {
-                alert(currentLang === 'vi' ? "Lỗi: Hệ thống nhạc chưa được khởi tạo (Lỗi Firebase)." : "Error: Song system not initialized (Lỗi Firebase).");
-                return;
+                 alert(currentLang === 'vi' ? "Lỗi: Không thể kết nối Firebase để đề xuất bài hát." : "Error: Cannot connect to Firebase to suggest song.");
+                 return;
             }
             const title = document.getElementById('song-title-input').value.trim();
             const url = document.getElementById('song-url-input').value.trim();
             const memory = document.getElementById('song-memory-input').value.trim();
-            const sender = document.getElementById('song-sender-input').value.trim() || translations[currentLang]['anonymous'];
+            const sender = document.getElementById('song-sender-input').value.trim();
             const submitBtn = document.querySelector('#create-song-section .btn-send');
 
-            if (title.length < 2 || url.length < 5) {
-                alert(translations[currentLang]['song_error_required']);
+            if (title.length < 3 || url.length < 5) {
+                alert(currentLang === 'vi' ? "Vui lòng nhập đầy đủ Tên bài hát và Link hợp lệ." : "Please enter a valid Song Title and Link.");
                 return;
             }
-
+            
             submitBtn.disabled = true;
 
-            try {
-                const newSongRef = await addDoc(classSongsRef, {
-                    title: title,
-                    url: url,
-                    memory: memory,
-                    sender: sender,
-                    votes: 0,
-                    created_at: serverTimestamp()
-                });
+            const newSong = {
+                title: title,
+                url: url,
+                memory: memory,
+                sender: sender || (currentUserName || translations[currentLang]['anonymous']),
+                votes: 0,
+                created_at: serverTimestamp()
+            };
 
-                // Clear fields
+            try {
+                await addDoc(classSongsRef, newSong);
+                alert(currentLang === 'vi' ? "Đề xuất bài hát thành công! Cảm ơn bạn đã chia sẻ kỷ niệm." : "Song suggestion successful! Thank you for sharing the memory.");
+                
+                // Clear inputs
                 document.getElementById('song-title-input').value = '';
                 document.getElementById('song-url-input').value = '';
                 document.getElementById('song-memory-input').value = '';
                 document.getElementById('song-sender-input').value = '';
-                
-                alert(currentLang === 'vi' ? "Đề xuất bài hát thành công!" : "Song suggestion successful!");
                 
             } catch (e) {
                 console.error("Error submitting new song: ", e);
@@ -1194,89 +1346,19 @@
             }
         }
 
-        function loadClassSongs() {
-            if (!classSongsRef) return;
-
-            try {
-                const q = query(classSongsRef, orderBy("votes", "desc"), orderBy("created_at", "asc"));
-                
-                onSnapshot(q, (snapshot) => {
-                    const songList = document.getElementById('song-list');
-                    songList.innerHTML = '';
-                    
-                    if (snapshot.empty) {
-                        songList.innerHTML = `<p style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${translations[currentLang]['song_list_no_songs']}</p>`;
-                        return;
-                    }
-
-                    const topSongId = snapshot.docs.length > 0 ? snapshot.docs[0].id : null;
-                    
-                    snapshot.docs.forEach((doc) => {
-                        renderSong(doc.id, doc.data(), doc.id === topSongId);
-                    });
-
-                }, (error) => {
-                    console.error("Lỗi Real-time Snapshot (Songs): ", error);
-                    document.getElementById('song-list').innerHTML = `<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể tải danh sách nhạc. (Kiểm tra Firebase Rules).</div>`;
-                });
-            } catch (e) {
-                console.error("Lỗi tạo query songs: ", e);
-            }
-        }
-
-        window.voteSong = async function(songId) {
-            if (!classSongsRef) return;
-            const voteBtn = document.getElementById(`vote-btn-${songId}`);
-            
-            if (votedSongs[songId]) {
-                alert(translations[currentLang]['song_voted_error']);
-                return;
-            }
-
-            voteBtn.disabled = true;
-            voteBtn.textContent = currentLang === 'vi' ? 'Đang bình chọn...' : 'Voting...';
-
-            try {
-                const docRef = doc(db, "class_songs", songId);
-                await updateDoc(docRef, { votes: increment(1) });
-                
-                // Get the new vote count immediately after update
-                const newVotes = (await getDoc(docRef)).data().votes;
-
-                votedSongs[songId] = true;
-                localStorage.setItem('votedSongs', JSON.stringify(votedSongs));
-
-                document.getElementById(`votes-count-${songId}`).textContent = newVotes;
-                voteBtn.textContent = translations[currentLang]['song_voted'];
-                voteBtn.classList.add('voted');
-                voteBtn.disabled = false;
-            } catch (e) {
-                console.error("Error updating vote: ", e);
-                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi bình chọn. Kiểm tra Rules Firebase!" : "An error occurred while voting. Check Firebase Rules!");
-                voteBtn.disabled = false;
-                voteBtn.textContent = translations[currentLang]['song_vote_btn']; // Reset button text on error
-            }
-        }
-
-        function renderSong(id, data, isTopSong) {
+        function renderSong(id, data, isTop) {
             const songList = document.getElementById('song-list');
-            const isVoted = votedSongs[id] === true;
             const votes = data.votes || 0;
-            const songElement = document.createElement('div');
-            songElement.id = `song-${id}`;
-            songElement.classList.add('song-card');
+            const isVoted = votedSongs[id];
             
-            const badgeHtml = isTopSong ? `<span style="background: gold; color: var(--text-color); padding: 3px 8px; border-radius: 5px; font-weight: 700; margin-right: 10px;"><i class="fas fa-crown"></i> TOP</span>` : '';
+            const newSongCard = document.createElement('div');
+            newSongCard.classList.add('song-card');
+            newSongCard.id = `song-${id}`;
             
-            const voteButtonHtml = `
-                <button id="vote-btn-${id}" class="game-button ${isVoted ? 'voted' : ''}" style="width: 120px; font-size: 0.85rem; padding: 8px 15px;" 
-                        onclick="voteSong('${id}')" ${isVoted ? 'disabled' : ''}>
-                    ${isVoted ? translations[currentLang]['song_voted'] : translations[currentLang]['song_vote_btn']}
-                </button>
-            `;
+            const badgeHtml = isTop ? `<span style="font-size: 0.75rem; background: gold; color: #333; padding: 3px 8px; border-radius: 4px; margin-right: 10px; font-weight: 700;">${translations[currentLang]['song_list_top_badge']}</span>` : '';
 
-            songElement.innerHTML = `
-                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 10px;">
+            newSongCard.innerHTML = `
+                <div style="border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; margin-bottom: 10px;">
                     <h4 style="color: var(--primary-color); font-size: 1.1rem; display: flex; align-items: center;">
                         ${badgeHtml}
                         <a href="${data.url}" target="_blank" style="color: inherit; text-decoration: none;">
@@ -1292,56 +1374,138 @@
                     <div style="font-weight: 600; color: var(--text-color);">
                         <i class="fas fa-thumbs-up" style="color: #00bcd4;"></i> <span id="votes-count-${id}">${votes}</span> <span data-i18n="song_list_votes">${translations[currentLang]['song_list_votes']}</span>
                     </div>
-                    ${voteButtonHtml}
+                    <button id="vote-btn-${id}" class="game-button ${isVoted ? 'voted' : ''}" onclick="voteSong('${id}')" style="padding: 8px 15px; font-size: 0.9rem;">
+                        ${translations[currentLang][isVoted ? 'song_list_voted_btn' : 'song_list_vote_btn']}
+                    </button>
                 </div>
             `;
-            songList.appendChild(songElement);
+            songList.appendChild(newSongCard);
+        }
+        
+        function loadClassSongs() {
+            if (!classSongsRef) return;
+            try {
+                // Query ordered by votes (descending) and then creation date (ascending) for tie-breaking
+                const q = query(classSongsRef, orderBy("votes", "desc"), orderBy("created_at", "asc"));
+
+                onSnapshot(q, (snapshot) => {
+                    const songList = document.getElementById('song-list');
+                    songList.innerHTML = ''; // Clear old list
+                    
+                    if (snapshot.empty) {
+                        songList.innerHTML = `<p style="text-align: center; color: var(--light-text-color); margin-top: 20px;">${translations[currentLang]['song_list_no_songs']}</p>`;
+                        return;
+                    }
+                    
+                    const topSongId = snapshot.docs.length > 0 ? snapshot.docs[0].id : null;
+
+                    snapshot.docs.forEach((doc) => {
+                        renderSong(doc.id, doc.data(), doc.id === topSongId);
+                    });
+                }, (error) => {
+                    console.error("Lỗi Real-time Snapshot (Songs): ", error);
+                    document.getElementById('song-list').innerHTML = `<div style="color: red; padding: 20px; text-align: center;">LỖI: Không thể tải danh sách nhạc. (Kiểm tra Firebase Rules).</div>`;
+                });
+            } catch (e) {
+                console.error("Lỗi tạo query songs: ", e);
+            }
         }
 
-        // --- LOGIC CÔNG THỨC TOÁN (MATH FORMULAS) - ĐÃ CHỈNH SỬA ---
-        
-        const formulaCategories = [
-            { category_vi: "Đại số Cơ bản (Lớp 1-9)", icon: "fa-superscript", formulas: [ 
-                { name_vi: "Hằng đẳng thức: Bình phương tổng", formula: "(a+b)^2 = a^2 + 2ab + b^2", variables_vi: "a, b: biến số bất kỳ" },
-                { name_vi: "Phương trình Bậc 2", formula: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", variables_vi: "$a, b, c$: hệ số, $\\Delta = b^2 - 4ac$" },
-                { name_vi: "Công thức Lãi Kép", formula: "A = P(1 + r)^n", variables_vi: "$P$: vốn ban đầu, $r$: lãi suất, $n$: số kỳ hạn" },
-            ] },
-            { category_vi: "Hình học Phẳng (Cấp 2)", icon: "fa-draw-polygon", formulas: [
-                { name_vi: "Diện tích Hình Chữ Nhật", formula: "S = a \\times b", variables_vi: "$a, b$: dài, rộng" },
-                { name_vi: "Diện tích Tam Giác (Cơ bản)", formula: "S = \\frac{1}{2}ah", variables_vi: "$a$: cạnh đáy, $h$: chiều cao tương ứng" },
-                { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "$a, b$: cạnh góc vuông, $c$: cạnh huyền" },
-                { name_vi: "Diện tích Hình Thang", formula: "S = \\frac{(a + b)h}{2}", variables_vi: "$a, b$: hai đáy, $h$: chiều cao" },
-                { name_vi: "Diện tích Hình Tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" },
-                { name_vi: "Chu vi Hình Tròn", formula: "P = 2 \\pi r", variables_vi: "$r$: bán kính" },
-                { name_vi: "Diện tích Hình Thoi", formula: "S = \\frac{1}{2}d_1 d_2", variables_vi: "$d_1, d_2$: độ dài hai đường chéo" },
-            ] },
-            // THÊM CATEGORY VECTOR
-            { category_vi: "Vector và Tọa Độ (Cấp 3)", icon: "fa-location-arrow", formulas: [
-                { name_vi: "Tọa độ Vector", formula: "\\vec{AB} = (x_B - x_A; y_B - y_A)", variables_vi: "A, B là hai điểm trong mặt phẳng tọa độ" },
-                { name_vi: "Độ dài Vector (Mặt phẳng)", formula: "\\|\\vec{a}\\| = \\sqrt{a_1^2 + a_2^2}", variables_vi: "$a_1, a_2$: tọa độ của vector $\\vec{a}$" },
-                { name_vi: "Tích vô hướng (Mặt phẳng)", formula: "\\vec{a} \\cdot \\vec{b} = a_1 b_1 + a_2 b_2", variables_vi: "$a_1, a_2$ và $b_1, b_2$: tọa độ của $\\vec{a}$ và $\\vec{b}$" },
-                { name_vi: "Góc giữa hai Vector", formula: "\\cos(\\vec{a}, \\vec{b}) = \\frac{\\vec{a} \\cdot \\vec{b}}{\\|\\vec{a}\\| \\|\\vec{b}\\|}", variables_vi: "$\\vec{a} \\cdot \\vec{b}$: tích vô hướng; $\\|\\vec{a}\\|$: độ dài" },
-            ] },
-            { category_vi: "Lượng Giác (Cấp 3)", icon: "fa-circle-notch", formulas: [
-                { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "a, b, c: cạnh, A, B, C: góc, R: bán kính đường tròn ngoại tiếp" },
-                { name_vi: "Định lý Cosin", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "Áp dụng cho mọi tam giác" },
-                { name_vi: "Công thức cơ bản", formula: "\\sin^2 x + \\cos^2 x = 1", variables_vi: "x: góc" },
-            ] },
-            { category_vi: "Giải Tích (Cấp 3)", icon: "fa-chart-line", formulas: [
-                { name_vi: "Đạo hàm (Tích)", formula: "(uv)' = u'v + uv'", variables_vi: "$u, v$: hàm số theo $x$" },
-                { name_vi: "Logarit (Tích)", formula: "\\log_a (xy) = \\log_a x + \\log_a y", variables_vi: "$a, x, y > 0, a \\neq 1$" },
-                { name_vi: "Logarit (Mũ)", formula: "\\log_a x^k = k \\log_a x", variables_vi: "$k \\in \\mathbb{R}$" },
-                { name_vi: "Cấp số cộng (Số hạng thứ n)", formula: "u_n = u_1 + (n-1)d", variables_vi: "$d$: công sai" },
-                { name_vi: "Tổng cấp số cộng (n số hạng)", formula: "S_n = \\frac{n(u_1 + u_n)}{2}", variables_vi: "$n$: số hạng" },
-            ] },
-            { category_vi: "Hình học Không Gian (Cấp 3)", icon: "fa-cube", formulas: [
-                { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3}Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" },
-                { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = Bh", variables_vi: "$B$: diện tích đáy, $h$: chiều cao" },
-                { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính" },
-                { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính" },
-                { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
-                { name_vi: "Diện tích Xung quanh Hình Trụ", formula: "S_{xq} = 2 \\pi r h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
-            ] },
+        window.voteSong = async function(songId) {
+            if (!classSongsRef) return;
+            const voteBtn = document.getElementById(`vote-btn-${songId}`);
+            
+            if (votedSongs[songId]) {
+                alert(currentLang === 'vi' ? "Bạn chỉ có thể vote một lần cho mỗi bài hát!" : "You can only vote once per song!");
+                return;
+            }
+            
+            voteBtn.disabled = true;
+            voteBtn.textContent = currentLang === 'vi' ? 'Đang vote...' : 'Voting...';
+
+            const docRef = doc(classSongsRef, songId);
+
+            try {
+                await updateDoc(docRef, { votes: increment(1) });
+                votedSongs[songId] = true;
+                localStorage.setItem('votedSongs', JSON.stringify(votedSongs));
+
+                // UI update will be handled by the real-time listener (onSnapshot)
+            } catch (e) {
+                console.error("Error updating vote: ", e);
+                alert(currentLang === 'vi' ? "Đã xảy ra lỗi khi vote. Kiểm tra Rules Firebase!" : "An error occurred while voting. Check Firebase Rules!");
+            }
+        }
+
+        // --- LOGIC CÔNG THỨC TOÁN HỌC ---
+        const formulaData = [
+            {
+                category_vi: "Lý Thuyết Số & Lũy Thừa (Cấp 2)",
+                icon: "fa-superscript",
+                formulas: [
+                    { name_vi: "Căn bậc hai", formula: "\\sqrt{a} \\cdot \\sqrt{b} = \\sqrt{a b}", variables_vi: "$a, b \\ge 0$" },
+                    { name_vi: "Lũy thừa của lũy thừa", formula: "(a^m)^n = a^{m \\cdot n}", variables_vi: "$a$: số thực, $m, n$: số nguyên" },
+                    { name_vi: "Quy tắc nhân lũy thừa", formula: "a^m \\cdot a^n = a^{m+n}" },
+                    { name_vi: "Quy tắc chia lũy thừa", formula: "\\frac{a^m}{a^n} = a^{m-n}" },
+                    { name_vi: "Hằng đẳng thức: Bình phương tổng", formula: "(a+b)^2 = a^2 + 2ab + b^2" },
+                    { name_vi: "Hằng đẳng thức: Hiệu hai bình phương", formula: "a^2 - b^2 = (a-b)(a+b)" },
+                ]
+            },
+            {
+                category_vi: "Hình Học Phẳng (Cấp 2 & 3)",
+                icon: "fa-drafting-compass",
+                formulas: [
+                    { name_vi: "Định lý Pytago", formula: "a^2 + b^2 = c^2", variables_vi: "a, b: cạnh góc vuông, c: cạnh huyền" },
+                    { name_vi: "Diện tích Tam giác", formula: "S = \\frac{1}{2} b h", variables_vi: "b: độ dài đáy, h: chiều cao" },
+                    { name_vi: "Chu vi Hình tròn", formula: "C = 2 \\pi r", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Diện tích Hình tròn", formula: "S = \\pi r^2", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Công thức Heron (Diện tích Tam giác)", formula: "S = \\sqrt{p(p-a)(p-b)(p-c)}", variables_vi: "$p = \\frac{a+b+c}{2}$: nửa chu vi" },
+                ]
+            },
+            {
+                category_vi: "Tọa Độ & Vector (Cấp 3)",
+                icon: "fa-vector-square",
+                formulas: [
+                    { name_vi: "Vector giữa hai điểm (Mặt phẳng)", formula: "\\vec{AB} = (x_B - x_A; y_B - y_A)", variables_vi: "A, B là hai điểm trong mặt phẳng tọa độ" },
+                    { name_vi: "Độ dài Vector (Mặt phẳng)", formula: "\\|\\vec{a}\\| = \\sqrt{a_1^2 + a_2^2}", variables_vi: "$a_1, a_2$: tọa độ của vector $\\vec{a}$" },
+                    { name_vi: "Tích vô hướng (Mặt phẳng)", formula: "\\vec{a} \\cdot \\vec{b} = a_1 b_1 + a_2 b_2", variables_vi: "$a_1, a_2$ và $b_1, b_2$: tọa độ của $\\vec{a}$ và $\\vec{b}$" },
+                    { name_vi: "Góc giữa hai Vector", formula: "\\cos(\\vec{a}, \\vec{b}) = \\frac{\\vec{a} \\cdot \\vec{b}}{\\|\\vec{a}\\| \\|\\vec{b}\\|}", variables_vi: "$\\vec{a} \\cdot \\vec{b}$: tích vô hướng; $\\|\\vec{a}\\|$: độ dài" },
+                ]
+            },
+            {
+                category_vi: "Lượng Giác (Cấp 3)",
+                icon: "fa-circle-notch",
+                formulas: [
+                    { name_vi: "Định lý Sin", formula: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C} = 2R", variables_vi: "a, b, c: cạnh, A, B, C: góc, R: bán kính đường tròn ngoại tiếp" },
+                    { name_vi: "Định lý Cosin", formula: "a^2 = b^2 + c^2 - 2bc \\cos A", variables_vi: "a, b, c: cạnh, A: góc đối diện cạnh a" },
+                    { name_vi: "Công thức Sin (Cộng)", formula: "\\sin(a+b) = \\sin a \\cos b + \\cos a \\sin b" },
+                    { name_vi: "Công thức Cos (Hiệu)", formula: "\\cos(a-b) = \\cos a \\cos b + \\sin a \\sin b" },
+                ]
+            },
+            {
+                category_vi: "Giải Tích (Cấp 3)",
+                icon: "fa-chart-line",
+                formulas: [
+                    { name_vi: "Đạo hàm: Hàm mũ", formula: "(\\mathrm{e}^x)' = \\mathrm{e}^x" },
+                    { name_vi: "Đạo hàm: Hàm Logarit", formula: "(\\ln x)' = \\frac{1}{x}", variables_vi: "$x > 0$" },
+                    { name_vi: "Tích phân cơ bản", formula: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C", variables_vi: "$n \\ne -1$" },
+                    { name_vi: "Tích phân Logarit", formula: "\\int \\frac{1}{x} dx = \\ln|x| + C", variables_vi: "$x \\ne 0$" },
+                    // Ví dụ thêm Công thức nghiệm phương trình bậc hai
+                    { name_vi: "Nghiệm phương trình bậc hai", formula: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", variables_vi: "$ax^2 + bx + c = 0, a \\ne 0$" },
+                ]
+            },
+            {
+                category_vi: "Hình Học Không Gian (Cấp 3)",
+                icon: "fa-cube",
+                formulas: [
+                    { name_vi: "Thể tích Khối Chóp", formula: "V = \\frac{1}{3} S_d h", variables_vi: "$S_d$: diện tích đáy, $h$: chiều cao" },
+                    { name_vi: "Thể tích Khối Lăng Trụ", formula: "V = S_d h", variables_vi: "$S_d$: diện tích đáy, $h$: chiều cao" },
+                    { name_vi: "Thể tích Khối Cầu", formula: "V = \\frac{4}{3} \\pi r^3", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Diện tích Mặt Cầu", formula: "S = 4 \\pi r^2", variables_vi: "$r$: bán kính" },
+                    { name_vi: "Thể tích Khối Trụ", formula: "V = \\pi r^2 h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
+                    { name_vi: "Diện tích Xung quanh Hình Trụ", formula: "S_{xq} = 2 \\pi r h", variables_vi: "$r$: bán kính đáy, $h$: chiều cao" },
+                ]
+            },
         ];
 
         window.toggleFormulaCategory = function(id) {
@@ -1357,86 +1521,86 @@
                 icon.classList.add('fa-chevron-down');
             }
         }
-        
+
         window.renderFormulaList = function() {
             const listElement = document.getElementById('formula-list');
-            listElement.innerHTML = '';
-            
+            listElement.innerHTML = ''; 
+
             // TỐI ƯU HÓA: Giải thích Ký hiệu Cơ bản
             const symbolExplanation = document.createElement('div');
             symbolExplanation.classList.add('formula-card');
             symbolExplanation.innerHTML = `
-                <div class="formula-name-display"><i class="fas fa-info-circle"></i> Giải thích Ký hiệu Cơ bản</div>
-                <p style="font-size: 0.95rem; color: var(--light-text-color);">
-                    Các công thức được hiển thị bằng KaTeX. Một số ký hiệu thường gặp:
-                    <ul style="margin-top: 5px; padding-left: 20px; list-style-type: square; line-height: 1.6;">
-                        <li>$S$: Diện tích</li>
-                        <li>$V$: Thể tích</li>
-                        <li>$P$: Chu vi</li>
-                        <li>$r$: Bán kính</li>
-                        <li>$h$: Chiều cao</li>
-                        <li>$\\vec{a}$: Vector $\\vec{a}$</li>
-                        <li>$B$: Diện tích đáy (của khối đa diện)</li>
-                    </ul>
-                </p>
+                 <div class="formula-name-display"><i class="fas fa-info-circle"></i> Giải thích Ký hiệu Cơ bản</div>
+                 <p style="font-size: 0.95rem; color: var(--light-text-color);">
+                     Các công thức được hiển thị bằng KaTeX. Một số ký hiệu thường gặp:
+                     <ul style="margin-top: 5px; padding-left: 20px; list-style-type: square; line-height: 1.6;">
+                         <li>$S$: Diện tích</li>
+                         <li>$V$: Thể tích</li>
+                         <li>$r$: Bán kính</li>
+                         <li>$h$: Chiều cao</li>
+                         <li>$\int$: Tích phân</li>
+                         <li>' : Đạo hàm</li>
+                     </ul>
+                 </p>
             `;
             listElement.appendChild(symbolExplanation);
 
-
-            formulaCategories.forEach((category, index) => {
-                const categoryId = `formula-cat-${index}`;
+            formulaData.forEach((category, index) => {
+                const categoryId = `formula-category-${index}`;
                 
-                // Category Header (Clickable for collapse)
-                const categoryHeader = document.createElement('h4');
-                categoryHeader.id = `${categoryId}-header`;
-                categoryHeader.classList.add('category-header-clickable');
-                categoryHeader.setAttribute('onclick', `toggleFormulaCategory('${categoryId}')`);
-                categoryHeader.style.cssText = 'cursor: pointer; color: var(--secondary-color); margin-top: 25px; margin-bottom: 0px; font-weight: 700; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center;';
-                categoryHeader.innerHTML = `
-                    <div><i class="fas ${category.icon}" style="margin-right: 10px;"></i> ${category.category_vi}</div>
-                    <i class="fas ${index === 0 ? 'fa-chevron-up' : 'fa-chevron-down'}" id="${categoryId}-icon"></i>
+                const header = document.createElement('div');
+                header.classList.add('category-header-clickable');
+                header.setAttribute('onclick', `toggleFormulaCategory('${categoryId}')`);
+                header.style.marginBottom = '15px';
+                header.style.cursor = 'pointer';
+
+                header.innerHTML = `
+                    <h4 style="font-weight: 700; color: var(--secondary-color); margin-bottom: 0;">
+                        <i class="fas ${category.icon}" style="margin-right: 10px;"></i>
+                        ${category.category_vi}
+                        <i id="${categoryId}-icon" class="fas fa-chevron-down" style="float: right; font-size: 1rem;"></i>
+                    </h4>
                 `;
-                listElement.appendChild(categoryHeader);
+                listElement.appendChild(header);
 
-                // Formula List Container (Collapsible)
-                const formulaContainer = document.createElement('div');
-                formulaContainer.id = categoryId;
-                formulaContainer.style.display = index === 0 ? 'block' : 'none'; // Keep the first category open by default
-                formulaContainer.style.paddingTop = '15px';
-                listElement.appendChild(formulaContainer);
-
-                // Formulas
+                const content = document.createElement('div');
+                content.id = categoryId;
+                content.style.display = 'none'; // Default to collapsed
+                
                 category.formulas.forEach(item => {
+                    // *** ĐIỂM CỐT LÕI ĐỂ KHẮC PHỤC LỖI HIỂN THỊ CÔNG THỨC ***
+                    // Bao bọc chuỗi công thức bằng $$...$$ để buộc KaTeX hiển thị ở chế độ Block (Display Mode).
+                    const formulaWithDelimiters = `$$${item.formula}$$`;
+                    
                     const formulaCard = document.createElement('div');
                     formulaCard.classList.add('formula-card');
                     formulaCard.innerHTML = `
                         <div class="formula-name-display">${item.name_vi}</div>
-                        <div class="formula-katex-display"> \\(${item.formula}\\) </div>
-                        <div class="formula-variables">${currentLang === 'vi' ? 'Giải thích' : 'Variables'}: ${item.variables_vi}</div>
+                        <div class="formula-katex-display">${formulaWithDelimiters}</div>
+                        ${item.variables_vi ? `<div class="formula-variables">${item.variables_vi}</div>` : ''}
                     `;
-                    formulaContainer.appendChild(formulaCard);
+                    content.appendChild(formulaCard);
                 });
+                
+                listElement.appendChild(content);
             });
-
-            // Call KaTeX auto-render after mounting all elements
+            
+            // Render KaTeX after adding all elements
             if (window.renderMathInElement) {
-                // Sử dụng auto-render để tìm và render các ký hiệu \(formula\)
-                window.renderMathInElement(listElement, {
+                renderMathInElement(listElement, {
                     delimiters: [
-                        {left: "$$", right: "$$", display: true},
-                        {left: "\\[", right: "\\]", display: true},
-                        {left: "$", right: "$", display: false},
+                        {left: "$$", right: "$$", display: true}, 
+                        {left: "\\[", right: "\\]", display: true}, 
+                        {left: "$", right: "$", display: false}, 
                         {left: "\\(", right: "\\)", display: false}
-                    ],
-                    throwOnError : false
+                    ], throwOnError : false
                 });
             } else {
                 listElement.innerHTML += `<p style="color: red; text-align: center; margin-top: 20px;">Lỗi: Không thể tải thư viện KaTeX để hiển thị công thức.</p>`
             }
         }
-        
+
         // --- LOGIC TRÒ CHƠI KHÁC ---
-        
         // Tic-Tac-Toe
         let board = ["", "", "", "", "", "", "", "", ""];
         let currentPlayer = "X";
@@ -1449,14 +1613,14 @@
 
         function initTicTacToe() {
             const cells = document.querySelectorAll('.cell');
-            const statusDisplay = document.getElementById('tictactoe-status');
             cells.forEach(cell => {
                 cell.textContent = '';
+                cell.removeEventListener('click', handleCellClick); // Remove existing listener to prevent duplicates
                 cell.addEventListener('click', handleCellClick);
             });
             updateStatus(translations[currentLang]['tictactoe_status_x']);
         }
-        
+
         function handleCellClick(clickedCellEvent) {
             const clickedCell = clickedCellEvent.target;
             const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
@@ -1482,6 +1646,7 @@
                 let a = board[winCondition[0]];
                 let b = board[winCondition[1]];
                 let c = board[winCondition[2]];
+
                 if (a === '' || b === '' || c === '') {
                     continue;
                 }
@@ -1492,56 +1657,63 @@
             }
 
             if (roundWon) {
-                updateStatus(currentPlayer === 'X' ? translations[currentLang]['tictactoe_win_x'] : translations[currentLang]['tictactoe_win_o']);
+                updateStatus(translations[currentLang]['tictactoe_status_win'].replace('%s', currentPlayer));
                 gameActive = false;
                 return;
             }
 
-            let roundDraw = !board.includes('');
+            let roundDraw = !board.includes("");
             if (roundDraw) {
-                updateStatus(translations[currentLang]['tictactoe_draw']);
+                updateStatus(translations[currentLang]['tictactoe_status_draw']);
                 gameActive = false;
                 return;
             }
 
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            updateStatus(currentPlayer === 'X' ? translations[currentLang]['tictactoe_status_x'] : translations[currentLang]['tictactoe_status_o']);
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            updateStatus(translations[currentLang][currentPlayer === "X" ? 'tictactoe_status_x' : 'tictactoe_status_o']);
         }
 
         function updateStatus(message) {
             document.getElementById('tictactoe-status').textContent = message;
         }
 
-        window.resetGame = function() {
+        window.resetTicTacToe = function() {
             board = ["", "", "", "", "", "", "", "", ""];
-            currentPlayer = "X";
             gameActive = true;
-            initTicTacToe();
+            currentPlayer = "X";
+            document.querySelectorAll('.cell').forEach(cell => cell.textContent = '');
+            updateStatus(translations[currentLang]['tictactoe_status_x']);
         }
 
-        // --- LOGIC GAME ĐOÁN SỐ (NUMBER GUESSING) ---
-        let secretNumber;
-        let guessesLeft;
-        let guessLog = [];
+        // Number Guessing Game
+        let secretNumber = 0;
+        let guessesLeft = 10;
         let gameGuActive = false;
-        
+        let guessLog = [];
+
         window.startNewGuessingGame = function() {
             secretNumber = Math.floor(Math.random() * 100) + 1;
             guessesLeft = 10;
-            guessLog = [];
             gameGuActive = true;
-            document.getElementById('guess-input').value = '';
+            guessLog = [];
             document.getElementById('guess-button').disabled = false;
+            document.getElementById('guess-input').value = '';
             document.getElementById('guess-result').textContent = '';
-            document.getElementById('guess-log').textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
+            document.getElementById('guess-log').textContent = currentLang === 'vi' ? 'Các số đã đoán: Chưa có' : 'Guesses: None yet';
+            updateGuessStatus();
         }
-        
+
+        function updateGuessStatus() {
+            const statusElement = document.getElementById('guess-status');
+            statusElement.textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft);
+        }
+
         window.checkGuess = function() {
             if (!gameGuActive) {
                 alert(currentLang === 'vi' ? 'Vui lòng bấm "Chơi mới" để bắt đầu.' : 'Please click "New Game" to start.');
                 return;
             }
-            
+
             const guessInput = document.getElementById('guess-input');
             const guess = parseInt(guessInput.value);
             const resultDisplay = document.getElementById('guess-result');
@@ -1575,18 +1747,18 @@
                     resultDisplay.textContent = translations[currentLang]['guess_high'];
                 }
             }
-            
-            logDisplay.textContent = translations[currentLang]['guess_try_left'].replace('%t', guessesLeft) + `. (${guessLog.join(', ')})`;
-            guessInput.value = ''; // Clear input after guess
+
+            logDisplay.textContent = `${currentLang === 'vi' ? 'Các số đã đoán: ' : 'Guesses: '} ${guessLog.join(', ')}`;
+            updateGuessStatus();
         }
-        
-        // --- LOGIC GAME GHÉP CẶP (MEMORY MATCH) ---
-        const cardSymbols = ['🧠', '🚀', '🌟', '🦄', '🌈', '🔥', '👑', '🔑']; // 8 symbols
-        let memoryCards = [];
+
+        // Memory Match Game
+        const cardSymbols = ["A", "B", "C", "D", "E", "F", "G", "H"];
+        let cards = [];
         let hasFlippedCard = false;
         let lockBoard = false;
         let firstCard, secondCard;
-        let matchesFound = 0;
+        let matchedPairs = 0;
         let totalTurns = 0;
 
         function shuffle(array) {
@@ -1594,59 +1766,47 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-            return array;
         }
 
-        function updateMemoryStatus(isLangToggle = false) {
-            const statusElement = document.getElementById('memory-status');
-            if (isLangToggle) {
-                 if (matchesFound === cardSymbols.length) {
-                    statusElement.textContent = translations[currentLang]['memory_status_win'].replace('%t', totalTurns);
-                 } else if (totalTurns > 0) {
-                    statusElement.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
-                 } else {
-                    statusElement.textContent = translations[currentLang]['memory_status_start'];
-                 }
-                 return;
-            }
-            
-            if (matchesFound === cardSymbols.length) {
-                 statusElement.textContent = translations[currentLang]['memory_status_win'].replace('%t', totalTurns);
-                 return;
-            }
-            
-            statusElement.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
-        }
-
-
-        window.startMemoryGame = function(isLangToggle) {
+        function createBoard() {
             const boardElement = document.getElementById('memory-game-board');
             boardElement.innerHTML = '';
-            memoryCards = [];
-            matchesFound = 0;
-            totalTurns = 0;
-            hasFlippedCard = false;
-            lockBoard = false;
-
-            const shuffledSymbols = shuffle([...cardSymbols, ...cardSymbols]); // Create pairs and shuffle
-
-            shuffledSymbols.forEach((symbol, index) => {
-                const card = document.createElement('div');
-                card.classList.add('memory-card');
-                card.setAttribute('data-symbol', symbol);
-                card.setAttribute('data-index', index);
-                
-                card.innerHTML = `
+            cards = [...cardSymbols, ...cardSymbols];
+            shuffle(cards);
+            
+            cards.forEach((symbol, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('memory-card');
+                cardElement.setAttribute('data-symbol', symbol);
+                cardElement.setAttribute('data-index', index);
+                cardElement.innerHTML = `
                     <div class="card-inner">
-                        <div class="card-front card-face">${symbol}</div>
-                        <div class="card-back card-face">?</div>
+                        <div class="card-face card-back">?</div>
+                        <div class="card-face card-front">${symbol}</div>
                     </div>
                 `;
-                card.addEventListener('click', flipCard);
-                boardElement.appendChild(card);
-                memoryCards.push(card);
+                cardElement.addEventListener('click', flipCard);
+                boardElement.appendChild(cardElement);
             });
-            updateMemoryStatus(isLangToggle);
+        }
+
+        window.startMemoryGame = function(isInitial = false) {
+            if (!isInitial) {
+                createBoard();
+                resetGameVariables();
+            } else {
+                 // Create a placeholder board on initial load
+                document.getElementById('memory-game-board').innerHTML = Array(16).fill(0).map((_, i) => `<div class="memory-card"><div class="card-inner"><div class="card-face card-back">?</div><div class="card-face card-front">${cardSymbols[i % 8]}</div></div></div>`).join('');
+            }
+            updateMemoryStatus();
+        }
+
+        function resetGameVariables() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+            matchedPairs = 0;
+            totalTurns = 0;
+            document.querySelectorAll('.memory-card').forEach(card => card.classList.remove('flipped', 'matched'));
         }
 
         function flipCard() {
@@ -1666,13 +1826,11 @@
             secondCard = this;
             totalTurns++;
             updateMemoryStatus();
-            
             checkForMatch();
         }
 
         function checkForMatch() {
             const isMatch = firstCard.getAttribute('data-symbol') === secondCard.getAttribute('data-symbol');
-
             isMatch ? disableCards() : unflipCards();
         }
 
@@ -1683,13 +1841,12 @@
             firstCard.classList.add('matched');
             secondCard.classList.add('matched');
 
-            matchesFound++;
-            if (matchesFound === cardSymbols.length) {
-                updateMemoryStatus(); // Update to win message
-                lockBoard = true;
-            }
-
+            matchedPairs++;
             resetBoard();
+            
+            if (matchedPairs === cardSymbols.length) {
+                 updateMemoryStatus(true); // Win condition
+            }
         }
 
         function unflipCards() {
@@ -1706,6 +1863,15 @@
             [firstCard, secondCard] = [null, null];
         }
 
+        function updateMemoryStatus(isWin = false) {
+            const statusElement = document.getElementById('memory-status');
+            if (isWin) {
+                 statusElement.textContent = translations[currentLang]['memory_status_win'].replace('%t', totalTurns);
+                 return;
+            }
+            
+            statusElement.textContent = translations[currentLang]['memory_status_turn'].replace('%t', totalTurns);
+        }
 
         // --- KHỞI TẠO ỨNG DỤNG ---
         window.initApp = function() {
@@ -1713,7 +1879,7 @@
                 applyLanguage(currentLang);
                 if (db) { 
                     loadInitialMessages();
-                    initQuiz();
+                    initQuizState(false);
                     loadClassSongs(); 
                 } else {
                      console.warn("Bỏ qua tải Chat/Quiz vì Firebase initialization lỗi.");
@@ -1726,6 +1892,7 @@
                 
                 // Load Formulas ngay khi init (KaTeX cần được render)
                 renderFormulaList(); 
+                window.formulasInitialized = true;
 
                 showTab('social'); 
             } catch (e) {
